@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Smetana explorer",
+  "name": "Smetana Explorer",
   "version": "1.0",
   "description": "Solana account data explorer. Watch what's inside data account without leaving the explorer. Explore data, track changes and more.",
   "content_scripts": [
@@ -15,5 +15,13 @@
         "https://solana.fm/*"
       ]
     }
-  ]
+  ],
+  "background": {
+    "service_worker": "scripts/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Open Smetana Explorer"
+  }
 }

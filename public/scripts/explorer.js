@@ -52,10 +52,16 @@ function docloaded() {
                     badge.style.borderRadius = "4px";
                     badge.style.color = 'white';
                     badge.style.backgroundColor = "#189AB4";
-                    badge.onclick = function(e) {
+                    badge.onclick = function (e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        alert('show addr popup');
+
+                        chrome.runtime.sendMessage({
+                            "smetana": true,
+                            "address":addr,
+                        });
+
+                        alert('sent!');
                     }
 
                     badge.classList.add("smetanaExplorer");
