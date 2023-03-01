@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Smetana explorer",
+  "version": "1.0",
+  "description": "Solana account data explorer. Watch what's inside data account without leaving the explorer. Explore data, track changes and more.",
+  "content_scripts": [
+    {
+      "run_at": "document_start",
+      "js": [
+        "scripts/explorer.js"
+      ],
+      "matches": [
+        "https://solscan.io/*",
+        "https://explorer.solana.com/*",
+        "https://solana.fm/*"
+      ]
+    }
+  ]
+}
