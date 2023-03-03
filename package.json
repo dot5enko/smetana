@@ -1,11 +1,12 @@
 {
-  "name": "chrome-react-seo-extension",
+  "name": "smetana-data-explorer-extension",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@chakra-ui/react": "^2.5.1",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
+    "@solana/web3.js": "^1.73.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -21,10 +22,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "INLINE_RUNTIME_CHUNK=false react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start": "webpack --mode=development --watch --stats-error-details",
+    "builddev": "INLINE_RUNTIME_CHUNK=false  webpack --mode=development",
+    "build": "INLINE_RUNTIME_CHUNK=false  webpack --mode=production"
   },
   "eslintConfig": {
     "extends": [
@@ -43,5 +43,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "clean-webpack-plugin": "^4.0.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "ts-loader": "^9.4.2",
+    "webpack-cli": "^5.0.1"
   }
 }
