@@ -53,7 +53,7 @@ chrome.runtime.onInstalled.addListener(() => {
             });
     }
 
-    setup(solanaweb3);
+    // setup(solanaweb3);
 });
 
 
@@ -65,15 +65,14 @@ chrome.runtime.onConnect.addListener(
 
 chrome.runtime.onStartup.addListener(() => {
     try {
-
-        setup(solanaweb3);
-        console.log('solana import ', solanaweb3)
-
+        // setup(solanaweb3,);
     } catch (err) {
         console.error('unable to init extension: ', err.message)
     }
 })
 
+
+setup(solanaweb3)
 
 
 
