@@ -18,12 +18,13 @@
     "framer-motion": "^10.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-icons": "^4.8.0",
     "react-scripts": "5.0.1",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "webpack --mode=development --watch --stats-error-details",
+    "start": "webpack-dev-server --config webpack.serve.config.js --host localhost --port 8080 --open --mode development",
     "builddev": "INLINE_RUNTIME_CHUNK=false  webpack --mode=development",
     "build": "INLINE_RUNTIME_CHUNK=false  webpack --mode=production"
   },
@@ -50,6 +51,7 @@
     "copy-webpack-plugin": "^11.0.0",
     "html-webpack-plugin": "^5.5.0",
     "ts-loader": "^9.4.2",
-    "webpack-cli": "^5.0.1"
+    "webpack-cli": "^5.0.1",
+    "webpack-dev-server": "^4.11.1"
   }
 }
