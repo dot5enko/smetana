@@ -3,11 +3,10 @@ import { PublicKey } from '@solana/web3.js';
 
 export const db = new Dexie('accounts');
 
-const tableName = "account";
-
 // todo check double initialization
 db.version(2).stores({
-    account: '++id, address, created_at, data',
+    data: '++id, address_id_ref, created_at',
+    addresses: '++id, &address, sync_flag'
 });
 
 export async function addressHistory(address: PublicKey) {

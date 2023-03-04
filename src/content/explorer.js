@@ -21,58 +21,103 @@ var observeDOM = (function () {
     }
 })()
 
-// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-//     console.log('got a response', message)
-// })
+import pcontext from './context'
+import { createPopupObject } from "./popup"
 
-function docloaded() {
+function processLinksWithData(links, pageContext) {
+    for (var it of links) {
+        var hrefAttr = it.href;
 
-    console.log('parse links ...');
-    var links = document.querySelectorAll("a");
+        if (hrefAttr.startsWith("https://solscan.io/account")) {
+
+            let splitParts = hrefAttr.split("\/")
+            let addr = splitParts[splitParts.length - 1]
+
+            // at this point data should already fetched
+            let addrData = pageContext.getData(addr);
+
+            if (it.querySelector(".smetanaExplorer") == null) {
+
+                const badge = document.createElement("span");
+                badge.style.border = "1px solid black"
+                badge.style.padding = "4px"
+                badge.style.marginRight = "10px";
+                badge.style.borderRadius = "4px";
+                badge.style.color = 'white';
+                badge.style.backgroundColor = "#189AB4";
+                badge.onclick = async function (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    let popupDiv = document.querySelector(".smetanaPopup");
+
+                    var xPosition = e.clientX + window.pageXOffset;
+                    var yPosition = e.clientY + window.pageYOffset;
+
+                    popupDiv.style.top = yPosition + "px";
+                    popupDiv.style.left = xPosition + "px";
+                    popupDiv.style.display = "block";
+                    popupDiv.style.opacity = 0;
+                    popupDiv.style.opacity = 1;
+
+                    console.log(' popup location should be ', e.offsetX, e.offsetY);
+                }
+
+                badge.classList.add("smetanaExplorer");
+                badge.innerText = "@" + addr.substring(0, 4);
+
+                it.prepend(badge);
+            }
+            // }
+        }
+    }
+}
+
+function handleUpdatedNode(pageContext, docPart) {
+
+    if (docPart == null) {
+        return;
+    }
+
+    var links = docPart.querySelectorAll("a");
 
     if (links != null) {
-        console.log(`found ${links.length} on this page`);
 
-        for (var it of links) {
-            var hrefAttr = it.href;
+        // collect all the visible accounts and check if there's data for them in extension
+        {
+            // addresses 
 
-            if (hrefAttr.startsWith("https://solscan.io/account")) {
+            var addrsToFetch = [];
 
-                let splitParts = hrefAttr.split("\/")
-                let addr = splitParts[splitParts.length - 1]
+            var linksToHandle = [];
 
-                if (it.querySelector(".smetanaExplorer") == null) {
+            for (var it of links) {
+                var hrefAttr = it.href;
 
-                    // check if its address 
-                    // if (addr.length == 44) {
-                    console.log(`-- ${hrefAttr} -> ${addr}`)
+                if (hrefAttr.startsWith("https://solscan.io/account")) {
 
-                    const badge = document.createElement("span");
-                    badge.style.border = "1px solid black"
-                    badge.style.padding = "4px"
-                    badge.style.marginRight = "10px";
-                    badge.style.borderRadius = "4px";
-                    badge.style.color = 'white';
-                    badge.style.backgroundColor = "#189AB4";
-                    badge.onclick = async function (e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                    let splitParts = hrefAttr.split("\/")
+                    let addr = splitParts[splitParts.length - 1]
 
-                        chrome.runtime.sendMessage({
-                            "smetana": true,
-                            "address": addr,
-                        }, (resp) => {
-                            console.log('awaiting response :', resp, chrome.runtime.lastError)
-                        });
+                    linksToHandle.push(it);
 
+                    if (pageContext.seen(addr)) {
+                        continue;
+                    } else {
+                        pageContext.setSeen(addr);
+                        addrsToFetch.push(addr)
                     }
-
-                    badge.classList.add("smetanaExplorer");
-                    badge.innerText = "@" + addr.substring(0, 4);
-
-                    it.prepend(badge);
                 }
-                // }
+            }
+
+            if (linksToHandle.length > 0) {
+
+                if (addrsToFetch.length > 0) {
+                    // got some addresses to fetch info of
+                    console.log(`fetch this addrs: ${addrsToFetch.length}`, addrsToFetch)
+                }
+
+                processLinksWithData(linksToHandle, pageContext);
             }
         }
     } else {
@@ -80,21 +125,19 @@ function docloaded() {
     }
 }
 
-let lastTime = new Date().getTime();
-
 document.addEventListener("DOMContentLoaded", function () {
 
     const bodyObj = document.querySelector('body');
+
+    // popup object
+    createPopupObject();
+
     observeDOM(bodyObj, function (m) {
-        lastTime = new Date().getTime();
-
-        setTimeout(function () {
-            // check if diff more than 1 secx
-            const lastFired = new Date().getTime() - lastTime;
-            if (lastFired > 200) {
-                docloaded();
+        for (var mutations of m) {
+            for (var addedNode of mutations.addedNodes) {
+                handleUpdatedNode(pcontext, addedNode)
             }
-        }, 250)
-
+        }
     });
+
 });

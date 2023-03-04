@@ -9,6 +9,9 @@
       "js": [
         "js/content.js"
       ],
+      "css": [
+        "css/content.css"
+      ],
       "matches": [
         "https://solscan.io/*",
         "https://explorer.solana.com/*",

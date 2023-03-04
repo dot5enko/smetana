@@ -12,6 +12,83 @@ const manifest = JSON.parse(fs.readFileSync(resolve(SRC_DIR, 'manifest', 'manife
 
 module.exports = [
     (env, { mode }) => ({
+        name: 'popup',
+        // dependencies: ['worker'],
+        devtool: mode === 'development' ? 'inline-source-map' : false,
+        context: SRC_DIR,
+
+        entry: {
+            popup: ['./popup/index'],
+            content: ['./content/explorer'],
+        },
+
+        output: {
+            filename: 'js/[name].js',
+            path: DIST_DIR,
+            assetModuleFilename: 'assets/[name][ext][query]',
+            publicPath: '',
+        },
+
+        experiments: {
+            asyncWebAssembly: true,
+        },
+
+        optimization: {
+            chunkIds: 'named',
+            moduleIds: 'named',
+        },
+
+        resolve: {
+            extensions: ['.tsx', '.ts', '.js', '.wasm'],
+        },
+
+        module: {
+            rules: [
+                {
+                    test: /\.tsx?$/,
+                    exclude: /node_modules/,
+                    use: {
+                        loader: 'ts-loader',
+                        options: {
+                            configFile: 'tsconfig.json',
+                        },
+                    },
+                },
+                {
+                    test: /\.s[ac]ss$/i,
+                    use: ['style-loader', 'css-loader', 'sass-loader'],
+                },
+                {
+                    test: /\.css$/i,
+                    use: ["style-loader", "css-loader"],
+                },
+            ],
+        },
+
+        plugins: [
+            new CopyWebpackPlugin({
+                patterns: [
+                    {
+                        from: 'content/style.css',
+                        to: 'css/content.css',
+                    },
+                ],
+            }),
+            new DefinePlugin({
+                'process.env.NODE_ENV': JSON.stringify(mode),
+                'process.env.EXT_VERSION': JSON.stringify(manifest.version),
+            }),
+            new ProvidePlugin({
+                process: 'process/browser',
+            }),
+            new HtmlWebpackPlugin({
+                template: './popup/index.html',
+                chunks: ['popup'],
+                filename: 'index.html',
+            })
+        ],
+    }),
+    (env, { mode }) => ({
         name: 'background',
         target: 'webworker',
         devtool: mode === 'development' ? 'inline-source-map' : false,
@@ -69,71 +146,6 @@ module.exports = [
             new ProvidePlugin({
                 process: 'process/browser',
             }),
-        ],
-    }),
-    (env, { mode }) => ({
-        name: 'popup',
-        // dependencies: ['worker'],
-        devtool: mode === 'development' ? 'inline-source-map' : false,
-        context: SRC_DIR,
-        
-        entry: {
-            popup: ['./popup/index'],
-            content: ['./content/explorer'],
-        },
-
-        output: {
-            filename: 'js/[name].js',
-            path: DIST_DIR,
-            assetModuleFilename: 'assets/[name][ext][query]',
-            publicPath: '',
-        },
-
-        experiments: {
-            asyncWebAssembly: true,
-        },
-
-        optimization: {
-            chunkIds: 'named',
-            moduleIds: 'named',
-        },
-
-        resolve: {
-            extensions: ['.tsx', '.ts', '.js', '.wasm'],
-        },
-
-        module: {
-            rules: [
-                {
-                    test: /\.tsx?$/,
-                    exclude: /node_modules/,
-                    use: {
-                        loader: 'ts-loader',
-                        options: {
-                            configFile: 'tsconfig.json',
-                        },
-                    },
-                },
-                {
-                    test: /\.s[ac]ss$/i,
-                    use: ['style-loader', 'css-loader', 'sass-loader'],
-                },
-            ],
-        },
-
-        plugins: [
-            new DefinePlugin({
-                'process.env.NODE_ENV': JSON.stringify(mode),
-                'process.env.EXT_VERSION': JSON.stringify(manifest.version),
-            }),
-            new ProvidePlugin({
-                process: 'process/browser',
-            }),
-            new HtmlWebpackPlugin({
-                template: './popup/index.html',
-                chunks: ['popup'],
-                filename: 'index.html',
-            })
         ],
     }),
 ];
