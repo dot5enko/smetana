@@ -1,4 +1,5 @@
 import { Connection, PublicKey } from "@solana/web3.js"
+import { db, addressHistory } from "./database"
 
 function setup() {
 
@@ -11,20 +12,42 @@ function setup() {
             console.log("do some work here...")
         })
 
-        chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+        chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             console.log("got a request from page", request);
             // sendResponse("received");
 
-            let addr = request.address;
+            let addr = new PublicKey(request.address);
             console.warn('address to fetch now : ', addr)
 
+            // addressHistory(addr).then((historyItems) => {
+            //     console.log("history items : ", historyItems)
+            // })
+
             connection.getAccountInfo(
-                new PublicKey(addr),
+                addr,
                 "confirmed",
             ).then((respdata) => {
-                console.log('got fetched result : ', respdata.data)
+                db.table('account').add({
+                    address: addr.toBase58(),
+                    created_at: new Date(),
+                    data: respdata.data,
+                }).then((addrid) => {
+
+                    sendResponse({
+                        "state": true,
+                        "type": "latest_data",
+                        "data": respdata
+                    })
+
+                }).catch((dberr) => {
+                    console.warn("unable to store item to database : ", dberr.message)
+                });
             }).catch((errFound) => {
-                console.warn('error while fetching data: ', errFound)
+                sendResponse({
+                    "state": false,
+                    "type": "node error",
+                    "err": errFound.message
+                })
             });
 
             chrome.windows.create({
@@ -33,6 +56,8 @@ function setup() {
                 width: 350,
                 height: 600,
             });
+
+            return true;
         });
 
         chrome.alarms.create({ periodInMinutes: 1 })
@@ -42,7 +67,12 @@ function setup() {
     }
 }
 
+chrome.runtime.onInstalled.addListener(() => {
+
+})
+
 chrome.runtime.onStartup.addListener(() => {
+
 })
 
 setup()

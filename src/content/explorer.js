@@ -1,4 +1,3 @@
-
 var observeDOM = (function () {
     var MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
@@ -22,6 +21,9 @@ var observeDOM = (function () {
     }
 })()
 
+// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//     console.log('got a response', message)
+// })
 
 function docloaded() {
 
@@ -52,16 +54,16 @@ function docloaded() {
                     badge.style.borderRadius = "4px";
                     badge.style.color = 'white';
                     badge.style.backgroundColor = "#189AB4";
-                    badge.onclick = function (e) {
+                    badge.onclick = async function (e) {
                         e.preventDefault();
                         e.stopPropagation();
 
                         chrome.runtime.sendMessage({
                             "smetana": true,
                             "address": addr,
+                        }, (resp) => {
+                            console.log('awaiting response :', resp, chrome.runtime.lastError)
                         });
-
-                        console.log('msg sent ?')
 
                     }
 
