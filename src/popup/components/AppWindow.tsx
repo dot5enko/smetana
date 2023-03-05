@@ -1,17 +1,11 @@
 import { Box, Flex, HTMLChakraProps, useCounter, keyframes } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
-import { MenuEntry, MenuEntryProps } from "./MenuEntry";
+import { useEffect, useState } from "react";
+import { ItemSelector, ItemSelectorProps } from "./menu/ItemSelect";
+import { MenuEntry, MenuEntryProps } from "./menu/MenuEntry";
+import { MenuEntryType } from "./menu/MenuEntryType";
 
 export interface WindowProps extends HTMLChakraProps<'div'> {
     config: AppWindowConfig
-}
-
-export enum MenuEntryType {
-    Label,
-    Submenu,
-    Action,
-    Select,
-    TextInput
 }
 
 export interface AppMenuEntry {
@@ -30,7 +24,7 @@ const AnimationDuration = 150;
 
 const fademove = keyframes`
     50% {
-        transform: translateX(30px);
+        transform: translateX(5px);
         opacity: 0;
     }
     100% {
@@ -44,10 +38,7 @@ export function AppWindow(props: WindowProps) {
     let { children, ...rest } = props
 
     const [activeWindow, setActiveWindow] = useState<AppWindowConfig>(props.config);
-    const [opacity, setOpacity] = useState(0);
-    const [display, setDisplay] = useState("none");
     const { increment, value: counterValue } = useCounter();
-
     const [anim, setAnim] = useState("");
 
     const spinAnimation = `${fademove} 0.3s linear`;
@@ -70,7 +61,18 @@ export function AppWindow(props: WindowProps) {
 
             let menuEntryParams: MenuEntryProps = {}
 
+            let isMenu = true;
+
             switch (menuItem.type) {
+                case MenuEntryType.Select: {
+                    isMenu = false;
+
+                    let selectorProps: ItemSelectorProps<any> = menuItem._config as ItemSelectorProps<any>;
+                    let styledSelect = <ItemSelector {...selectorProps} />;
+
+                    items.push(styledSelect);
+
+                } break;
                 case MenuEntryType.Action: {
                     menuEntryParams.onClick = menuItem._config;
                 } break;
@@ -84,12 +86,13 @@ export function AppWindow(props: WindowProps) {
                     console.warn(`unable to handle menu item type: ${menuItem.type}`);
                 }
             }
-
-            items.push(<MenuEntry key={keyIdx} {...menuEntryParams}>{menuItem.label}</MenuEntry>)
+            if (isMenu) {
+                items.push(<MenuEntry key={keyIdx} {...menuEntryParams}>{menuItem.label}</MenuEntry>)
+            }
             keyIdx += 1;
         }
 
-        return items;
+        return <>{items}</>;
     }
 
     const [content, setContent] = useState(renderMenu());
@@ -104,7 +107,7 @@ export function AppWindow(props: WindowProps) {
 
     }, [activeWindow]);
 
-    return <Box width="100%" position="relative" overflow={"hidden"}>
+    return <Box width="100%" position="relative" overflow={"hidden"} padding="0px 5px">
         <Flex
             {...rest}
             direction="column"

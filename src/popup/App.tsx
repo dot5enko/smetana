@@ -2,8 +2,8 @@ import { Box, Button, Flex, FormControl, FormHelperText, FormLabel, Input, Progr
 import { ChakraProvider, Text } from '@chakra-ui/react'
 import { Icon } from '@chakra-ui/icon'
 import { MdSettings } from 'react-icons/md'
-import { AppMenuEntry, AppWindow, AppWindowConfig, MenuEntryType } from "./components/AppWindow"
-import { Action, MenuEntry, Submenu } from "./components/MenuEntry"
+import { AppWindow, AppWindowConfig } from "./components/AppWindow"
+import { Action, Selector, Submenu } from "./components/builder"
 
 function App() {
 
@@ -19,17 +19,29 @@ function Content() {
   const { colorMode, toggleColorMode } = useColorMode()
 
   const config: AppWindowConfig = {
+    title: "main",
     entries: [
       Action("Addresses", () => {
         alert('addresses not implemented')
       }),
-      Submenu("Config", "Configuration", Action("test", () => {
-        alert("this is test action")
-      }), Action("another test", () => {
-        alert("this is test action")
-      })),
-    ],
-    title: "main"
+      Submenu("Config", "Configuration",
+        Submenu(
+          "Network RPC",
+          "Network provider",
+          Selector("rpc selector",
+            false,
+            [
+              "https://rpc.ankr.com/solana",
+            ],
+            undefined,
+            "https://rpc.ankr.com/solana",
+            "https://api.mainnet-beta.solana.com",
+            "https://api.devnet.solana.com",
+            "https://api.testnet.solana.com",
+          )
+        )
+      )
+    ]
   }
 
   return (
@@ -57,16 +69,6 @@ function Content() {
           <Text variant="secondary"> Usage: </Text>
           <Progress colorScheme={"green"} size="lg" hasStripe value={64} />
         </Box>
-        {/* <FormControl>
-          <FormLabel color='gray.400'>Solana rpc endpoint</FormLabel>
-          <Select >
-            <option value="https://rpc.ankr.com/solana">ankr</option>
-            <option value="https://api.mainnet-beta.solana.com">mainnet-beta</option>
-            <option value="https://api.devnet.solana.com">devnet</option>
-            <option value="https://api.testnet.solana.com">testnet</option>
-          </Select>
-          <FormHelperText>Choose rpc endpoint we should use</FormHelperText>
-        </FormControl> */}
         <AppWindow config={config} />
       </Box>
     </Flex>)
