@@ -1,4 +1,4 @@
-import { Box, Flex, HTMLChakraProps, useCounter, keyframes, Spacer, Icon } from "@chakra-ui/react";
+import { Box, Flex, HTMLChakraProps, useCounter, keyframes, Spacer, Icon, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { ItemSelector, ItemSelectorProps } from "./menu/ItemSelect";
@@ -68,12 +68,13 @@ export function AppWindow(props: WindowProps) {
             let isMenu = true;
 
             switch (menuItem.type) {
+
                 case MenuEntryType.Select: {
                     isMenu = false;
 
                     let selectorProps: ItemSelectorProps<any> = menuItem._config as ItemSelectorProps<any>;
                     selectorProps.onSelectorValueChange = (val: any) => {
-                        
+
                         // will it change reference ?
                         menuItem._config.value = val;
 
@@ -135,6 +136,9 @@ export function AppWindow(props: WindowProps) {
                             setActiveWindow(activeWindow.parent as AppWindowConfig)
                         }}
                     ><Icon as={MdKeyboardBackspace} /></Box> : null}
+                    <Flex alignItems="center" paddingLeft="20px">
+                        <Text>{activeWindow.title}</Text>
+                    </Flex>
                     <Spacer />
                 </Flex>
             </Box>

@@ -12,7 +12,7 @@ export function MenuItemBasicElement(props: MenuItemBasicElementProps) {
 
         width="100%"
         padding="10px 20px"
-        backgroundColor="#1E2027"
+        backgroundColor="#363A46"
         minHeight="55px"
         cursor="pointer"
         transition="all .2s ease"
@@ -23,7 +23,7 @@ export function MenuItemBasicElement(props: MenuItemBasicElementProps) {
         flexDirection="column"
 
         _hover={{
-            backgroundColor: "#363A46",
+            backgroundColor: "#1E2027",
             color: "whiteAlpha.900"
         }}
 

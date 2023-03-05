@@ -22,14 +22,12 @@ function Content() {
   const [config, setConfig] = useState<AppWindowConfig>({
     title: "main",
     entries: [
-      Action("Addresses", () => {
-        alert('addresses not implemented')
-      }),
+      Submenu("Addresses", "Watched addresses", Action("add new", () => {})),
       Submenu("Config", "Configuration",
         Submenu(
           "Network RPC",
           "Network provider",
-          Selector("rpc selector",
+          Selector("choose and rpc provider for requests to be done by this extension",
             false,
             [
               "https://rpc.ankr.com/solana",
@@ -45,7 +43,10 @@ function Content() {
             "https://api.testnet.solana.com",
           )
         )
-      )
+      ),
+      Action("About",() => {
+        alert("created by dot5enko")
+      })
     ]
   })
 

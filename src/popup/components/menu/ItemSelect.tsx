@@ -105,7 +105,7 @@ export function ItemSelector<T>(props: ItemSelectorProps<T>) {
         })
 
         return <Box>
-            <Text>{props.label}</Text>
+            <Text fontSize="14px" color="gray.200" padding="10px">{props.label}</Text>
             <>
                 {inner}
             </>
