@@ -73,6 +73,9 @@ export function AppWindow(props: WindowProps) {
 
                     let selectorProps: ItemSelectorProps<any> = menuItem._config as ItemSelectorProps<any>;
                     selectorProps.onSelectorValueChange = (val: any) => {
+                        
+                        // will it change reference ?
+                        menuItem._config.value = val;
 
                         // go back on value change
                         setActiveWindow(activeWindow.parent as AppWindowConfig)
