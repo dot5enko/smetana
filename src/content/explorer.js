@@ -49,18 +49,33 @@ function processLinksWithData(links, pageContext) {
                     e.preventDefault();
                     e.stopPropagation();
 
-                    let popupDiv = document.querySelector(".smetanaPopup");
+                    let popupDiv = document.querySelector(".smetana-popup");
 
-                    var xPosition = e.clientX + window.pageXOffset;
-                    var yPosition = e.clientY + window.pageYOffset;
+                    popupDiv.style.display = "block";
+                    popupDiv.style.opacity = 1;
+
+                    var xPosition = e.clientX + window.pageXOffset - popupDiv.clientWidth / 2;
+                    var yPosition = e.clientY + window.pageYOffset - popupDiv.clientHeight / 2;
 
                     popupDiv.style.top = yPosition + "px";
                     popupDiv.style.left = xPosition + "px";
-                    popupDiv.style.display = "block";
-                    popupDiv.style.opacity = 0;
-                    popupDiv.style.opacity = 1;
 
-                    console.log(' popup location should be ', e.offsetX, e.offsetY);
+                    let addressValueHolder = document.querySelector('.addressValue')
+                    addressValueHolder.innerText = addr;
+
+                    // set data 
+
+                    {
+                        let popupdata = document.querySelector('.popup-data')
+                        popupdata.innerText = JSON.stringify(addrData)
+
+                        // current addr data 
+                        // use data view strategy interface
+
+                        const getFreshBtn = document.querySelector(".getFresh");
+                        getFreshBtn.setAttribute('data-id', addr)
+                    }
+
                 }
 
                 badge.classList.add("smetanaExplorer");
@@ -115,9 +130,14 @@ function handleUpdatedNode(pageContext, docPart) {
                 if (addrsToFetch.length > 0) {
                     // got some addresses to fetch info of
                     console.log(`fetch this addrs: ${addrsToFetch.length}`, addrsToFetch)
-                }
 
-                processLinksWithData(linksToHandle, pageContext);
+                    pageContext.fetchAddressesStateFromHistory(addrsToFetch).then(() => {
+                        processLinksWithData(linksToHandle, pageContext);
+                    })
+
+                } else {
+                    processLinksWithData(linksToHandle, pageContext);
+                }
             }
         }
     } else {
@@ -130,7 +150,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const bodyObj = document.querySelector('body');
 
     // popup object
-    createPopupObject();
+    {
+        createPopupObject();
+
+        // setup callbacks
+        {
+            let getBtn = document.querySelector(".getFresh");
+            let popupdata = document.querySelector('.popup-data')
+
+            getBtn.addEventListener('click', function (e) {
+                const addrVal = getBtn.getAttribute('data-id')
+
+                pcontext.fetchAddressData([addrVal]).then((resp) => {
+                    // console.log('wow, got an address data in response', resp)
+                    popupdata.innerText = JSON.stringify(resp[0])
+                });
+            })
+        }
+    }
 
     observeDOM(bodyObj, function (m) {
         for (var mutations of m) {

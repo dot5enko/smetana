@@ -18,7 +18,7 @@ class ContentContext {
         });
     }
 
-    public getData(addr: string): AddrCacheEntry | undefined  {
+    public getData(addr: string): AddrCacheEntry | undefined {
 
         var addrStr = addr;
 
@@ -28,14 +28,12 @@ class ContentContext {
     public seen(addr: string): boolean {
         return this.addressDataCache.has(addr);
     }
-
-    public fetchAddresses(addrs: string[]): Promise<AddressData[]> {
-
+    public fetchAddressData(addrs: string[]): Promise<AddressData[]> {
         let chromeObject = (window as any).chrome;
 
         return chromeObject.runtime.sendMessage({
             "smetana": true,
-            "command": "fetch_addresses_state",
+            "command": "fetch_addresses_data",
             "address": addrs,
         }).then((resp: AddressData[]) => {
 
@@ -48,7 +46,30 @@ class ContentContext {
                 this.addressDataCache.set(it.key, newVal);
             }
 
+            return resp;
+        });
+    }
+
+    public fetchAddressesStateFromHistory(addrs: string[]): Promise<AddressData[]> {
+
+        let chromeObject = (window as any).chrome;
+
+        return chromeObject.runtime.sendMessage({
+            "smetana": true,
+            "command": "fetch_addresses_state",
+            "address": addrs,
+        }).then((resp: AddressData[]) => {
+
             console.log('got a response from background worker :', resp)
+
+            for (var it of resp) {
+                let newVal: AddrCacheEntry = {
+                    data: it,
+                    lastUpdated: new Date(),
+                    fetched: true
+                };
+                this.addressDataCache.set(it.key, newVal);
+            }
 
             return resp;
         });

@@ -1,13 +1,47 @@
-.smetanaPopup {
-    width: 500px;
+.smetana-popup {
+    /* max-width: 350px; */
     border-radius: 5px;
     padding: 15px;
     margin-right: 10px;
     position: absolute;
     display: none;
-    height: 450px;
-    opacity : 0;
+    opacity: 0;
     color: white;
-    background-color: rgba(6, 3, 33, 0.95);
+    background-color: rgba(6, 3, 33, 0.85);
     transition: all .5s ease;
+}
+
+.smetana-popup-content {
+    display: flex;
+    gap: 4px;
+}
+
+.popup-button {
+    padding: 5px 10px;
+    text-align: center;
+    cursor: pointer;
+
+    background-color: rgba(121, 134, 163, 0.777);
+}
+
+.popup-button:hover {
+    background-color: rgba(121, 134, 163, 0.577);
+}
+
+.popup-button.addressValue {
+    font-size: 14px;
+    text-align: left;
+}
+
+.popup-button.inactive {
+    background-color: rgba(121, 134, 163, 0);
+}
+
+.popup-data {
+    font-size: 10px;
+    padding: 15px;
+    color:rgba(255, 255, 255, 0.477);
+    max-width: 400px;
+    word-wrap: break-word;
+    overflow: hidden;
 }
