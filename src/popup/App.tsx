@@ -23,7 +23,11 @@ function Content() {
       Action("Addresses", () => {
         alert('addresses not implemented')
       }),
-      Submenu("Config", "Configuration"),
+      Submenu("Config", "Configuration", Action("test", () => {
+        alert("this is test action")
+      }), Action("another test", () => {
+        alert("this is test action")
+      })),
     ],
     title: "main"
   }
