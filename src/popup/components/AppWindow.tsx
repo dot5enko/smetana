@@ -1,8 +1,10 @@
-import { Box, Flex, HTMLChakraProps, useCounter, keyframes } from "@chakra-ui/react";
+import { Box, Flex, HTMLChakraProps, useCounter, keyframes, Spacer, Icon } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { MdKeyboardBackspace } from "react-icons/md";
 import { ItemSelector, ItemSelectorProps } from "./menu/ItemSelect";
 import { MenuEntry, MenuEntryProps } from "./menu/MenuEntry";
 import { MenuEntryType } from "./menu/MenuEntryType";
+import { MenuItemBasicElement } from "./menu/MenuItemBasicElement";
 
 export interface WindowProps extends HTMLChakraProps<'div'> {
     config: AppWindowConfig
@@ -18,6 +20,7 @@ export interface AppMenuEntry {
 export interface AppWindowConfig {
     title: string
     entries: AppMenuEntry[]
+    parent?: AppWindowConfig
 }
 
 const AnimationDuration = 150;
@@ -35,9 +38,10 @@ const fademove = keyframes`
 
 export function AppWindow(props: WindowProps) {
 
-    let { children, ...rest } = props
+    let { children, ...rest } = props;
 
     const [activeWindow, setActiveWindow] = useState<AppWindowConfig>(props.config);
+
     const { increment, value: counterValue } = useCounter();
     const [anim, setAnim] = useState("");
 
@@ -68,6 +72,12 @@ export function AppWindow(props: WindowProps) {
                     isMenu = false;
 
                     let selectorProps: ItemSelectorProps<any> = menuItem._config as ItemSelectorProps<any>;
+                    selectorProps.onSelectorValueChange = (val: any) => {
+
+                        // go back on value change
+                        setActiveWindow(activeWindow.parent as AppWindowConfig)
+                    }
+
                     let styledSelect = <ItemSelector {...selectorProps} />;
 
                     items.push(styledSelect);
@@ -79,7 +89,9 @@ export function AppWindow(props: WindowProps) {
                 case MenuEntryType.Submenu: {
                     menuEntryParams.submenu = true;
                     menuEntryParams.onClick = () => {
-                        setActiveWindow(menuItem.children as AppWindowConfig);
+                        let newWindow = menuItem.children as AppWindowConfig;
+                        newWindow.parent = activeWindow;
+                        setActiveWindow(newWindow);
                     }
                 } break;
                 default: {
@@ -108,11 +120,27 @@ export function AppWindow(props: WindowProps) {
     }, [activeWindow]);
 
     return <Box width="100%" position="relative" overflow={"hidden"} padding="0px 5px">
-        <Flex
-            {...rest}
-            direction="column"
-            gap="5px"
-            animation={anim}
-        >{content}</Flex>
+        <Box>
+            <Box padding="15px 0px" height="80px">
+                <Flex>
+                    {activeWindow.parent ? <Box
+                        cursor="pointer"
+                        border="1px solid gray"
+                        padding="10px 15px"
+                        borderRadius="6px"
+                        onClick={() => {
+                            setActiveWindow(activeWindow.parent as AppWindowConfig)
+                        }}
+                    ><Icon as={MdKeyboardBackspace} /></Box> : null}
+                    <Spacer />
+                </Flex>
+            </Box>
+            <Flex
+                {...rest}
+                direction="column"
+                gap="5px"
+                animation={anim}
+            >{content}</Flex>
+        </Box>
     </Box>
 }

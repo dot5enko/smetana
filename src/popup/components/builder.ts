@@ -34,6 +34,7 @@ export function Selector<T>(
     label: string,
     multiselect: boolean,
     selected: T[],
+    onChange: { (selected: T[]): void },
     renderer?: { (item: T): JSX.Element },
     ...options: T[]
 ) {
@@ -43,6 +44,7 @@ export function Selector<T>(
         value: selected,
         isMultiselect: multiselect,
         elementRenderer: renderer,
+        onSelectorValueChange: onChange,
         label: label,
     }
 

@@ -18,10 +18,12 @@ export function ItemSelector<T>(props: ItemSelectorProps<T>) {
     const [selectedChanges, setChanges] = useState(0);
 
     useEffect(() => {
-        if (props.onSelectorValueChange != null) {
-            props.onSelectorValueChange(selected)
+        if (selectedChanges > 0) {
+            if (props.onSelectorValueChange != null) {
+                props.onSelectorValueChange(selected)
+            }
         }
-    }, [selectedChanges, selected, props.onSelectorValueChange])
+    }, [selectedChanges])
 
 
     const itemRenderer = props.elementRenderer ? props.elementRenderer : (item: T) => {

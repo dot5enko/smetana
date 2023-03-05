@@ -4,6 +4,7 @@ import { Icon } from '@chakra-ui/icon'
 import { MdSettings } from 'react-icons/md'
 import { AppWindow, AppWindowConfig } from "./components/AppWindow"
 import { Action, Selector, Submenu } from "./components/builder"
+import { useState } from "react"
 
 function App() {
 
@@ -18,7 +19,7 @@ function Content() {
 
   const { colorMode, toggleColorMode } = useColorMode()
 
-  const config: AppWindowConfig = {
+  const [config, setConfig] = useState<AppWindowConfig>({
     title: "main",
     entries: [
       Action("Addresses", () => {
@@ -33,6 +34,10 @@ function Content() {
             [
               "https://rpc.ankr.com/solana",
             ],
+            (rpcSelected: string[]) => {
+              let newValue = rpcSelected[0];
+              // alert(`rpc selected: ${newValue}`)
+            },
             undefined,
             "https://rpc.ankr.com/solana",
             "https://api.mainnet-beta.solana.com",
@@ -42,9 +47,10 @@ function Content() {
         )
       )
     ]
-  }
+  })
 
   return (
+
     <Flex
       // color="gray.300"
       alignItems="center" justifyContent="center">
