@@ -1,5 +1,6 @@
 import { Box, Flex, HTMLChakraProps, keyframes, Spacer, Icon, Text } from "@chakra-ui/react";
 import { MdKeyboardBackspace } from "react-icons/md";
+import { EditDataType } from "../screens/EditDataType";
 import { RpcConfig } from "../screens/RpcConfig";
 import { ExtensionContextProvider, useExtensionContext } from "./context/ExtensionContext";
 import { MenuDivider } from "./menu/MenuDivider";
@@ -68,7 +69,7 @@ function AppWindowInner(props: { children: any }) {
             <Route path="">
                 <MenuEntry submenu="addresses">Favorites</MenuEntry>
                 <MenuEntry submenu="tags">Tags</MenuEntry>
-                <MenuEntry submenu="datatypes">Data types</MenuEntry>
+                <MenuEntry submenu="create_datatype">Data types</MenuEntry>
                 <MenuDivider />
                 <MenuEntry submenu="config">Settings</MenuEntry>
                 <MenuEntry onClick={() => { alert("made by dot5enko") }} >About</MenuEntry>
@@ -82,6 +83,7 @@ function AppWindowInner(props: { children: any }) {
                     <strong>Language</strong>
                 </MenuEntry>
             </Route>
+            <EditDataType path="create_datatype" />
             <RpcConfig path="rpc_config" />
         </Flex>
     </Box>

@@ -3,19 +3,48 @@ import { useEffect, useMemo, useState } from "react";
 import { MdCheckCircle } from "react-icons/md";
 import { MenuItemBasicElement } from "./MenuItemBasicElement";
 
+export type ItemSelectorSize = 'sm' | "md" | "bg"
+
 export interface ItemSelectorProps<T> extends HTMLChakraProps<'div'> {
     options: T[],
     value: T[]
     isMultiselect?: boolean,
     onSelectorValueChange?(selected: T[]): void,
     elementRenderer?(item: T): JSX.Element,
-    label: string
+    label?: string,
+    size?: ItemSelectorSize
 }
 
 export function ItemSelector<T>(props: ItemSelectorProps<T>) {
 
     const [selected, setSelected] = useState(props.value);
     const [selectedChanges, setChanges] = useState(0);
+
+    const { size, fontSize,padding } = useMemo(() => {
+
+        let heightVal = "65px"
+        let font = "16px"
+        let padding = "10px 20px"
+
+        switch (props.size) {
+            case 'bg':
+                heightVal = "95px"
+                font = "32px"
+                break;
+            case 'sm':
+                heightVal = "25px"
+                font = "14px"
+                padding = "8px 16px";
+                break;
+            default:
+                heightVal = "65px"
+                font = "16px"
+                padding = "10px 20px";
+                break;
+        }
+
+        return { size: heightVal, fontSize: font,padding };
+    }, [props.size]);
 
     useEffect(() => {
         if (selectedChanges > 0) {
@@ -85,19 +114,24 @@ export function ItemSelector<T>(props: ItemSelectorProps<T>) {
             const borderTop = isFirst ? "6px" : "0px";
             const borderBottom = isLast ? "6px" : "0px";
 
+            const borderBottomValue = isLast ? "" : "1px solid #3A3E4C";
+
             return (<MenuItemBasicElement
                 key={idx}
                 borderTopRadius={borderTop}
                 borderBottomRadius={borderBottom}
+                borderBottom={borderBottomValue}
                 onClick={onClickHandler}
-                height="65px"
+                minHeight={size}
+                fontSize={fontSize}
+                padding={padding}
             >
                 <Flex>
                     <>{renderedItem}</>
                     {selected.includes(it) ? <>
                         <Spacer />
                         <Box>
-                            <Icon color="green.300" as={MdCheckCircle} />
+                            <Icon fontSize={"16px"} color="green.300" as={MdCheckCircle} />
                         </Box>
                     </> : null}
                 </Flex>
@@ -105,7 +139,7 @@ export function ItemSelector<T>(props: ItemSelectorProps<T>) {
         })
 
         return <Box>
-            <Text fontSize="14px" color="gray.200" padding="10px">{props.label}</Text>
+            {props.label ? <Text fontSize="14px" color="gray.200" padding="10px">{props.label}</Text> : null}
             <>
                 {inner}
             </>
