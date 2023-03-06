@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, useState } from "react";
+import { getKeyValueOrDefault, setKeyValue } from "../../../background/storage";
 
 
 export interface ExtensionContextType {
@@ -6,6 +7,8 @@ export interface ExtensionContextType {
     setRoute(val: string): void,
     routeBack(): void
     hasBack: boolean
+    rpc: string
+    setRpc(arg: string): void
 }
 
 const ExtensionContext = createContext({} as ExtensionContextType);
@@ -14,12 +17,15 @@ export interface ExtensionContextProviderProps {
     children?: JSX.Element
 }
 
+const RpcConfigKey = "rpc_config";
+
 export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
 
     const { children, ...rest } = props;
 
     const [route, setRouteVal] = useState("")
     const [routeStack, setRouteStack] = useState<string[]>([]);
+    const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, "https://rpc.ankr.com/solana"));
 
     const ctxValue = useMemo(() => {
 
@@ -48,14 +54,20 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
             }
         }
 
+        const setRpc = (val: string) => {
+            setKeyValue(RpcConfigKey, val);
+            setRpcRaw(val);
+        }
+
         const value: ExtensionContextType = {
             route,
             setRoute,
             routeBack,
-            hasBack: routeStack.length > 0
+            hasBack: routeStack.length > 0,
+            rpc, setRpc
         }
         return value;
-    }, [route,routeStack])
+    }, [route, routeStack, rpc])
 
     return (
         <ExtensionContext.Provider value={ctxValue}>

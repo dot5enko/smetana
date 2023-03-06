@@ -1,7 +1,6 @@
 // import { PublicKey } from "@solana/web3.js";
 import { AddressData } from "src/background/AddressData";
 
-
 interface AddrCacheEntry {
     data?: AddressData
     lastUpdated?: Date

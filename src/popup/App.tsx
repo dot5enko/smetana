@@ -1,13 +1,8 @@
-import { Box, Button, Flex, FormControl, FormHelperText, FormLabel, Input, Progress, Select, Spacer, useColorMode } from "@chakra-ui/react"
+import { Box, Button, Flex, Spacer, useColorMode } from "@chakra-ui/react"
 import { ChakraProvider, Text } from '@chakra-ui/react'
 import { Icon } from '@chakra-ui/icon'
 import { MdSettings } from 'react-icons/md'
-import { AppWindow, AppWindowConfig } from "./components/AppWindow"
-import { Action, Selector, Submenu } from "./components/builder"
-import { useState } from "react"
-import { MenuEntry } from "./components/menu/MenuEntry"
-import { Route } from "./components/Router"
-import { useExtensionContext } from "./components/context/ExtensionContext"
+import { AppWindow } from "./components/AppWindow"
 
 function App() {
 
@@ -21,37 +16,6 @@ function App() {
 function Content() {
 
   const { colorMode, toggleColorMode } = useColorMode()
-
-  const [config, setConfig] = useState<AppWindowConfig>({
-    title: "main",
-    entries: [
-      Submenu("Addresses", "Watched addresses", Action("add new", () => { })),
-      Submenu("Config", "Configuration",
-        Submenu(
-          "Network RPC",
-          "Network provider",
-          Selector("choose and rpc provider for requests to be done by this extension",
-            false,
-            [
-              "https://rpc.ankr.com/solana",
-            ],
-            (rpcSelected: string[]) => {
-              let newValue = rpcSelected[0];
-              // alert(`rpc selected: ${newValue}`)
-            },
-            undefined,
-            "https://rpc.ankr.com/solana",
-            "https://api.mainnet-beta.solana.com",
-            "https://api.devnet.solana.com",
-            "https://api.testnet.solana.com",
-          )
-        )
-      ),
-      Action("About", () => {
-        alert("created by dot5enko")
-      })
-    ]
-  })
 
   return (
 
@@ -75,27 +39,11 @@ function Content() {
             </Button>
           </Box>
         </Flex>
-        <Box>
+        {/* <Box>
           <Text variant="secondary"> Usage: </Text>
           <Progress colorScheme={"green"} size="lg" hasStripe value={64} />
-        </Box>
-        <AppWindow>
-          <Route path="">
-            <MenuEntry submenu="addresses">Addresses</MenuEntry>
-            <MenuEntry submenu="config">Config</MenuEntry>
-            <MenuEntry onClick={() => { alert("made by dot5enko") }} >About</MenuEntry>
-          </Route>
-          <Route path="config">
-            <MenuEntry submenu="rpc_config">Network RPC</MenuEntry>
-          </Route>
-          <Route path="rpc_config">
-            <MenuEntry onClick={() => { alert("made by dot5enko") }} >one line</MenuEntry>
-            <MenuEntry onClick={() => { alert("made by dot5enko") }} >two line</MenuEntry>
-            <MenuEntry onClick={() => { alert("made by dot5enko") }} >three line</MenuEntry>
-            <MenuEntry onClick={() => { alert("made by dot5enko") }} >five line</MenuEntry>
-            <MenuEntry onClick={() => { alert("made by dot5enko") }} >six line</MenuEntry>
-          </Route>
-        </AppWindow>
+        </Box> */}
+        <AppWindow/>
       </Box>
     </Flex>)
 }

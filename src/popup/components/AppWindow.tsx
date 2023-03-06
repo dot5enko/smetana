@@ -1,11 +1,10 @@
-import { Box, Flex, HTMLChakraProps, useCounter, keyframes, Spacer, Icon, Text } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { Box, Flex, HTMLChakraProps, keyframes, Spacer, Icon, Text } from "@chakra-ui/react";
 import { MdKeyboardBackspace } from "react-icons/md";
+import { RpcConfig } from "../screens/RpcConfig";
 import { ExtensionContextProvider, useExtensionContext } from "./context/ExtensionContext";
-import { ItemSelector, ItemSelectorProps } from "./menu/ItemSelect";
-import { MenuEntry, MenuEntryProps } from "./menu/MenuEntry";
+import { MenuEntry } from "./menu/MenuEntry";
 import { MenuEntryType } from "./menu/MenuEntryType";
-import { MenuItemBasicElement } from "./menu/MenuItemBasicElement";
+import { Route } from "./Router";
 
 export interface WindowProps extends HTMLChakraProps<'div'> {
     // config: AppWindowConfig
@@ -37,11 +36,9 @@ const fademove = keyframes`
     }
 `
 
-
-
 function AppWindowInner(props: { children: any }) {
 
-    const { hasBack, routeBack } = useExtensionContext();
+    const { hasBack, routeBack, rpc } = useExtensionContext();
 
     return <Box>
         <Box padding="15px 0px" height="80px">
@@ -66,99 +63,30 @@ function AppWindowInner(props: { children: any }) {
             direction="column"
             gap="5px"
         // animation={anim}
-        >{props.children}</Flex>
+        >
+            <Route path="">
+                <MenuEntry submenu="addresses">Addresses</MenuEntry>
+                <MenuEntry submenu="config">Settings</MenuEntry>
+                <MenuEntry onClick={() => { alert("made by dot5enko") }} >About</MenuEntry>
+            </Route>
+            <Route path="config">
+                <MenuEntry submenu="rpc_config">
+                    <strong>Network RPC</strong>
+                    <Text size={"xs"} color="gray.600">{rpc}</Text>
+                </MenuEntry>
+                <MenuEntry submenu="lang_config">
+                    <strong>Language</strong>
+                    <Text size={"xs"} color="gray.600">{rpc}</Text>
+                </MenuEntry>
+            </Route>
+            <RpcConfig path="rpc_config" />
+        </Flex>
     </Box>
 }
 
 export function AppWindow(props: WindowProps) {
 
     let { children, ...rest } = props;
-
-
-    /*
-    const [activeWindow, setActiveWindow] = useState<AppWindowConfig>(props.config);
-
-    const { increment, value: counterValue } = useCounter();
-    const [anim, setAnim] = useState("");
-
-    const spinAnimation = `${fademove} 0.3s linear`;
-
-    function showTransitionEffect() {
-        setAnim(spinAnimation);
-    }
-
-    useEffect(() => {
-        if (counterValue > 1) {
-            showTransitionEffect();
-        }
-    }, [counterValue])
-
-    function renderMenu() {
-        let items = [];
-        let keyIdx = 0;
-
-        for (let menuItem of activeWindow.entries) {
-
-            let menuEntryParams: MenuEntryProps = {}
-
-            let isMenu = true;
-
-            switch (menuItem.type) {
-
-                case MenuEntryType.Select: {
-                    isMenu = false;
-
-                    let selectorProps: ItemSelectorProps<any> = menuItem._config as ItemSelectorProps<any>;
-                    selectorProps.onSelectorValueChange = (val: any) => {
-
-                        // will it change reference ?
-                        menuItem._config.value = val;
-
-                        // go back on value change
-                        setActiveWindow(activeWindow.parent as AppWindowConfig)
-                    }
-
-                    let styledSelect = <ItemSelector {...selectorProps} />;
-
-                    items.push(styledSelect);
-
-                } break;
-                case MenuEntryType.Action: {
-                    menuEntryParams.onClick = menuItem._config;
-                } break;
-                case MenuEntryType.Submenu: {
-                    menuEntryParams.submenu = true;
-                    menuEntryParams.onClick = () => {
-                        let newWindow = menuItem.children as AppWindowConfig;
-                        newWindow.parent = activeWindow;
-                        setActiveWindow(newWindow);
-                    }
-                } break;
-                default: {
-                    console.warn(`unable to handle menu item type: ${menuItem.type}`);
-                }
-            }
-            if (isMenu) {
-                items.push(<MenuEntry key={keyIdx} {...menuEntryParams}>{menuItem.label}</MenuEntry>)
-            }
-            keyIdx += 1;
-        }
-
-        return <>{items}</>;
-    }
-
-    const [content, setContent] = useState(renderMenu());
-
-    useEffect(() => {
-
-        increment();
-
-        setTimeout(() => {
-            setContent(renderMenu())
-        }, AnimationDuration)
-
-    }, [activeWindow]);
-*/
 
     return <Box width="100%" position="relative" overflow={"hidden"} padding="0px 5px">
         <ExtensionContextProvider>
