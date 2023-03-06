@@ -23,7 +23,7 @@ interface ActionButtonVariantStyle {
 
 export function ActionButton(props: ActionButtonProps) {
 
-    const { children, ...rest } = props;
+    const { children, action, actionVariant, ...rest } = props;
 
     const { hover, style }: ActionButtonVariantStyle = useMemo(() => {
 
@@ -38,7 +38,7 @@ export function ActionButton(props: ActionButtonProps) {
             }
         }
 
-        switch (props.actionVariant) {
+        switch (actionVariant) {
 
             case 'error':
                 result.style.backgroundColor = "#ec404b";
@@ -67,7 +67,11 @@ export function ActionButton(props: ActionButtonProps) {
         }
 
         return result;
-    }, [props.actionVariant])
+    }, [actionVariant])
 
-    return <MenuItemBasicElement textAlign="center" borderRadius="6px" {...rest} {...style} _hover={{ ...hover }}>{children}</MenuItemBasicElement>
+    return <MenuItemBasicElement
+        onClick={() => action()}
+        textAlign="center"
+        borderRadius="6px"
+        {...rest} {...style} _hover={{ ...hover }}>{children}</MenuItemBasicElement>
 }

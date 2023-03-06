@@ -3,49 +3,76 @@ import { ActionButton } from "../components/menu/ActionButton";
 import { MenuDivider } from "../components/menu/MenuDivider";
 import { SwitchInput } from "../components/menu/SwitchInput";
 import { TextInput } from "../components/menu/TextInput";
-import { Route } from "../components/Router";
 import { BorshTypeSelect } from "../components/smetana/BorshTypeSelect";
-
-import { Text } from "@chakra-ui/react"
 import { Group } from "../components/menu/Group";
+import { DataTypeField, getFieldsById, updateDatatypeField } from "../../background/types/DataTypeField";
 
 export interface EditTypeFieldProps {
-    id: string
+    id: any
 }
 
 export function EditTypeField(props: EditTypeFieldProps) {
 
-    const [curVal, setCurVal] = useState("u8");
-    const [isOptional, setIsOptional] = useState(true);
-    const [fieldName, setFieldName] = useState("");
+    const [object, setObject] = useState<DataTypeField | undefined>(undefined)
+    const [changesCount, setChangesCount] = useState(0);
 
-    const [complexType, setComplexNested] = useState(false);
+    useEffect(() => {
+        if (props.id != undefined) {
+            getFieldsById(props.id).then((item) => {
+                setObject(item);
+                setChangesCount(changesCount + 1)
+            }).catch(e => {
+                console.error('unable to get data type field :', props.id, e.message)
+            });
+        }
+    }, [props.id])
+
+    useEffect(() => {
+        if (changesCount > 0) {
+            updateDatatypeField(props.id, object).catch(e => console.error('unable to update field config'))
+            console.log('alter db object', object)
+        }
+    }, [changesCount, props.id])
+
+
+    function changeObject(handler: { (obj: DataTypeField): void }) {
+        if (object !== undefined) {
+
+            // is it passed by reference?
+            handler(object)
+
+            setObject(object)
+            setChangesCount(changesCount + 1)
+        }
+    }
 
     return <>
         <TextInput
             placeholder={"property name"}
-            value={fieldName}
+            value={object?.label}
             onChange={(name: string) => {
-                setFieldName(name)
+                changeObject(it => it.label = name)
             }} />
-        <SwitchInput value={isOptional} onChange={(val) => {
-            setIsOptional(val)
+        <SwitchInput value={object?.optional} onChange={(val) => {
+            changeObject(it => it.optional = val)
         }}
         // sublabel="whether this field is optional in structure or not"
         >Is optional</SwitchInput>
 
         <Group name="property type">
-            <SwitchInput value={complexType} onChange={(val) => {
-                setComplexNested(val)
+            <SwitchInput value={object?.is_complex_type} onChange={(val) => {
+                changeObject(it => it.is_complex_type = val)
             }}>Complex type</SwitchInput>
 
-            {!complexType ?
-                <BorshTypeSelect value={curVal} onChange={(type: string[]) => {
-                    setCurVal(type[0]);
+            {!object?.is_complex_type ?
+                <BorshTypeSelect value={object?.field_type as string} onChange={(type: string[]) => {
+                    changeObject(it => it.field_type = type[0])
                 }}></BorshTypeSelect> :
-                <Text>Complex types is not supported yet :(</Text>}
+                <ActionButton actionVariant="warning" action={function (): void {
+                    throw new Error("Function not implemented.");
+                }} >not supported yet :(</ActionButton>}
         </Group>
         <MenuDivider height={10} width={0} />
-        <ActionButton actionVariant="info" action={() => { }} textAlign="center">Save</ActionButton>
+        {/* <ActionButton actionVariant="info" action={() => { }} textAlign="center">Save</ActionButton> */}
     </>
 }

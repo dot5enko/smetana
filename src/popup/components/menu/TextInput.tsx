@@ -12,7 +12,7 @@ export interface TextInputProps {
 
 export function TextInput(props: TextInputProps) {
     return <>
-        <Input width="100" minHeight="55px" placeholder={props.placeholder} onChange={(e) => {
+        <Input width="100" minHeight="55px" value={props.value} placeholder={props.placeholder} onChange={(e) => {
             props.onChange(e.target.value)
         }} />
         {props.sublabel ? <Sublabel value={props.sublabel} /> : null}

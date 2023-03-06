@@ -8,6 +8,7 @@ db.version(2).stores({
     data: '++id, address_id, created_at',
     address: '++id, &address, sync_flag',
     datatype: '++id, label',
+    datatypefield: '++id, datatype_id ',
 });
 
 export async function addressHistory(address: PublicKey) {

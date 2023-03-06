@@ -6,7 +6,7 @@ export interface SwitchInputProps {
     children?: any,
     sublabel?: string,
 
-    value: boolean
+    value?: boolean
     onChange(val: boolean): void
 }
 
