@@ -1,13 +1,10 @@
 import { useMemo } from "react";
 import { useExtensionContext } from "./context/ExtensionContext";
 
-export function Router() {
-
-}
-
 export interface RouteProps {
     path: string
-    children: any
+    children?: any
+    args?: any[]
 }
 
 export function Route(props: RouteProps) {

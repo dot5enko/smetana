@@ -6,7 +6,8 @@ export const db = new Dexie('accounts');
 // todo check double initialization
 db.version(2).stores({
     data: '++id, address_id, created_at',
-    address: '++id, &address, sync_flag'
+    address: '++id, &address, sync_flag',
+    datatype: '++id, label',
 });
 
 export async function addressHistory(address: PublicKey) {

@@ -1,8 +1,11 @@
 import { Box, Flex, HTMLChakraProps, keyframes, Spacer, Icon, Text } from "@chakra-ui/react";
+import { useContext } from "react";
 import { MdKeyboardBackspace } from "react-icons/md";
+import { DataTypes } from "../screens/DataTypes";
 import { EditDataType } from "../screens/EditDataType";
+import { EditTypeField } from "../screens/EditTypeField";
 import { RpcConfig } from "../screens/RpcConfig";
-import { ExtensionContextProvider, useExtensionContext } from "./context/ExtensionContext";
+import { ExtensionContextProvider, useExtensionContext, useRouteArg } from "./context/ExtensionContext";
 import { MenuDivider } from "./menu/MenuDivider";
 import { MenuEntry } from "./menu/MenuEntry";
 import { MenuEntryType } from "./menu/MenuEntryType";
@@ -69,8 +72,8 @@ function AppWindowInner(props: { children: any }) {
             <Route path="">
                 <MenuEntry submenu="addresses">Favorites</MenuEntry>
                 <MenuEntry submenu="tags">Tags</MenuEntry>
-                <MenuEntry submenu="create_datatype">Data types</MenuEntry>
-                <MenuDivider />
+                <MenuEntry submenu="data_types">Data types</MenuEntry>
+                <MenuDivider width={0} />
                 <MenuEntry submenu="config">Settings</MenuEntry>
                 <MenuEntry onClick={() => { alert("made by dot5enko") }} >About</MenuEntry>
             </Route>
@@ -83,8 +86,18 @@ function AppWindowInner(props: { children: any }) {
                     <strong>Language</strong>
                 </MenuEntry>
             </Route>
-            <EditDataType path="create_datatype" />
-            <RpcConfig path="rpc_config" />
+            <Route path="data_types">
+                <DataTypes />
+            </Route>
+            <Route path="edit_datatype">
+                <EditDataType id={useRouteArg(0)} />
+            </Route>
+            <Route path="edit_typefield" >
+                <EditTypeField id={useRouteArg(0)} />
+            </Route>
+            <Route path="rpc_config">
+                <RpcConfig />
+            </Route>
         </Flex>
     </Box>
 }

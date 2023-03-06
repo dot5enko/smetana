@@ -2,6 +2,7 @@ import { Box, Text, HTMLChakraProps, Spacer, Icon, Flex } from "@chakra-ui/react
 import { useEffect, useMemo, useState } from "react";
 import { MdCheckCircle } from "react-icons/md";
 import { MenuItemBasicElement } from "./MenuItemBasicElement";
+import { ScrolledItem } from "./ScrolledItem";
 
 export type ItemSelectorSize = 'sm' | "md" | "bg"
 
@@ -13,6 +14,7 @@ export interface ItemSelectorProps<T> extends HTMLChakraProps<'div'> {
     elementRenderer?(item: T): JSX.Element,
     label?: string,
     size?: ItemSelectorSize
+    scrollAfterHeight? :number 
 }
 
 export function ItemSelector<T>(props: ItemSelectorProps<T>) {
@@ -20,7 +22,7 @@ export function ItemSelector<T>(props: ItemSelectorProps<T>) {
     const [selected, setSelected] = useState(props.value);
     const [selectedChanges, setChanges] = useState(0);
 
-    const { size, fontSize,padding } = useMemo(() => {
+    const { size, fontSize, padding } = useMemo(() => {
 
         let heightVal = "65px"
         let font = "16px"
@@ -43,7 +45,7 @@ export function ItemSelector<T>(props: ItemSelectorProps<T>) {
                 break;
         }
 
-        return { size: heightVal, fontSize: font,padding };
+        return { size: heightVal, fontSize: font, padding };
     }, [props.size]);
 
     useEffect(() => {
@@ -141,7 +143,9 @@ export function ItemSelector<T>(props: ItemSelectorProps<T>) {
         return <Box>
             {props.label ? <Text fontSize="14px" color="gray.200" padding="10px">{props.label}</Text> : null}
             <>
-                {inner}
+                <ScrolledItem height={props.scrollAfterHeight} >
+                    {inner}
+                </ScrolledItem>
             </>
         </Box>
     }, [selectedChanges, selected, props.options]);

@@ -4,11 +4,12 @@ import { getKeyValueOrDefault, setKeyValue } from "../../../background/storage";
 
 export interface ExtensionContextType {
     route: string
-    setRoute(val: string): void,
+    setRoute(val: string, ...args: any[]): void,
     routeBack(): void
     hasBack: boolean
     rpc: string
     setRpc(arg: string): void
+    routeArgs: any[]
 }
 
 const ExtensionContext = createContext({} as ExtensionContextType);
@@ -19,27 +20,37 @@ export interface ExtensionContextProviderProps {
 
 const RpcConfigKey = "rpc_config";
 
+interface RouteHistoryEntry {
+    path: string,
+    args?: any[]
+}
+
 export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
 
     const { children, ...rest } = props;
 
     const [route, setRouteVal] = useState("")
-    const [routeStack, setRouteStack] = useState<string[]>([]);
+    const [routeStack, setRouteStack] = useState<RouteHistoryEntry[]>([]);
     const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, "https://rpc.ankr.com/solana"));
+    const [routeArgs, setRouteArgs] = useState<any[]>([]);
 
     const ctxValue = useMemo(() => {
 
-        const setRoute = (newVal: string) => {
+        const setRoute = (newVal: string, ...args: any[]) => {
 
             // push current route to stack
             {
-                let routesHistory = routeStack;
-                routesHistory.push(route);
+                let routesHistory: RouteHistoryEntry[] = routeStack;
+                routesHistory.push({
+                    path: route,
+                    args: routeArgs
+                });
 
                 setRouteStack(routesHistory);
             }
 
             setRouteVal(newVal);
+            setRouteArgs(args)
         }
 
 
@@ -49,8 +60,11 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
             if (prevRoute !== undefined) {
                 setRouteStack(routeStack);
 
+                let prevRouteVal = prevRoute;
+
                 // don't push current into history
-                setRouteVal(prevRoute as string);
+                setRouteVal(prevRouteVal.path);
+                setRouteArgs(prevRouteVal.args as any[])
             }
         }
 
@@ -60,14 +74,13 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
         }
 
         const value: ExtensionContextType = {
-            route,
-            setRoute,
-            routeBack,
+            route, setRoute, routeBack,
             hasBack: routeStack.length > 0,
-            rpc, setRpc
+            rpc, setRpc,
+            routeArgs
         }
         return value;
-    }, [route, routeStack, rpc])
+    }, [route, routeStack, rpc, routeArgs])
 
     return (
         <ExtensionContext.Provider value={ctxValue}>
@@ -84,6 +97,11 @@ export function useExtensionContext(): ExtensionContextType {
     }
 
     return ctx;
+}
+
+export function useRouteArg(idx: number): any {
+    const { routeArgs } = useExtensionContext();
+    return routeArgs[idx];
 }
 
 

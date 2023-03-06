@@ -69,5 +69,5 @@ export function ActionButton(props: ActionButtonProps) {
         return result;
     }, [props.actionVariant])
 
-    return <MenuItemBasicElement borderRadius="6px" {...rest} {...style} _hover={{ ...hover }}>{children}</MenuItemBasicElement>
+    return <MenuItemBasicElement textAlign="center" borderRadius="6px" {...rest} {...style} _hover={{ ...hover }}>{children}</MenuItemBasicElement>
 }
