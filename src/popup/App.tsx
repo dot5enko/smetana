@@ -5,6 +5,9 @@ import { MdSettings } from 'react-icons/md'
 import { AppWindow, AppWindowConfig } from "./components/AppWindow"
 import { Action, Selector, Submenu } from "./components/builder"
 import { useState } from "react"
+import { MenuEntry } from "./components/menu/MenuEntry"
+import { Route } from "./components/Router"
+import { useExtensionContext } from "./components/context/ExtensionContext"
 
 function App() {
 
@@ -22,7 +25,7 @@ function Content() {
   const [config, setConfig] = useState<AppWindowConfig>({
     title: "main",
     entries: [
-      Submenu("Addresses", "Watched addresses", Action("add new", () => {})),
+      Submenu("Addresses", "Watched addresses", Action("add new", () => { })),
       Submenu("Config", "Configuration",
         Submenu(
           "Network RPC",
@@ -44,7 +47,7 @@ function Content() {
           )
         )
       ),
-      Action("About",() => {
+      Action("About", () => {
         alert("created by dot5enko")
       })
     ]
@@ -76,7 +79,23 @@ function Content() {
           <Text variant="secondary"> Usage: </Text>
           <Progress colorScheme={"green"} size="lg" hasStripe value={64} />
         </Box>
-        <AppWindow config={config} />
+        <AppWindow>
+          <Route path="">
+            <MenuEntry submenu="addresses">Addresses</MenuEntry>
+            <MenuEntry submenu="config">Config</MenuEntry>
+            <MenuEntry onClick={() => { alert("made by dot5enko") }} >About</MenuEntry>
+          </Route>
+          <Route path="config">
+            <MenuEntry submenu="rpc_config">Network RPC</MenuEntry>
+          </Route>
+          <Route path="rpc_config">
+            <MenuEntry onClick={() => { alert("made by dot5enko") }} >one line</MenuEntry>
+            <MenuEntry onClick={() => { alert("made by dot5enko") }} >two line</MenuEntry>
+            <MenuEntry onClick={() => { alert("made by dot5enko") }} >three line</MenuEntry>
+            <MenuEntry onClick={() => { alert("made by dot5enko") }} >five line</MenuEntry>
+            <MenuEntry onClick={() => { alert("made by dot5enko") }} >six line</MenuEntry>
+          </Route>
+        </AppWindow>
       </Box>
     </Flex>)
 }

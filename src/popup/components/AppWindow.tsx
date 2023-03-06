@@ -1,13 +1,14 @@
 import { Box, Flex, HTMLChakraProps, useCounter, keyframes, Spacer, Icon, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { MdKeyboardBackspace } from "react-icons/md";
+import { ExtensionContextProvider, useExtensionContext } from "./context/ExtensionContext";
 import { ItemSelector, ItemSelectorProps } from "./menu/ItemSelect";
 import { MenuEntry, MenuEntryProps } from "./menu/MenuEntry";
 import { MenuEntryType } from "./menu/MenuEntryType";
 import { MenuItemBasicElement } from "./menu/MenuItemBasicElement";
 
 export interface WindowProps extends HTMLChakraProps<'div'> {
-    config: AppWindowConfig
+    // config: AppWindowConfig
 }
 
 export interface AppMenuEntry {
@@ -36,10 +37,45 @@ const fademove = keyframes`
     }
 `
 
+
+
+function AppWindowInner(props: { children: any }) {
+
+    const { hasBack, routeBack } = useExtensionContext();
+
+    return <Box>
+        <Box padding="15px 0px" height="80px">
+            <Flex>
+                {hasBack ? <Box
+                    cursor="pointer"
+                    border="1px solid gray"
+                    padding="10px 15px"
+                    borderRadius="6px"
+                    onClick={() => {
+                        routeBack();
+                    }}
+                ><Icon as={MdKeyboardBackspace} /></Box> : null}
+                {/* <Flex alignItems="center" paddingLeft="20px">
+                <Text>{activeWindow.title}</Text>
+            </Flex> */}
+                <Spacer />
+            </Flex>
+        </Box>
+        <Flex
+            // {...rest}
+            direction="column"
+            gap="5px"
+        // animation={anim}
+        >{props.children}</Flex>
+    </Box>
+}
+
 export function AppWindow(props: WindowProps) {
 
     let { children, ...rest } = props;
 
+
+    /*
     const [activeWindow, setActiveWindow] = useState<AppWindowConfig>(props.config);
 
     const { increment, value: counterValue } = useCounter();
@@ -122,32 +158,11 @@ export function AppWindow(props: WindowProps) {
         }, AnimationDuration)
 
     }, [activeWindow]);
+*/
 
     return <Box width="100%" position="relative" overflow={"hidden"} padding="0px 5px">
-        <Box>
-            <Box padding="15px 0px" height="80px">
-                <Flex>
-                    {activeWindow.parent ? <Box
-                        cursor="pointer"
-                        border="1px solid gray"
-                        padding="10px 15px"
-                        borderRadius="6px"
-                        onClick={() => {
-                            setActiveWindow(activeWindow.parent as AppWindowConfig)
-                        }}
-                    ><Icon as={MdKeyboardBackspace} /></Box> : null}
-                    <Flex alignItems="center" paddingLeft="20px">
-                        <Text>{activeWindow.title}</Text>
-                    </Flex>
-                    <Spacer />
-                </Flex>
-            </Box>
-            <Flex
-                {...rest}
-                direction="column"
-                gap="5px"
-                animation={anim}
-            >{content}</Flex>
-        </Box>
+        <ExtensionContextProvider>
+            <AppWindowInner>{children}</AppWindowInner>
+        </ExtensionContextProvider>
     </Box>
 }
