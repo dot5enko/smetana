@@ -2,6 +2,7 @@ import { Box, Flex, HTMLChakraProps, keyframes, Spacer, Icon, Text } from "@chak
 import { MdKeyboardBackspace } from "react-icons/md";
 import { RpcConfig } from "../screens/RpcConfig";
 import { ExtensionContextProvider, useExtensionContext } from "./context/ExtensionContext";
+import { MenuDivider } from "./menu/MenuDivider";
 import { MenuEntry } from "./menu/MenuEntry";
 import { MenuEntryType } from "./menu/MenuEntryType";
 import { Route } from "./Router";
@@ -65,7 +66,10 @@ function AppWindowInner(props: { children: any }) {
         // animation={anim}
         >
             <Route path="">
-                <MenuEntry submenu="addresses">Addresses</MenuEntry>
+                <MenuEntry submenu="addresses">Favorites</MenuEntry>
+                <MenuEntry submenu="tags">Tags</MenuEntry>
+                <MenuEntry submenu="datatypes">Data types</MenuEntry>
+                <MenuDivider />
                 <MenuEntry submenu="config">Settings</MenuEntry>
                 <MenuEntry onClick={() => { alert("made by dot5enko") }} >About</MenuEntry>
             </Route>
@@ -76,7 +80,6 @@ function AppWindowInner(props: { children: any }) {
                 </MenuEntry>
                 <MenuEntry submenu="lang_config">
                     <strong>Language</strong>
-                    <Text size={"xs"} color="gray.600">{rpc}</Text>
                 </MenuEntry>
             </Route>
             <RpcConfig path="rpc_config" />
