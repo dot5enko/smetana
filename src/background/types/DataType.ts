@@ -1,17 +1,39 @@
 import { IndexableType } from "dexie";
 import { db } from "../database";
 
+export interface DataTypeAggregatedInfo {
+    used_by: number,
+    fields_count: number,
+    size_bytes: number
+}
+
 export interface DataType {
     id?: number
     label: string
     protect_updates: boolean
-    program_id : string
+    program_id: string
+
+    info: DataTypeAggregatedInfo
 }
 
 const datatype = db.table('datatype');
 
 export async function createNew(): Promise<IndexableType> {
-    return datatype.add({ label: "new type" })
+
+    const rndName  = Math.random().toString(36).slice(2)
+
+    const typ: DataType = {
+        label: `type-${rndName}`,
+        protect_updates: false,
+        program_id: "",
+        info: {
+            used_by: 0,
+            fields_count: 0,
+            size_bytes: 0,
+        }
+    }
+
+    return datatype.add(typ)
 }
 
 export async function getById(id: number): Promise<DataType> {

@@ -44,7 +44,6 @@ export function DataTypes(props: DataTypesProps) {
                 }}>From anchor</ActionButton>
         </MultipleItemsRow>
 
-        {/* <Group> */}
         <TextInput
             placeholder="search query"
             value={query}
@@ -56,6 +55,5 @@ export function DataTypes(props: DataTypesProps) {
                 setRoute("edit_datatype", it.id);
             }} />
         })}
-        {/* </Group> */}
     </>
 }

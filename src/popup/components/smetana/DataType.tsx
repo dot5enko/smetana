@@ -1,8 +1,9 @@
 import { Box, Flex, HTMLChakraProps, Icon, Spacer, Text } from "@chakra-ui/react";
-import { useMemo } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { DataType as DataTypeInterface } from "../../../background/types/DataType";
+import { DataType as DataTypeInterface, DataTypeAggregatedInfo } from "../../../background/types/DataType";
 import { MenuItemBasicElement } from "../menu/MenuItemBasicElement";
+import { Sublabel } from "../menu/Sublabel";
+import { addrFormat } from "./helpers";
 
 export interface DataTypeProps extends HTMLChakraProps<'div'> {
     item: DataTypeInterface
@@ -12,22 +13,16 @@ export function DataType(props: DataTypeProps) {
 
     const { item, ...rest } = props;
 
-    const fakeUsage = useMemo(() => {
-
-        let min = 10;
-        let max = 250;
-
-        return Math.floor(Math.random() * (max - min) + min);
-    }, [props.id])
-
     return <MenuItemBasicElement borderRadius={"6px"} {...rest}>
-        <Flex>
+        <Flex gap="5px">
             <Box>
-                <Flex>
+                <Flex gap="5px">
                     <Text fontWeight="bold" color={"white"}>{item.label}</Text>
-                    {/* {item.optional ? <Text fontSize="xs" color="red">*</Text> : null} */}
+                    <Spacer />
+                    <Text textAlign={"center"} color="blue.400" marginRight="15px">used {item.info.used_by} times</Text>
                 </Flex>
-                <Text fontSize={"sm"} color="green.300">used by {fakeUsage} decoders</Text>
+                <Text fontSize={"xs"} color="green.300">ProgramId: {addrFormat(item.program_id, 5)}</Text>
+                <Text fontSize={"xs"}>{item.info.fields_count} fields, total <strong>{item.info.size_bytes}</strong> bytes</Text>
             </Box>
             <Spacer />
             <Box alignSelf="center">

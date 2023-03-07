@@ -38,42 +38,44 @@ export function DataTypeField(props: DataTypeFieldProps) {
         <Flex>
             <Box>
                 <Flex>
-                    <Text fontWeight="bold" color={"white"}>{item.label}</Text>
+                    <Text fontWeight="bold" color={"white"}>{item.label ? item.label : "<empty>"}</Text>
                     {item.optional ? <Text fontSize="xs" color="red">*</Text> : null}
                 </Flex>
-                <Text fontSize={"sm"} color="green.300">{item.field_type}</Text>
+                <Text fontSize={"sm"} color="green.300">{item.field_type ? item.field_type : "<error type>"}</Text>
             </Box>
             <Spacer />
-            <Flex direction={"column"} gap="5px" marginRight="10px">
-                <ArrowBox boxActive={movable as boolean} onClick={(e) => {
-                    if (movable) {
-                        e.stopPropagation();
 
-                        moveUp(item.id as number).then(() => {
-                            if (props.onMoved) {
-                                props.onMoved()
-                            }
-                        }).catch((e) => console.warn("unable to move field:", e.message));
-                    }
-                }}>
-                    <Icon as={MdArrowDropUp}></Icon>
-                </ArrowBox>
-                <ArrowBox boxActive={movable as boolean} onClick={(e) => {
-                    if (movable) {
-                        e.stopPropagation();
-                        moveDown(item.id as number).then(() => {
-                            if (props.onMoved) {
-                                props.onMoved()
-                            }
-                        }).catch((e) => console.warn("unable to move field:", e.message))
-                    }
-                }}>
-                    <Icon as={MdArrowDropDown}></Icon>
-                </ArrowBox>
-            </Flex>
-            <Box alignSelf="center">
-                {!movable ? <Icon as={MdKeyboardArrowRight} /> : null}
-            </Box>
+            {!movable ?
+                <Box alignSelf="center">
+                    {!movable ? <Icon as={MdKeyboardArrowRight} /> : null}
+                </Box> :
+                <Flex direction={"column"} gap="5px">
+                    <ArrowBox boxActive={movable as boolean} onClick={(e) => {
+                        if (movable) {
+                            e.stopPropagation();
+
+                            moveUp(item.id as number).then(() => {
+                                if (props.onMoved) {
+                                    props.onMoved()
+                                }
+                            }).catch((e) => console.warn("unable to move field:", e.message));
+                        }
+                    }}>
+                        <Icon as={MdArrowDropUp}></Icon>
+                    </ArrowBox>
+                    <ArrowBox boxActive={movable as boolean} onClick={(e) => {
+                        if (movable) {
+                            e.stopPropagation();
+                            moveDown(item.id as number).then(() => {
+                                if (props.onMoved) {
+                                    props.onMoved()
+                                }
+                            }).catch((e) => console.warn("unable to move field:", e.message))
+                        }
+                    }}>
+                        <Icon as={MdArrowDropDown}></Icon>
+                    </ArrowBox>
+                </Flex>}
         </Flex>
     </MenuItemBasicElement >
 }
