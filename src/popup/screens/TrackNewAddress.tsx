@@ -13,7 +13,7 @@ import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
 import { MenuDivider } from "../components/menu/MenuDivider";
 import { ActionButton } from "../components/menu/ActionButton";
 import { ItemSelector } from "../components/menu/ItemSelect";
-import { DataType, datatypesForProgram } from "../../background/types/DataType";
+import { DataType, datatypesForProgram, decodeType as decodeTypeFunc } from "../../background/types/DataType";
 import { Group } from "../components/menu/Group";
 import { DataType as DataTypeComponent } from "../components/smetana/DataType";
 
@@ -69,6 +69,29 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
     const [decodeType, setType] = useState<DataType | undefined>(undefined);
     const [types, setTypes] = useState<DataType[]>([])
     const [typesChanges, setTypesChanges] = useState(0);
+
+    const [decodeError, setDecodeError] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (decodeType != undefined) {
+
+            console.log('going to decode data ...')
+
+            setDecodeError(false);
+            decodeTypeFunc(raw?.data as Uint8Array, decodeType).
+                then((decoded) => {
+                    if (decoded.partial && decoded.fields.length == 0) {
+                        setDecodeError(true);
+                    } else {
+                        console.log('decoded data: ', decoded.fields)
+                    }
+                }).catch(e => {
+                    console.warn('unable to decode data : ', e)
+                    setDecodeError(true);
+                })
+        }
+    }, [decodeType])
+
 
     useEffect(() => {
 
@@ -148,15 +171,22 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                         <ItemSelector label="Select compatible decoder for data" onSelectorValueChange={(nval) => {
                             setType(nval[0])
                         }} value={[decodeType]} options={types} elementRenderer={(it) => {
-                            return <Decoder it={it as DataType} />
+                            return <Decoder it={it as DataType} datasize={raw.data.length} />
                         }}></ItemSelector>
                     </> : null))}
     </>
 }
 
-function Decoder(props: { it: DataType }) {
+function Decoder(props: { it: DataType, datasize: number }) {
+
+    const matchSize = props.datasize === props.it.info.size_bytes;
+
     return <Box>
+        {matchSize ?
+            <Text fontSize="xs" color="green.400">matched by size</Text> :
+            <Text fontSize="xs" color="orange.400">type size is not equal to data size</Text>
+        }
         <Text fontWeight="bold" color={"white"}>{props.it.label}</Text>
-        <Text fontSize="xs"><strong>{props.it.info.size_bytes}</strong> bytes, {props.it.info.fields_count} fields</Text>
+        <Text fontSize="sm"><strong>{props.it.info.size_bytes}</strong> bytes, {props.it.info.fields_count} fields</Text>
     </Box>
 }

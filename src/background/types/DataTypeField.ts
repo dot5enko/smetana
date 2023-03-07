@@ -1,6 +1,8 @@
 import { IndexableType } from "dexie";
 import { db } from "../database";
 import { getById } from "./DataType";
+import borsh from "borsh"
+import { DecodeFieldResult } from "./DecodedField";
 
 export interface DataTypeField {
     id?: number
@@ -23,7 +25,7 @@ export async function getFieldSize(object: DataTypeField) {
         throw new Error('complex field types not implemented. can\'t calc size of field')
     } else {
 
-        let size = object.optional?1:0;
+        let size = object.optional ? 1 : 0;
 
         switch (object.field_type) {
             case "u8":
