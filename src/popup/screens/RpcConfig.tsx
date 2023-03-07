@@ -9,7 +9,8 @@ export function RpcConfig() {
         "https://rpc.ankr.com/solana",
         "https://api.mainnet-beta.solana.com",
         "https://api.devnet.solana.com",
-        "https://api.testnet.solana.com"
+        "https://api.testnet.solana.com",
+        "https://try-rpc.mainnet.solana.blockdaemon.tech"
     ]
 
     return <>

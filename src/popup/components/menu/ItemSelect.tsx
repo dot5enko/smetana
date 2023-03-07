@@ -63,7 +63,8 @@ export function ItemSelector<T>(props: ItemSelectorProps<T>) {
 
     const itemRenderer = props.elementRenderer ? props.elementRenderer : (item: T) => {
         if (typeof item !== 'string') {
-            throw new Error("no item renderer provided, and selector items are not of type string ")
+            console.error("no item renderer provided, and selector items are not of type string: ", item)
+            return <></>
         } else {
             return <Text>{item}</Text>
         }
