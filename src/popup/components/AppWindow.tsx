@@ -13,6 +13,9 @@ import { Route } from "./Router";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SlideWindow } from "./menu/SlideWindow";
+import { Addresses } from "../screens/Addresses";
+import { TextInput } from "./menu/TextInput";
+import { TrackNewAddress } from "../screens/TrackNewAddress";
 
 export interface WindowProps extends HTMLChakraProps<'div'> {
     // config: AppWindowConfig
@@ -79,6 +82,12 @@ function AppWindowInner(props: { children: any }) {
                 <MenuDivider width={0} />
                 <MenuEntry submenu="config">Settings</MenuEntry>
                 <AboutPage />
+            </Route>
+            <Route path="track_new_address">
+                <TrackNewAddress addr="A35xZFvr3xsRdaV6jnMrNujzBkKx3hApXTDCfj1AVpmm"/>
+            </Route>
+            <Route path="addresses">
+                <Addresses />
             </Route>
             <Route path="config">
                 <MenuEntry submenu="rpc_config" submenuTitle="Network RPC">

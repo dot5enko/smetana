@@ -1,4 +1,5 @@
-import { createContext, useContext, useMemo, useState } from "react";
+import { Connection } from "@solana/web3.js";
+import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { getKeyValueOrDefault, setKeyValue } from "../../../background/storage";
 
 
@@ -14,6 +15,8 @@ export interface ExtensionContextType {
 
     slideActive: boolean,
     toggleSlide(): void
+
+    connection: Connection
 }
 
 const ExtensionContext = createContext({} as ExtensionContextType);
@@ -40,6 +43,14 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
     const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, "https://rpc.ankr.com/solana"));
 
     const [slideActive, setSlideActive] = useState<boolean>(false);
+    const [connection, setConnection] = useState(new Connection(rpc, 'confirmed'))
+
+    useEffect(() => {
+        // todo use parameter
+        setConnection(new Connection(rpc, 'confirmed'))
+        console.log('connection changed to: ', rpc)
+    }, [rpc])
+
 
     const ctxValue = useMemo(() => {
 
@@ -85,6 +96,7 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
         }
 
         const value: ExtensionContextType = {
+            connection,
             setRoute, routeBack,
             hasBack: routeStack.length > 0,
             rpc, setRpc,
@@ -92,7 +104,7 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
             slideActive, toggleSlide,
         }
         return value;
-    }, [rpc, slideActive, routeStack, currentRoute])
+    }, [rpc, slideActive, routeStack, currentRoute, connection])
 
     return (
         <ExtensionContext.Provider value={ctxValue}>

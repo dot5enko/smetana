@@ -1,33 +1,39 @@
-import { Box, Flex, Highlight, HTMLChakraProps, Icon, Spacer } from "@chakra-ui/react";
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { Box, Flex, HTMLChakraProps, Icon, Spacer } from "@chakra-ui/react";
+import { useEffect, useMemo, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { useExtensionContext } from "../context/ExtensionContext";
+import { EntryVariant, getVariantStyle } from "./EntryVariantStyle";
 import { MenuItemBasicElement } from "./MenuItemBasicElement";
 
 export interface MenuEntryProps extends HTMLChakraProps<"div"> {
     submenu?: string,
     submenuTitle?: string
-    highlighted?: boolean
+    entryVariant?: EntryVariant
 }
 
 export function MenuEntry(props: MenuEntryProps) {
 
-    let { children, submenu, submenuTitle, ...rest } = props
+    let { children, submenu, submenuTitle, entryVariant, ...rest } = props
 
     const [title, setTitle] = useState<string>("");
 
-    useEffect(() => {
+    const variantStyle = useMemo(() => {
+        return getVariantStyle(entryVariant ?? 'default');
+    }, [entryVariant])
 
-        if (submenuTitle === undefined) {
-            if (typeof children === 'string') {
-                submenuTitle = children as string;
+    useEffect(() => {
+        if (submenu) {
+            if (submenuTitle === undefined) {
+                if (typeof children === 'string') {
+                    submenuTitle = children as string;
+                } else {
+                    console.error('no submenuTitle prop provided, nor child is string type')
+                }
             } else {
-                console.error('no submenuTitle prop provided, nor child is string type')
+                setTitle(submenuTitle)
             }
-        } else {
-            setTitle(submenuTitle)
         }
-    }, [submenuTitle])
+    }, [submenuTitle, submenu])
 
     const { setRoute } = useExtensionContext();
 
@@ -35,7 +41,13 @@ export function MenuEntry(props: MenuEntryProps) {
         setRoute(submenu as string, title);
     } : props.onClick;
 
-    return <MenuItemBasicElement {...rest} onClick={clickAction} borderRadius="6px">
+    return <MenuItemBasicElement
+        onClick={clickAction}
+        borderRadius="6px"
+        {...variantStyle.style}
+        _hover={{ ...variantStyle.hover }}
+        {...rest}
+    >
         <Flex>
             <Box>
                 {children}

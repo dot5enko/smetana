@@ -6,10 +6,10 @@ import { Sublabel } from "./Sublabel";
 export interface TextInputProps {
     sublabel?: string,
     value?: string
-    onChange(val: string): void
+    onChange?(val: string): void
     placeholder?: string
     validate?: InputType
-    onValidChange?(valid: boolean): void
+    onValidChange?(valid: boolean, val: string): void
     invalidTypeLabel?: string
 }
 
@@ -40,13 +40,13 @@ export function TextInput<T>(props: TextInputProps) {
         if (props.validate) {
             if (!validateFormat(val, props.validate)) {
                 if (props.onValidChange) {
-                    props.onValidChange(false)
+                    props.onValidChange(false, val)
                 }
                 setValid(false);
                 return false;
             } else {
                 if (props.onValidChange) {
-                    props.onValidChange(true)
+                    props.onValidChange(true, val)
                 }
                 setValid(true);
                 return true;
@@ -65,7 +65,9 @@ export function TextInput<T>(props: TextInputProps) {
         <Box position="relative">
             <Input width="100%" minHeight="55px" value={props.value} placeholder={props.placeholder} onChange={(e) => {
                 const newVal = e.target.value;
-                props.onChange(newVal)
+                if (props.onChange) {
+                    props.onChange(newVal)
+                }
             }} />
             {!valid && props.invalidTypeLabel ?
                 <Sublabel position={"absolute"} top="0" left="0" color="red.400">{props.invalidTypeLabel}</Sublabel> :
