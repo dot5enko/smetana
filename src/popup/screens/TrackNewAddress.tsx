@@ -1,9 +1,10 @@
-import { Box, Skeleton, Text } from "@chakra-ui/react";
+import { Skeleton, Text } from "@chakra-ui/react";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+
 import { useEffect, useState } from "react";
 import { RawAccountInfo } from "../../background/types/RawAccountinfo";
 import { getAddressInfo } from "../../background/rpc";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import { Group } from "../components/menu/Group";
 import { MenuEntry } from "../components/menu/MenuEntry";
 import { Sublabel } from "../components/menu/Sublabel";
 import { TextInput } from "../components/menu/TextInput";
@@ -11,7 +12,6 @@ import { addrFormat } from "../components/smetana/helpers";
 import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
 import { MenuDivider } from "../components/menu/MenuDivider";
 import { ActionButton } from "../components/menu/ActionButton";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 export interface TrackNewAddressProps {
     addr?: string
@@ -46,11 +46,11 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                 } else {
                     setFound(false);
                 }
+                setLoading(false)
             }).catch(e => {
+                setLoading(false)
                 setFound(false);
                 console.error('unable to fetch address info : ', e.message)
-            }).finally(() => {
-                setLoading(false)
             })
         }
     }, [validAddr, connection])
