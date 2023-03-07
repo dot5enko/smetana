@@ -7,17 +7,17 @@ import { BorshTypeSelect } from "../components/smetana/BorshTypeSelect";
 import { Group } from "../components/menu/Group";
 import { DataTypeField, getFieldsById, removeTypeField, updateDatatypeField } from "../../background/types/DataTypeField";
 import { useExtensionContext } from "../components/context/ExtensionContext";
+import { toast } from "react-toastify";
 
 export interface EditTypeFieldProps {
     id: any
+    protected?: boolean
 }
 
 export function EditTypeField(props: EditTypeFieldProps) {
 
     const { routeBack } = useExtensionContext();
-
     const [object, setObject] = useState<DataTypeField | undefined>(undefined)
-    const [changesCount, setChangesCount] = useState(0);
 
     useEffect(() => {
         if (props.id != undefined) {
@@ -30,6 +30,7 @@ export function EditTypeField(props: EditTypeFieldProps) {
         }
     }, [props.id])
 
+    const [changesCount, setChangesCount] = useState(0);
     useEffect(() => {
         if (changesCount > 0) {
             updateDatatypeField(props.id, object).catch(e => console.error('unable to update field config'))
@@ -39,13 +40,17 @@ export function EditTypeField(props: EditTypeFieldProps) {
 
 
     function changeObject(handler: { (obj: DataTypeField): void }) {
-        if (object !== undefined) {
+        if (props.protected) {
+            toast('changes protected, unprotect first', { type: 'warning' })
+        } else {
+            if (object !== undefined) {
 
-            // is it passed by reference?
-            handler(object)
+                // is it passed by reference?
+                handler(object)
 
-            setObject(object)
-            setChangesCount(changesCount + 1)
+                setObject(object)
+                setChangesCount(changesCount + 1)
+            }
         }
     }
 

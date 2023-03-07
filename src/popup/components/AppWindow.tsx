@@ -1,5 +1,4 @@
 import { Box, Flex, HTMLChakraProps, keyframes, Spacer, Icon, Text } from "@chakra-ui/react";
-import { useContext } from "react";
 import { MdKeyboardBackspace } from "react-icons/md";
 import { DataTypes } from "../screens/DataTypes";
 import { EditDataType } from "../screens/EditDataType";
@@ -10,6 +9,9 @@ import { MenuDivider } from "./menu/MenuDivider";
 import { MenuEntry } from "./menu/MenuEntry";
 import { MenuEntryType } from "./menu/MenuEntryType";
 import { Route } from "./Router";
+
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export interface WindowProps extends HTMLChakraProps<'div'> {
     // config: AppWindowConfig
@@ -93,7 +95,7 @@ function AppWindowInner(props: { children: any }) {
                 <EditDataType id={useRouteArg(0)} />
             </Route>
             <Route path="edit_typefield" >
-                <EditTypeField id={useRouteArg(0)} />
+                <EditTypeField id={useRouteArg(0)} protected={useRouteArg(1, false)} />
             </Route>
             <Route path="rpc_config">
                 <RpcConfig />
@@ -106,7 +108,8 @@ export function AppWindow(props: WindowProps) {
 
     let { children, ...rest } = props;
 
-    return <Box width="100%" position="relative" overflow={"hidden"} padding="0px 5px">
+    return <Box width="100%" position="relative" overflow={"hidden"} padding="0px 5px" {...rest}>
+        <ToastContainer position="top-center" limit={1} theme="dark" hideProgressBar={true} closeButton={false} />
         <ExtensionContextProvider>
             <AppWindowInner>{children}</AppWindowInner>
         </ExtensionContextProvider>

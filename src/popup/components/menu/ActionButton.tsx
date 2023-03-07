@@ -1,10 +1,12 @@
 import { background, HTMLChakraProps } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { MenuItemBasicElement } from "./MenuItemBasicElement";
+import { Sublabel } from "./Sublabel";
 
 export interface ActionButtonProps extends HTMLChakraProps<'div'> {
     actionVariant?: ActionButtonVariant
     action(): void
+    sublabel?: string
 }
 
 export type ActionButtonVariant = 'warning' | 'default' | 'success' | 'error' | 'info'
@@ -23,7 +25,7 @@ interface ActionButtonVariantStyle {
 
 export function ActionButton(props: ActionButtonProps) {
 
-    const { children, action, actionVariant, ...rest } = props;
+    const { children, action, actionVariant, sublabel, ...rest } = props;
 
     const { hover, style }: ActionButtonVariantStyle = useMemo(() => {
 
@@ -69,9 +71,14 @@ export function ActionButton(props: ActionButtonProps) {
         return result;
     }, [actionVariant])
 
-    return <MenuItemBasicElement
-        onClick={() => action()}
-        textAlign="center"
-        borderRadius="6px"
-        {...rest} {...style} _hover={{ ...hover }}>{children}</MenuItemBasicElement>
+    return <>
+        <MenuItemBasicElement
+            onClick={() => action()}
+            textAlign="center"
+            borderRadius="6px"
+            {...rest} {...style} _hover={{ ...hover }}>
+            {children}
+        </MenuItemBasicElement>
+        {props.sublabel ? <Sublabel value={props.sublabel} /> : null}
+    </>
 }

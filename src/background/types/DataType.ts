@@ -4,6 +4,7 @@ import { db } from "../database";
 export interface DataType {
     id?: number
     label: string
+    protect_updates: boolean
 }
 
 const datatype = db.table('datatype');

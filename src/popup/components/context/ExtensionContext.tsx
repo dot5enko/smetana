@@ -99,9 +99,9 @@ export function useExtensionContext(): ExtensionContextType {
     return ctx;
 }
 
-export function useRouteArg(idx: number): any {
+export function useRouteArg(idx: number, def? : any): any {
     const { routeArgs } = useExtensionContext();
-    return routeArgs[idx];
+    return routeArgs[idx] ?? def;
 }
 
 
