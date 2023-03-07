@@ -69,7 +69,7 @@ export function TextInput<T>(props: TextInputProps) {
             }} />
             {!valid && props.invalidTypeLabel ?
                 <Sublabel position={"absolute"} top="0" left="0" color="red.400">{props.invalidTypeLabel}</Sublabel> :
-                (props.value?<Sublabel position={"absolute"} top="-1px" left="2px" color="blue.400">{props.placeholder}</Sublabel>:null)
+                (props.value ? <Sublabel position={"absolute"} top="-1px" left="2px" color="blue.400">{props.placeholder}</Sublabel> : null)
             }
         </Box>
         {props.sublabel ? <Sublabel>{props.sublabel}</Sublabel> : null}
