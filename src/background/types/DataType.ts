@@ -5,6 +5,7 @@ export interface DataType {
     id?: number
     label: string
     protect_updates: boolean
+    program_id : string
 }
 
 const datatype = db.table('datatype');

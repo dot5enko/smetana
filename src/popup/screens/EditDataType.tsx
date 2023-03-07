@@ -21,7 +21,7 @@ export function EditDataType(props: EditDataTypeProps) {
     const [items, setItems] = useState<DataTypeFieldInterface[]>([]);
     const [object, setObject] = useState<DataTypeInterface | undefined>(undefined);
 
-    const { setRoute, routeBack } = useExtensionContext();
+    const { setRoute, routeBack, toggleSlide } = useExtensionContext();
 
     const [orderEditable, setOrderEditable] = useState(false);
 
@@ -79,30 +79,32 @@ export function EditDataType(props: EditDataTypeProps) {
         <TextInput placeholder="label" sublabel="this is what you'll see in explorer" value={object?.label} onChange={(newVal) => {
             changeObject(it => it.label = newVal)
         }} />
-        <>
-            {items.map((it, idx) => {
-                return <DataTypeField movable={orderEditable} onMoved={() => {
-                    fetchFields();
-                }} key={idx} item={it} onClick={() => {
-                    if (!orderEditable) {
-                        setRoute("edit_typefield", it.id, object?.protect_updates);
-                    }
-                }} />
-            })}
-        </>
-        <MenuDivider width={0} height={16} />
-        <ActionButton actionVariant="info" action={function (): void {
-            if (object?.protect_updates) {
-                toast("changes protected", { type: 'warning' })
-            } else {
-                createNewField(props.id).then(id => {
-                    // todo use consts
-                    setRoute("edit_typefield", id);
-                })
-            }
-        }}>+ field</ActionButton>
-
-        <MenuDivider width={0} height={15} />
+        <TextInput validate='publicKey' invalidTypeLabel="should be valid solana address" placeholder="program_id" sublabel="this type would only be applied to addresses owned by this program" value={object?.program_id} onChange={(newVal) => {
+            changeObject(it => it.program_id = newVal)
+        }} />
+        <Group name="structure">
+            <>
+                {items.map((it, idx) => {
+                    return <DataTypeField movable={orderEditable} onMoved={() => {
+                        fetchFields();
+                    }} key={idx} item={it} onClick={() => {
+                        if (!orderEditable) {
+                            setRoute("edit_typefield", it.id, object?.protect_updates);
+                        }
+                    }} />
+                })}
+            </>
+            <ActionButton actionVariant="info" action={function (): void {
+                if (object?.protect_updates) {
+                    toast("changes protected", { type: 'warning' })
+                } else {
+                    createNewField(props.id).then(id => {
+                        // todo use consts
+                        setRoute("edit_typefield", id);
+                    })
+                }
+            }}>+ field</ActionButton>
+        </Group>
         <Group name={"danger zone"}>
             <ActionButton actionVariant={orderEditable ? "success" : "default"} action={() => {
                 if (object?.protect_updates) {
@@ -113,7 +115,7 @@ export function EditDataType(props: EditDataTypeProps) {
             }}>{orderEditable ? "Exit edit mode" : "Change property order"}</ActionButton>
             <ActionButton action={() => {
                 changeObject(it => it.protect_updates = !it.protect_updates, true)
-            }}>{object?.protect_updates ? "Unprotect updates" : "Protect updates"} {!object?.protect_updates ? <Sublabel value="you won't able make any updates into structure while type is protected" /> : null}</ActionButton>
+            }}>{object?.protect_updates ? "Unprotect updates" : "Protect updates"} {!object?.protect_updates ? <Sublabel>you won't able make any updates into structure while type is protected</Sublabel> : null}</ActionButton>
             <ActionButton actionVariant="error" action={() => {
                 if (confirm("really want to delete this item?")) {
                     removeType(props.id).then(() => {

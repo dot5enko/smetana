@@ -43,7 +43,7 @@ function Content() {
           <Text variant="secondary"> Usage: </Text>
           <Progress colorScheme={"green"} size="lg" hasStripe value={64} />
         </Box> */}
-        <AppWindow/>
+        <AppWindow />
       </Box>
     </Flex>)
 }

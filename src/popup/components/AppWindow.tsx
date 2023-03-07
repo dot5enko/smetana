@@ -12,6 +12,7 @@ import { Route } from "./Router";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { SlideWindow } from "./menu/SlideWindow";
 
 export interface WindowProps extends HTMLChakraProps<'div'> {
     // config: AppWindowConfig
@@ -45,7 +46,7 @@ const fademove = keyframes`
 
 function AppWindowInner(props: { children: any }) {
 
-    const { hasBack, routeBack, rpc } = useExtensionContext();
+    const { hasBack, routeBack, rpc, slideActive } = useExtensionContext();
 
     return <Box>
         <Box padding="15px 0px" height="80px">
@@ -77,7 +78,7 @@ function AppWindowInner(props: { children: any }) {
                 <MenuEntry submenu="data_types">Data types</MenuEntry>
                 <MenuDivider width={0} />
                 <MenuEntry submenu="config">Settings</MenuEntry>
-                <MenuEntry onClick={() => { alert("made by dot5enko") }} >About</MenuEntry>
+                <AboutPage />
             </Route>
             <Route path="config">
                 <MenuEntry submenu="rpc_config">
@@ -101,9 +102,13 @@ function AppWindowInner(props: { children: any }) {
                 <RpcConfig />
             </Route>
         </Flex>
+        {/* <SlideWindow windowActive={slideActive} /> */}
     </Box>
 }
-
+function AboutPage() {
+    const { toggleSlide } = useExtensionContext();
+    return <MenuEntry onClick={toggleSlide} >About</MenuEntry>
+}
 export function AppWindow(props: WindowProps) {
 
     let { children, ...rest } = props;

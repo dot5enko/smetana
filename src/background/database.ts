@@ -7,7 +7,7 @@ export const db = new Dexie('accounts');
 db.version(2).stores({
     data: '++id, address_id, created_at',
     address: '++id, &address, sync_flag',
-    datatype: '++id, label',
+    datatype: '++id, label, program_id',
     datatypefield: '++id, datatype_id, order_position ',
 });
 

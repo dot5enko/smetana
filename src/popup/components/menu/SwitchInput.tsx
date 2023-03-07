@@ -1,4 +1,4 @@
-import { Box, Flex, Spacer, Switch, Text } from "@chakra-ui/react";
+import { Box, Flex, Spacer, Switch } from "@chakra-ui/react";
 import { MenuItemBasicElement } from "./MenuItemBasicElement";
 import { Sublabel } from "./Sublabel";
 
@@ -13,12 +13,7 @@ export interface SwitchInputProps {
 export function SwitchInput(props: SwitchInputProps) {
 
     return <>
-        <MenuItemBasicElement borderRadius="6px" 
-        // onClick={(e) => {
-        //     console.log('click on switch found')
-        //     props.onChange(!props.value);
-        // }}
-        >
+        <MenuItemBasicElement borderRadius="6px">
             <Flex width="100%">
                 <Box>{props.children}</Box>
                 <Spacer />
@@ -28,6 +23,6 @@ export function SwitchInput(props: SwitchInputProps) {
                 }} />
             </Flex>
         </MenuItemBasicElement>
-        {props.sublabel ? <Sublabel value={props.sublabel} /> : null}
+        {props.sublabel ? <Sublabel>{props.sublabel}</Sublabel> : null}
     </>
 }

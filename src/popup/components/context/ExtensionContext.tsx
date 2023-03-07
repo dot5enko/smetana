@@ -9,7 +9,10 @@ export interface ExtensionContextType {
     hasBack: boolean
     rpc: string
     setRpc(arg: string): void
-    routeArgs: any[]
+    routeArgs: any[],
+
+    slideActive: boolean,
+    toggleSlide(): void
 }
 
 const ExtensionContext = createContext({} as ExtensionContextType);
@@ -33,6 +36,8 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
     const [routeStack, setRouteStack] = useState<RouteHistoryEntry[]>([]);
     const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, "https://rpc.ankr.com/solana"));
     const [routeArgs, setRouteArgs] = useState<any[]>([]);
+
+    const [slideActive, setSlideActive] = useState<boolean>(false);
 
     const ctxValue = useMemo(() => {
 
@@ -73,14 +78,20 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
             setRpcRaw(val);
         }
 
+        // slide window 
+        const toggleSlide = () => {
+            setSlideActive(!slideActive)
+        }
+
         const value: ExtensionContextType = {
             route, setRoute, routeBack,
             hasBack: routeStack.length > 0,
             rpc, setRpc,
-            routeArgs
+            routeArgs,
+            slideActive, toggleSlide
         }
         return value;
-    }, [route, routeStack, rpc, routeArgs])
+    }, [route, routeStack, rpc, routeArgs, slideActive])
 
     return (
         <ExtensionContext.Provider value={ctxValue}>
@@ -99,7 +110,7 @@ export function useExtensionContext(): ExtensionContextType {
     return ctx;
 }
 
-export function useRouteArg(idx: number, def? : any): any {
+export function useRouteArg(idx: number, def?: any): any {
     const { routeArgs } = useExtensionContext();
     return routeArgs[idx] ?? def;
 }

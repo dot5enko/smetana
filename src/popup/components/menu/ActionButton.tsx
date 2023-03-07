@@ -79,6 +79,6 @@ export function ActionButton(props: ActionButtonProps) {
             {...rest} {...style} _hover={{ ...hover }}>
             {children}
         </MenuItemBasicElement>
-        {props.sublabel ? <Sublabel value={props.sublabel} /> : null}
+        {props.sublabel ? <Sublabel>{props.sublabel} </Sublabel> : null}
     </>
 }
