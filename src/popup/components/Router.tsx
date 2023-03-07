@@ -12,13 +12,13 @@ export function Route(props: RouteProps) {
     const { route } = useExtensionContext();
 
     const content = useMemo(() => {
-        if (route == props.path) {
+        if (route.path == props.path) {
             return props.children;
         } else {
             return null;
         }
 
-    }, [route, props.path, props.children])
+    }, [route.path, props.path, props.children])
 
     return content;
 }

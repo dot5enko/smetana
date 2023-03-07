@@ -1,4 +1,3 @@
-import { Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { DataType as DataTypeInterface, getById, removeType, updateDatatype } from "../../background/types/DataType";
@@ -7,7 +6,6 @@ import { useExtensionContext } from "../components/context/ExtensionContext";
 
 import { ActionButton } from "../components/menu/ActionButton";
 import { Group } from "../components/menu/Group";
-import { MenuDivider } from "../components/menu/MenuDivider";
 import { Sublabel } from "../components/menu/Sublabel";
 import { TextInput } from "../components/menu/TextInput";
 import { DataTypeField } from "../components/smetana/DataTypeField";
@@ -89,7 +87,11 @@ export function EditDataType(props: EditDataTypeProps) {
                         fetchFields();
                     }} key={idx} item={it} onClick={() => {
                         if (!orderEditable) {
-                            setRoute("edit_typefield", it.id, object?.protect_updates);
+                            setRoute(
+                                "edit_typefield",
+                                "Edit "+ object?.label + " property",
+                                it.id,
+                                object?.protect_updates);
                         }
                     }} />
                 })}
@@ -100,7 +102,7 @@ export function EditDataType(props: EditDataTypeProps) {
                 } else {
                     createNewField(props.id).then(id => {
                         // todo use consts
-                        setRoute("edit_typefield", id);
+                        setRoute("edit_typefield", object?.label + " > new field", id);
                     })
                 }
             }}>+ field</ActionButton>

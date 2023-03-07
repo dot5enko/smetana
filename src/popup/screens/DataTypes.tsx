@@ -5,7 +5,6 @@ import { ActionButton } from "../components/menu/ActionButton";
 import { DataType } from "../components/smetana/DataType";
 import { DataType as DataTypeInterface } from "../../background/types/DataType"
 import { TextInput } from "../components/menu/TextInput";
-import { Group } from "../components/menu/Group";
 import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
 
 export let SearchLimit = 30;
@@ -32,7 +31,7 @@ export function DataTypes(props: DataTypesProps) {
                 actionVariant="info"
                 action={() => {
                     createNew().then((id) => {
-                        setRoute('edit_datatype', id as number)
+                        setRoute('edit_datatype', "Create new type", id as number)
                     }).catch((e: any) => {
                         console.error('unable to create new type:', e.message)
                     });
@@ -40,8 +39,8 @@ export function DataTypes(props: DataTypesProps) {
             <ActionButton
                 actionVariant="success"
                 action={() => {
-                    setRoute('import_anchor_type')
-                }}>From anchor</ActionButton>
+                    setRoute('import_anchor_type', "Anchor idl import")
+                }}>Import idl</ActionButton>
         </MultipleItemsRow>
 
         <TextInput
@@ -52,7 +51,7 @@ export function DataTypes(props: DataTypesProps) {
             }}></TextInput>
         {items.map((it, idx) => {
             return <DataType key={idx} item={it} onClick={() => {
-                setRoute("edit_datatype", it.id);
+                setRoute("edit_datatype", "Edit type", it.id);
             }} />
         })}
     </>

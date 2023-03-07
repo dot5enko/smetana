@@ -46,7 +46,7 @@ const fademove = keyframes`
 
 function AppWindowInner(props: { children: any }) {
 
-    const { hasBack, routeBack, rpc, slideActive } = useExtensionContext();
+    const { hasBack, routeBack, rpc, slideActive, route } = useExtensionContext();
 
     return <Box>
         <Box padding="15px 0px" height="80px">
@@ -60,9 +60,9 @@ function AppWindowInner(props: { children: any }) {
                         routeBack();
                     }}
                 ><Icon as={MdKeyboardBackspace} /></Box> : null}
-                {/* <Flex alignItems="center" paddingLeft="20px">
-                <Text>{activeWindow.title}</Text>
-            </Flex> */}
+                <Flex alignItems="center" paddingLeft="20px">
+                    <Text>{route.title}</Text>
+                </Flex>
                 <Spacer />
             </Flex>
         </Box>
@@ -81,12 +81,12 @@ function AppWindowInner(props: { children: any }) {
                 <AboutPage />
             </Route>
             <Route path="config">
-                <MenuEntry submenu="rpc_config">
+                <MenuEntry submenu="rpc_config" submenuTitle="Network RPC">
                     <strong>Network RPC</strong>
                     <Text size={"xs"} color="gray.600">{rpc}</Text>
                 </MenuEntry>
                 <MenuEntry submenu="lang_config">
-                    <strong>Language</strong>
+                    Language
                 </MenuEntry>
             </Route>
             <Route path="data_types">

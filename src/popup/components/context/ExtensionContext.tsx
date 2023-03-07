@@ -3,13 +3,14 @@ import { getKeyValueOrDefault, setKeyValue } from "../../../background/storage";
 
 
 export interface ExtensionContextType {
-    route: string
-    setRoute(val: string, ...args: any[]): void,
+    route: RouteHistoryEntry,
+    setRoute(val: string, title: string, ...args: any[]): void,
+
     routeBack(): void
     hasBack: boolean
+
     rpc: string
     setRpc(arg: string): void
-    routeArgs: any[],
 
     slideActive: boolean,
     toggleSlide(): void
@@ -25,37 +26,39 @@ const RpcConfigKey = "rpc_config";
 
 interface RouteHistoryEntry {
     path: string,
-    args?: any[]
+    title: string,
+    args: any[]
 }
 
 export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
 
     const { children, ...rest } = props;
 
-    const [route, setRouteVal] = useState("")
+    const [currentRoute, setRouteState] = useState<RouteHistoryEntry>({ path: "", title: "", args: [] })
+
     const [routeStack, setRouteStack] = useState<RouteHistoryEntry[]>([]);
     const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, "https://rpc.ankr.com/solana"));
-    const [routeArgs, setRouteArgs] = useState<any[]>([]);
 
     const [slideActive, setSlideActive] = useState<boolean>(false);
 
     const ctxValue = useMemo(() => {
 
-        const setRoute = (newVal: string, ...args: any[]) => {
+        const setRoute = (newPath: string, newTitle: string, ...args: any[]) => {
 
             // push current route to stack
             {
                 let routesHistory: RouteHistoryEntry[] = routeStack;
-                routesHistory.push({
-                    path: route,
-                    args: routeArgs
-                });
+                routesHistory.push(currentRoute);
 
                 setRouteStack(routesHistory);
             }
 
-            setRouteVal(newVal);
-            setRouteArgs(args)
+            const newRouteState: RouteHistoryEntry = {
+                path: newPath,
+                title: newTitle,
+                args
+            };
+            setRouteState(newRouteState);
         }
 
 
@@ -66,10 +69,8 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
                 setRouteStack(routeStack);
 
                 let prevRouteVal = prevRoute;
-
                 // don't push current into history
-                setRouteVal(prevRouteVal.path);
-                setRouteArgs(prevRouteVal.args as any[])
+                setRouteState(prevRouteVal)
             }
         }
 
@@ -84,14 +85,14 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
         }
 
         const value: ExtensionContextType = {
-            route, setRoute, routeBack,
+            setRoute, routeBack,
             hasBack: routeStack.length > 0,
             rpc, setRpc,
-            routeArgs,
-            slideActive, toggleSlide
+            route: currentRoute,
+            slideActive, toggleSlide,
         }
         return value;
-    }, [route, routeStack, rpc, routeArgs, slideActive])
+    }, [rpc, slideActive, routeStack, currentRoute])
 
     return (
         <ExtensionContext.Provider value={ctxValue}>
@@ -111,7 +112,7 @@ export function useExtensionContext(): ExtensionContextType {
 }
 
 export function useRouteArg(idx: number, def?: any): any {
-    const { routeArgs } = useExtensionContext();
+    const { route: { args: routeArgs } } = useExtensionContext();
     return routeArgs[idx] ?? def;
 }
 
