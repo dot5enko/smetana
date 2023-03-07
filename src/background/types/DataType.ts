@@ -29,3 +29,7 @@ export async function findDatatypes(label: string, limit: number): Promise<DataT
 export async function updateDatatype(id: number, changes: any) {
     datatype.update(id, changes);
 }
+
+export async function removeType(id: number) {
+    return datatype.delete(id);
+}

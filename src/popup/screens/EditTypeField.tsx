@@ -5,13 +5,16 @@ import { SwitchInput } from "../components/menu/SwitchInput";
 import { TextInput } from "../components/menu/TextInput";
 import { BorshTypeSelect } from "../components/smetana/BorshTypeSelect";
 import { Group } from "../components/menu/Group";
-import { DataTypeField, getFieldsById, updateDatatypeField } from "../../background/types/DataTypeField";
+import { DataTypeField, getFieldsById, removeTypeField, updateDatatypeField } from "../../background/types/DataTypeField";
+import { useExtensionContext } from "../components/context/ExtensionContext";
 
 export interface EditTypeFieldProps {
     id: any
 }
 
 export function EditTypeField(props: EditTypeFieldProps) {
+
+    const { routeBack } = useExtensionContext();
 
     const [object, setObject] = useState<DataTypeField | undefined>(undefined)
     const [changesCount, setChangesCount] = useState(0);
@@ -73,6 +76,17 @@ export function EditTypeField(props: EditTypeFieldProps) {
                 }} >not supported yet :(</ActionButton>}
         </Group>
         <MenuDivider height={10} width={0} />
-        {/* <ActionButton actionVariant="info" action={() => { }} textAlign="center">Save</ActionButton> */}
+        <Group name="danger zone">
+            <ActionButton actionVariant="error" action={() => {
+                if (confirm("do you really want to remove this item?")) {
+                    removeTypeField(props.id).then(() => {
+                        routeBack();
+                    }).catch(e => {
+                        console.error('unable to remove field', e.message)
+                    })
+                }
+            }} textAlign="center">Remove</ActionButton>
+        </Group>
+
     </>
 }

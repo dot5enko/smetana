@@ -6,6 +6,7 @@ import { DataType } from "../components/smetana/DataType";
 import { DataType as DataTypeInterface } from "../../background/types/DataType"
 import { TextInput } from "../components/menu/TextInput";
 import { Group } from "../components/menu/Group";
+import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
 
 export let SearchLimit = 30;
 
@@ -26,7 +27,7 @@ export function DataTypes(props: DataTypesProps) {
     }, [query])
 
     return <>
-        <Group name="actions">
+        <MultipleItemsRow>
             <ActionButton
                 actionVariant="info"
                 action={() => {
@@ -39,13 +40,9 @@ export function DataTypes(props: DataTypesProps) {
             <ActionButton
                 actionVariant="success"
                 action={() => {
-                    createNew().then((id) => {
-                        setRoute('edit_datatype', id as number)
-                    }).catch((e: any) => {
-                        console.error('unable to create new type:', e.message)
-                    });
-                }}>Import anchor</ActionButton>
-        </Group>
+                    setRoute('import_anchor_type')
+                }}>From anchor</ActionButton>
+        </MultipleItemsRow>
 
         {/* <Group> */}
         <TextInput

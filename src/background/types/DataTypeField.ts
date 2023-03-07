@@ -41,6 +41,10 @@ export async function getFieldsById(id: number): Promise<DataTypeField> {
 }
 
 export async function updateDatatypeField(id: number, changes: any) {
-    datatypefield.update(id, changes);
+    return datatypefield.update(id, changes);
+}
+
+export async function removeTypeField(id: number) {
+    return datatypefield.delete(id);
 }
 

@@ -14,13 +14,17 @@ export interface ItemSelectorProps<T> extends HTMLChakraProps<'div'> {
     elementRenderer?(item: T): JSX.Element,
     label?: string,
     size?: ItemSelectorSize
-    scrollAfterHeight? :number 
+    scrollAfterHeight?: number
 }
 
 export function ItemSelector<T>(props: ItemSelectorProps<T>) {
 
     const [selected, setSelected] = useState(props.value);
     const [selectedChanges, setChanges] = useState(0);
+
+    useEffect(() => {
+        setSelected(props.value)
+    }, [props.value])
 
     const { size, fontSize, padding } = useMemo(() => {
 

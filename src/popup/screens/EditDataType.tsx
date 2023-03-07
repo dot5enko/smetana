@@ -1,6 +1,6 @@
 import { Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { DataType as DataTypeInterface, getById, updateDatatype } from "../../background/types/DataType";
+import { DataType as DataTypeInterface, getById, removeType, updateDatatype } from "../../background/types/DataType";
 import { createNewField, DataTypeField as DataTypeFieldInterface, getFieldsForType } from "../../background/types/DataTypeField";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 
@@ -19,7 +19,7 @@ export function EditDataType(props: EditDataTypeProps) {
     const [items, setItems] = useState<DataTypeFieldInterface[]>([]);
     const [label, setLabelValue] = useState<string | undefined>(undefined);
 
-    const { setRoute } = useExtensionContext();
+    const { setRoute, routeBack } = useExtensionContext();
 
     // update object
     useEffect(() => {
@@ -58,18 +58,23 @@ export function EditDataType(props: EditDataTypeProps) {
                 }} />
             })}
         </>
+        <MenuDivider width={0} height={16} />
         <ActionButton actionVariant="info" action={function (): void {
             createNewField(props.id).then(id => {
                 // todo use consts
                 setRoute("edit_typefield", id);
             })
-        }}>Add field</ActionButton>
+        }}>+ field</ActionButton>
 
         <MenuDivider width={0} height={15} />
         <Group name={"danger zone"}>
             <ActionButton actionVariant="error" action={() => {
-                if (confirm("really delete")) {
-
+                if (confirm("really want to delete this item?")) {
+                    removeType(props.id).then(() => {
+                        routeBack();
+                    }).catch(e => {
+                        console.error('unable to remove field', e.message)
+                    })
                 }
             }}>Delete type</ActionButton>
         </Group>
