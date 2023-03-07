@@ -22,7 +22,9 @@ export async function findDatatypes(label: string, limit: number): Promise<DataT
         return await datatype.limit(limit).toArray()
     }
 
-    return await datatype.where("label").startsWithIgnoreCase(label).limit(limit).toArray()
+    return await datatype.filter((it: DataType) => {
+        return it.label.toLowerCase().indexOf(label.toLowerCase()) != -1
+    }).limit(limit).toArray()
 }
 
 
