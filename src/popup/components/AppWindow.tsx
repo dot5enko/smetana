@@ -16,6 +16,7 @@ import { SlideWindow } from "./menu/SlideWindow";
 import { Addresses } from "../screens/Addresses";
 import { TextInput } from "./menu/TextInput";
 import { TrackNewAddress } from "../screens/TrackNewAddress";
+import { ImportIdl } from "../screens/ImportIdl";
 
 export interface WindowProps extends HTMLChakraProps<'div'> {
     // config: AppWindowConfig
@@ -84,7 +85,7 @@ function AppWindowInner(props: { children: any }) {
                 <AboutPage />
             </Route>
             <Route path="track_new_address">
-                <TrackNewAddress addr="3QwsnHqEo1pq45UbDfura4fmSaWXqbGQMNDbr6pV1G56"/>
+                <TrackNewAddress addr="3QwsnHqEo1pq45UbDfura4fmSaWXqbGQMNDbr6pV1G56" />
             </Route>
             <Route path="addresses">
                 <Addresses />
@@ -97,6 +98,9 @@ function AppWindowInner(props: { children: any }) {
                 <MenuEntry submenu="lang_config">
                     Language
                 </MenuEntry>
+            </Route>
+            <Route path="import_anchor_type">
+                <ImportIdl />
             </Route>
             <Route path="data_types">
                 <DataTypes />

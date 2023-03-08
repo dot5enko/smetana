@@ -1,6 +1,6 @@
 import { IndexableType } from "dexie";
 import { db } from "../database";
-import { DataTypeField, getFieldsForType } from "./DataTypeField";
+import { DataTypeField, getFieldsForType, getFieldSize } from "./DataTypeField";
 import { DecodedField, decodeSimpleType } from "./DecodedField";
 
 
@@ -20,6 +20,7 @@ export interface DataType {
 }
 
 const datatype = db.table('datatype');
+const datatypefield = db.table('datatypefield');
 
 export async function createNew(): Promise<IndexableType> {
 
@@ -130,5 +131,46 @@ export async function decodeType(data: Uint8Array, typ: DataType): Promise<Decod
     }
 
     return { partial: err, fields: result };
+}
+
+
+export interface ParsedTypeFromIdl {
+
+    fields: DataTypeField[]
+    name: string,
+}
+
+export async function importType(t: ParsedTypeFromIdl): Promise<number> {
+
+    const typ: DataType = {
+        label: t.name,
+        protect_updates: false,
+        program_id: "",
+        info: {
+            used_by: 0,
+            fields_count: 0,
+            size_bytes: 0,
+        }
+    }
+
+    const typeid = (await datatype.add(typ)) as number
+
+    let max_order_position = 0;
+
+    for (var fieldit of t.fields) {
+
+        fieldit.datatype_id = typeid;
+
+        await datatypefield.add(fieldit)
+
+        typ.info.fields_count += 1;
+        typ.info.size_bytes += await getFieldSize(fieldit);
+
+        datatype.update(typeid, typ)
+
+        max_order_position += 1
+    }
+
+    return Promise.resolve(typeid);
 }
 

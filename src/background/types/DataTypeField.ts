@@ -85,7 +85,7 @@ export async function createNewField(parent_type: number): Promise<IndexableType
         field_type: '',
         is_complex_type: false
     }
-    const result = datatypefield.add(fieldObject)
+    const result = await datatypefield.add(fieldObject)
 
     typeObject.info.fields_count += 1;
     typeObject.info.size_bytes += await getFieldSize(fieldObject);
