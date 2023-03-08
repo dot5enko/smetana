@@ -1,11 +1,13 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
-import { DragEventHandler, useState } from "react";
+import { DragEventHandler, useEffect, useState } from "react";
 import { importType, ParsedTypeFromIdl } from "../../background/types/DataType";
 import { parseIdlTypes } from '../../background/idl'
 import { ItemSelector } from "../components/menu/ItemSelect";
 import { MenuDivider } from "../components/menu/MenuDivider";
 import { MenuEntryWithSublabel } from "../components/menu/MenuEntryWithSublabel";
 import { useExtensionContext } from "../components/context/ExtensionContext";
+import { toast } from "react-toastify";
+import { BottomContent } from "../components/menu/BottomContent";
 
 export function ImportIdl() {
 
@@ -60,11 +62,16 @@ export function ImportIdl() {
 
     const importSelected = async () => {
 
-        for (var it of typesSelected) {
-            await importType(it)
-        }
+        if (typesSelected.length > 0) {
 
-        setRoute('data_types', "Data types");
+            for (var it of typesSelected) {
+                await importType(it)
+            }
+            setRoute('data_types', "Data types", true);
+
+        } else {
+            toast('nothing to import')
+        }
     }
 
     return <>
@@ -72,10 +79,15 @@ export function ImportIdl() {
             <form onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}>
                 <input type="file" hidden={true} multiple={true}></input>
                 <Flex direction="column"
-
-                    cursor="pointer" justifyContent={"center"} textAlign="center" height="200px" width="100%" border={drag ? "5px dashed #c7c7c7" : "3px dashed #c7c7c7"} borderRadius="10px">
+                    cursor="pointer"
+                    justifyContent={"center"}
+                    textAlign="center"
+                    height="350px"
+                    width="100%"
+                    border={drag ? "5px dashed #c7c7c7" : "3px dashed #c7c7c7"}
+                    borderRadius="10px"
+                >
                     Drop idl *.json here
-
                 </Flex>
             </form> : null}
 
@@ -107,12 +119,14 @@ export function ImportIdl() {
                     }}
                 ></ItemSelector>
                 <MenuDivider width={0} />
-                <MenuEntryWithSublabel action={importSelected} text={typesSelected.length == 0 ? "please, select types to import first" : undefined}>
-                    Import
-                </MenuEntryWithSublabel>
             </> : null}
-
         </Box>
-
+        <BottomContent>
+            <MenuEntryWithSublabel
+                colorVariant="info"
+                action={importSelected}
+                text={typesSelected.length == 0 ? "please, select types to import first" : undefined}
+            >Import</MenuEntryWithSublabel>
+        </BottomContent>
     </>
 }

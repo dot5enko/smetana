@@ -2,10 +2,9 @@ import { Connection } from "@solana/web3.js";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { getKeyValueOrDefault, setKeyValue } from "../../../background/storage";
 
-
 export interface ExtensionContextType {
     route: RouteHistoryEntry,
-    setRoute(val: string, title: string, ...args: any[]): void,
+    setRoute(val: string, title: string, footer: boolean, ...args: any[]): void,
 
     routeBack(): void
     hasBack: boolean
@@ -31,13 +30,14 @@ interface RouteHistoryEntry {
     path: string,
     title: string,
     args: any[]
+    footerContent: boolean
 }
 
 export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
 
     const { children, ...rest } = props;
 
-    const [currentRoute, setRouteState] = useState<RouteHistoryEntry>({ path: "", title: "", args: [] })
+    const [currentRoute, setRouteState] = useState<RouteHistoryEntry>({ path: "", title: "", args: [], footerContent: false })
 
     const [routeStack, setRouteStack] = useState<RouteHistoryEntry[]>([]);
     const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, "https://rpc.ankr.com/solana"));
@@ -54,7 +54,7 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
 
     const ctxValue = useMemo(() => {
 
-        const setRoute = (newPath: string, newTitle: string, ...args: any[]) => {
+        const setRoute = (newPath: string, newTitle: string, footerContent: boolean, ...args: any[]) => {
 
             // push current route to stack
             {
@@ -67,7 +67,8 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
             const newRouteState: RouteHistoryEntry = {
                 path: newPath,
                 title: newTitle,
-                args
+                args,
+                footerContent
             };
             setRouteState(newRouteState);
         }
@@ -104,6 +105,7 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
             slideActive, toggleSlide,
         }
         return value;
+
     }, [rpc, slideActive, routeStack, currentRoute, connection])
 
     return (
@@ -127,5 +129,3 @@ export function useRouteArg(idx: number, def?: any): any {
     const { route: { args: routeArgs } } = useExtensionContext();
     return routeArgs[idx] ?? def;
 }
-
-

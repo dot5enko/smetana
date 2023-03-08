@@ -1,18 +1,18 @@
 import { Box, Flex, HTMLChakraProps, Icon, Spacer } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { useExtensionContext } from "../context/ExtensionContext";
-import { getVariantStyle } from "./EntryVariantStyle";
 import { BasicEntryProps, MenuItemBasicElement } from "./MenuItemBasicElement";
 
 export interface MenuEntryProps extends HTMLChakraProps<"div">, BasicEntryProps {
     submenu?: string,
     submenuTitle?: string
+    fixedFooter?: boolean
 }
 
 export function MenuEntry(props: MenuEntryProps) {
 
-    let { children, submenu, submenuTitle, ...rest } = props
+    let { children, submenu, submenuTitle, fixedFooter, ...rest } = props
 
     const [title, setTitle] = useState<string>("");
 
@@ -33,7 +33,11 @@ export function MenuEntry(props: MenuEntryProps) {
     const { setRoute } = useExtensionContext();
 
     const clickAction = submenu ? () => {
-        setRoute(submenu as string, title);
+        setRoute(
+            submenu as string,
+            title,
+            fixedFooter ?? false
+        );
     } : props.onClick;
 
     return <MenuItemBasicElement

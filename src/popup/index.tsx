@@ -8,7 +8,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <ColorModeScript initialColorMode='light'/>
-    <App/>
-  </React.StrictMode> 
+    <ColorModeScript initialColorMode='dark' />
+    <App />
+  </React.StrictMode>
 );

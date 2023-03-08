@@ -91,6 +91,7 @@ export function EditDataType(props: EditDataTypeProps) {
                             setRoute(
                                 "edit_typefield",
                                 "Edit " + object?.label + " property",
+                                false,
                                 it.id,
                                 object?.protect_updates);
                         }
@@ -104,7 +105,12 @@ export function EditDataType(props: EditDataTypeProps) {
                     } else {
                         createNewField(props.id).then(id => {
                             // todo use consts
-                            setRoute("edit_typefield", object?.label + " > new field", id);
+                            setRoute(
+                                "edit_typefield",
+                                object?.label + " > new field",
+                                false,
+                                id
+                            );
                         })
                     }
                 }}>+ field</ActionButton>

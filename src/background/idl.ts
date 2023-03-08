@@ -1,3 +1,4 @@
+import { sha256 } from "js-sha256";
 import { ParsedTypeFromIdl } from "./types/DataType";
 import { DataTypeField, getFieldSize } from "./types/DataTypeField"
 
@@ -11,6 +12,7 @@ export async function parseIdlTypes(idl: any, includeComplex: boolean) { //: Pro
         if (includeComplex || !parseResult.complex) {
             parseResult.name = it.name;
             parseResult.struct = true
+            parseResult.discriminator = new Uint8Array(calcDiscriminator(it.name))
             types.set(it.name, parseResult)
         }
     }
@@ -19,6 +21,7 @@ export async function parseIdlTypes(idl: any, includeComplex: boolean) { //: Pro
         const parseResult = await parseIdlStruct(it, types);
         if (includeComplex || !parseResult.complex) {
             parseResult.name = it.name;
+            parseResult.discriminator = new Uint8Array(calcDiscriminator(it.name))
             types.set(it.name, parseResult)
         }
     }
@@ -123,7 +126,7 @@ async function parseIdlStruct(struct: any, typesMap: Map<string, ParsedTypeFromI
 
                         fieldObj.field_type = 'u8';
                         fieldObj.array_size = parsedData.info.size_bytes
-                        
+
                     } else {
                         console.log('not found type ', referencedTypeName)
                         noComplex = false;
@@ -148,8 +151,15 @@ async function parseIdlStruct(struct: any, typesMap: Map<string, ParsedTypeFromI
             size_bytes: size,
             used_by: 0,
         },
-        struct: false
+        struct: false,
+        discriminator: new Uint8Array(),
     });
+}
 
+export function calcDiscriminator(typename: string) {
 
+    let val = `account:${typename}`
+    let hash = sha256.array(val).slice(0, 8);
+
+    return hash;
 }

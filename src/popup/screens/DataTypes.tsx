@@ -6,6 +6,8 @@ import { DataType } from "../components/smetana/DataType";
 import { DataType as DataTypeInterface } from "../../background/types/DataType"
 import { TextInput } from "../components/menu/TextInput";
 import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
+import { BottomContent } from "../components/menu/BottomContent";
+import { MenuEntry } from "../components/menu/MenuEntry";
 
 export let SearchLimit = 30;
 
@@ -26,24 +28,27 @@ export function DataTypes(props: DataTypesProps) {
     }, [query])
 
     return <>
-        <MultipleItemsRow>
-            <ActionButton
-                colorVariant="info"
-                action={() => {
-                    createNew().then((id) => {
-                        setRoute('edit_datatype', "Create new type", id as number)
-                    }).catch((e: any) => {
-                        console.error('unable to create new type:', e.message)
-                    });
-                }}>New type</ActionButton>
-            <ActionButton
-                colorVariant="success"
-                action={() => {
-                    setRoute('import_anchor_type', "Anchor idl import")
-                }}>Import idl</ActionButton>
-        </MultipleItemsRow>
-
+        <BottomContent>
+            <MultipleItemsRow>
+                <MenuEntry
+                    colorVariant="info"
+                    submenu="adwad"
+                    onClick={() => {
+                        createNew().then((id) => {
+                            setRoute('edit_datatype', "Create new type", false, id as number)
+                        }).catch((e: any) => {
+                            console.error('unable to create new type:', e.message)
+                        });
+                    }}>New type</MenuEntry>
+                {/* <ActionButton
+                    colorVariant="success"
+                    action={() => {
+                        setRoute('import_anchor_type', "Anchor idl import")
+                    }}>Import idl</ActionButton> */}
+            </MultipleItemsRow>
+        </BottomContent>
         <TextInput
+            sizeVariant="sm"
             placeholder="search query"
             value={query}
             onChange={(newVal) => {
@@ -51,7 +56,7 @@ export function DataTypes(props: DataTypesProps) {
             }}></TextInput>
         {items.map((it, idx) => {
             return <DataType key={idx} item={it} onClick={() => {
-                setRoute("edit_datatype", "Edit type", it.id);
+                setRoute("edit_datatype", "Edit type", false, it.id);
             }} />
         })}
     </>
