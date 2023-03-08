@@ -13,10 +13,11 @@ import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
 import { MenuDivider } from "../components/menu/MenuDivider";
 import { ActionButton } from "../components/menu/ActionButton";
 import { ItemSelector } from "../components/menu/ItemSelect";
-import { DataType, datatypesForProgram, decodeType as decodeTypeFunc, DecodeTypeResult } from "../../background/types/DataType";
+import { DataType, datatypesForProgram, DecodeTypeResult } from "../../background/types/DataType";
 import { Group } from "../components/menu/Group";
-import { DataType as DataTypeComponent } from "../components/smetana/DataType";
+import { decodeType as decodeTypeFunc } from "../../background/borsh";
 import { DecodedType } from "../components/smetana/DecodedType";
+import { toast } from "react-toastify";
 
 export interface TrackNewAddressProps {
     addr?: string
@@ -91,11 +92,11 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                     }
                 }).catch(e => {
                     console.warn('unable to decode data : ', e)
+                    toast('unable to decode data: ' + e.message);
                     setDecodeError(true);
                 })
         }
     }, [decodeType])
-
 
     useEffect(() => {
 
@@ -140,9 +141,9 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
             }}
         />
         {loading ? <>
-            <Skeleton width={"100%"} height="100px"></Skeleton>
+            <Skeleton width={"100%"} height="100px" borderRadius="6px"></Skeleton>
             <MenuDivider width={0} />
-            <Skeleton width={"100%"} height="65px"></Skeleton>
+            <Skeleton width={"100%"} height="65px" borderRadius="6px"></Skeleton>
         </> :
             (!found ? <ActionButton action={() => { }} >
                 <Text>Unable to get account data</Text>

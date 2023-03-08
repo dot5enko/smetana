@@ -1,7 +1,7 @@
 import { IndexableType } from "dexie";
 import { db } from "../database";
-import { DataTypeField, getFieldsForType, getFieldSize } from "./DataTypeField";
-import { DecodedField, decodeSimpleType } from "./DecodedField";
+import { DataTypeField, getFieldSize } from "./DataTypeField";
+import { DecodedField } from "./DecodedField";
 
 export interface ParsedTypeFromIdl {
     fields: DataTypeField[]
@@ -101,43 +101,6 @@ export async function datatypesForProgram(program: string, label: string = "", l
 export interface DecodeTypeResult {
     partial: boolean
     fields: DecodedField[]
-}
-
-export async function decodeType(data: Uint8Array, typ: DataType): Promise<DecodeTypeResult> {
-
-    let result: DecodedField[] = [];
-
-    const fields = await getFieldsForType(typ.id as number);
-
-    let offset = 0;
-    let err = false;
-
-    for (var itfield of fields) {
-        if (itfield.is_complex_type) {
-            throw new Error('complex types not implemented yet');
-        } else {
-            const decoderesult = decodeSimpleType(data.slice(offset), itfield);
-            if (decoderesult.error) {
-                console.log(`error decoding simple field "${itfield.label}": ${decoderesult.error}`)
-                err = true;
-                break;
-            } else {
-                result.push({
-                    field: itfield,
-                    decoded_value: decoderesult.outvalue,
-                    present: decoderesult.contains
-                })
-
-                offset += decoderesult.bytesUsed
-            }
-        }
-    }
-
-    if (offset != data.length) {
-        err = true;
-    }
-
-    return { partial: err, fields: result };
 }
 
 export async function importType(t: ParsedTypeFromIdl): Promise<number> {

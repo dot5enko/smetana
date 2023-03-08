@@ -8,7 +8,7 @@ import { MenuEntryWithSublabel } from "../menu/MenuEntryWithSublabel";
 
 export function DecodedType(props: { item: DecodeTypeResult }) {
     return <Flex gap="5px" direction="column">
-        {props.item.fields.map((it, idx) => {
+        {props.item.fields.filter((it) => !it.field.hide).map((it, idx) => {
             return <DecodedField key={idx} field={it} />
         })}
         {props.item.partial ? <>

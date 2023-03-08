@@ -16,13 +16,10 @@ export function DataType(props: DataTypeProps) {
     return <MenuItemBasicElement borderRadius={"6px"} {...rest}>
         <Flex gap="5px">
             <Box>
-                <Flex gap="5px">
-                    <Text fontWeight="bold" color={"white"}>{item.label}</Text>
-                    <Spacer />
-                    <Text textAlign={"center"} color="blue.400" marginRight="15px">used {item.info.used_by} times</Text>
-                </Flex>
+                <Text fontWeight="bold" color={"white"}>{item.label}</Text>
                 <Text fontSize={"xs"} color="green.300">ProgramId: {addrFormat(item.program_id, 5)}</Text>
                 <Text fontSize={"xs"}>{item.info.fields_count} fields, total <strong>{item.info.size_bytes}</strong> bytes</Text>
+                <Text fontSize={"xs"} color="blue.400">used {item.info.used_by} times</Text>
             </Box>
             <Spacer />
             <Box alignSelf="center">

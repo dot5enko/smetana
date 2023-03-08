@@ -21,49 +21,52 @@ export interface DataTypeField {
 const datatypefield = db.table('datatypefield');
 const datatype = db.table('datatype');
 
-
 export async function getFieldSize(object: DataTypeField) {
     if (object.is_complex_type) {
+
+        // fetch type by id
+
         throw new Error('complex field types not implemented. can\'t calc size of field')
     } else {
 
         let size = object.optional ? 1 : 0;
 
+        let arraySizeModified = object.is_array ? object.array_size : 1;
+
+        let elementSize = 0
+
         switch (object.field_type) {
+
             case "u8":
             case "i8":
-            case "string":
             case "bool":
 
-                if (object.field_type === "string") {
-                    console.log("string size cant be determined beforehand, force 1 byte")
-                }
-
-                size += 1;
+                elementSize = 1;
                 break;
             case "u16":
             case "i16":
-                size += 2;
+                elementSize = 2;
                 break;
             case "u32":
             case "i32":
-                size += 4;
+                elementSize = 4;
                 break;
             case "u64":
             case "i64":
-                size += 8;
+                elementSize = 8;
                 break;
             case "u128":
             case "i128":
-                size += 16;
+                elementSize = 16;
                 break;
             case "publicKey":
-                size += 32;
+                elementSize = 32;
                 break;
             default:
-                console.error(`unsupported field type: ${object.field_type}`)
-                return Promise.resolve(0)
+                throw new Error(`unsupported field type: ${object.field_type}`)
         }
+
+        size += arraySizeModified * elementSize;
 
         return Promise.resolve(size);
     }
@@ -84,7 +87,7 @@ export async function createNewField(parent_type: number): Promise<IndexableType
         order_position: max_order_position + 1,
         label: "",
         optional: false,
-        field_type: '',
+        field_type: 'u8', // byte,
         is_complex_type: false,
         hide: false,
         is_array: false,
@@ -93,8 +96,8 @@ export async function createNewField(parent_type: number): Promise<IndexableType
     const result = await datatypefield.add(fieldObject)
 
     typeObject.info.fields_count += 1;
-    typeObject.info.size_bytes += await getFieldSize(fieldObject);
 
+    typeObject.info.size_bytes += await getFieldSize(fieldObject);
     datatype.update(typeObject.id, typeObject)
 
     return result;
@@ -139,8 +142,8 @@ export async function removeTypeField(id: number) {
     const typeObject = await getById(fieldObject.datatype_id);
 
     typeObject.info.fields_count -= 1;
-    typeObject.info.size_bytes -= await getFieldSize(fieldObject);
 
+    typeObject.info.size_bytes -= await getFieldSize(fieldObject);
     await datatype.update(typeObject.id, typeObject)
 
     return datatypefield.delete(id);

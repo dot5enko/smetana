@@ -1,7 +1,9 @@
 import { Box, Flex, HTMLChakraProps, Icon, Spacer, Text } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MdArrowDropDown, MdArrowDropUp, MdKeyboardArrowRight } from "react-icons/md";
+import { DataType } from "src/background/types/DataType";
 import { DataTypeField, moveDown, moveUp } from "../../../background/types/DataTypeField";
+import { If } from "../menu/If";
 import { MenuItemBasicElement } from "../menu/MenuItemBasicElement";
 
 export interface DataTypeFieldProps extends HTMLChakraProps<'div'> {
@@ -30,6 +32,25 @@ function ArrowBox(props: ArrowBoxProps) {
     </Box>
 }
 
+function Typ(props: { item: DataTypeField }) {
+
+    const { item } = props;
+
+    const [fieldType, setFieldType] = useState<string | undefined>()
+
+    useEffect(() => {
+        if (!item.is_complex_type) {
+            setFieldType(item.field_type);
+        } else {
+            setFieldType('<complextype>')
+        }
+    }, [item.is_complex_type])
+
+    return <>
+        {fieldType}<If condition={item.is_array}>[{item.array_size}]</If>
+    </>
+}
+
 export function DataTypeField(props: DataTypeFieldProps) {
 
     const { item, movable, onMoved, ...rest } = props;
@@ -38,10 +59,10 @@ export function DataTypeField(props: DataTypeFieldProps) {
         <Flex>
             <Box>
                 <Flex>
-                    <Text fontWeight="bold" color={"white"}>{item.label ? item.label : "<empty>"}</Text>
+                    <Text fontWeight="bold" color={item.hide?"gray":"white"}>{item.label ? item.label : "<empty>"}</Text>
                     {item.optional ? <Text fontSize="xs" color="red">*</Text> : null}
                 </Flex>
-                <Text fontSize={"sm"} color="green.300">{item.field_type ? item.field_type : "<error type>"}</Text>
+                <Text fontSize={"sm"} color="green.300">{item.field_type ? <Typ item={item}></Typ> : "<error type>"}</Text>
             </Box>
             <Spacer />
 

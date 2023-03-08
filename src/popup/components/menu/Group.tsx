@@ -8,7 +8,7 @@ export interface GroupProps extends HTMLChakraProps<'div'> {
 
 export function Group(props: GroupProps) {
     return <Box
-        padding="10px 10px"
+        padding="5px 5px"
         paddingTop="1px"
         marginBottom="20px"
 
@@ -22,7 +22,7 @@ export function Group(props: GroupProps) {
             <ScrolledItem height={props.maxContentHeight} >
                 <Flex
                     direction="column"
-                    gap="5px"
+                    gap="6px"
                 >
                     {props.children}
                 </Flex>

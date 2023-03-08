@@ -6,6 +6,7 @@ import { useExtensionContext } from "../components/context/ExtensionContext";
 
 import { ActionButton } from "../components/menu/ActionButton";
 import { Group } from "../components/menu/Group";
+import { If } from "../components/menu/If";
 import { Sublabel } from "../components/menu/Sublabel";
 import { TextInput } from "../components/menu/TextInput";
 import { DataTypeField } from "../components/smetana/DataTypeField";
@@ -89,44 +90,48 @@ export function EditDataType(props: EditDataTypeProps) {
                         if (!orderEditable) {
                             setRoute(
                                 "edit_typefield",
-                                "Edit "+ object?.label + " property",
+                                "Edit " + object?.label + " property",
                                 it.id,
                                 object?.protect_updates);
                         }
                     }} />
                 })}
             </>
-            <ActionButton colorVariant="info" action={function (): void {
-                if (object?.protect_updates) {
-                    toast("changes protected", { type: 'warning' })
-                } else {
-                    createNewField(props.id).then(id => {
-                        // todo use consts
-                        setRoute("edit_typefield", object?.label + " > new field", id);
-                    })
-                }
-            }}>+ field</ActionButton>
+            <If condition={!object?.protect_updates}>
+                <ActionButton colorVariant="info" action={function (): void {
+                    if (object?.protect_updates) {
+                        toast("changes protected", { type: 'warning' })
+                    } else {
+                        createNewField(props.id).then(id => {
+                            // todo use consts
+                            setRoute("edit_typefield", object?.label + " > new field", id);
+                        })
+                    }
+                }}>+ field</ActionButton>
+            </If>
         </Group>
         <Group name={"danger zone"}>
-            <ActionButton colorVariant={orderEditable ? "success" : "default"} action={() => {
-                if (object?.protect_updates) {
-                    toast("changes protected", { type: 'warning' })
-                } else {
-                    setOrderEditable(!orderEditable);
-                }
-            }}>{orderEditable ? "Exit edit mode" : "Change property order"}</ActionButton>
             <ActionButton action={() => {
                 changeObject(it => it.protect_updates = !it.protect_updates, true)
-            }}>{object?.protect_updates ? "Unprotect updates" : "Protect updates"} {!object?.protect_updates ? <Sublabel>you won't able make any updates into structure while type is protected</Sublabel> : null}</ActionButton>
-            <ActionButton colorVariant="error" action={() => {
-                if (confirm("really want to delete this item?")) {
-                    removeType(props.id).then(() => {
-                        routeBack();
-                    }).catch(e => {
-                        console.error('unable to remove field', e.message)
-                    })
-                }
-            }}>Delete type</ActionButton>
+            }}>{object?.protect_updates ? "Unprotect changes" : "Protect"} {!object?.protect_updates ? <Sublabel>you won't able make any updates into structure while type is protected</Sublabel> : null}</ActionButton>
+            <If condition={!object?.protect_updates}>
+                <ActionButton colorVariant={orderEditable ? "success" : "default"} action={() => {
+                    if (object?.protect_updates) {
+                        toast("changes protected", { type: 'warning' })
+                    } else {
+                        setOrderEditable(!orderEditable);
+                    }
+                }}>{orderEditable ? "Exit edit mode" : "Change property order"}</ActionButton>
+                <ActionButton colorVariant="error" action={() => {
+                    if (confirm("really want to delete this item?")) {
+                        removeType(props.id).then(() => {
+                            routeBack();
+                        }).catch(e => {
+                            console.error('unable to remove field:', e)
+                        })
+                    }
+                }}>Delete type</ActionButton>
+            </If>
         </Group>
     </>
 }
