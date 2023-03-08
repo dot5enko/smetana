@@ -1,8 +1,8 @@
 import { Box, Flex, Spacer, Switch } from "@chakra-ui/react";
-import { MenuItemBasicElement } from "./MenuItemBasicElement";
+import { BasicEntryProps, MenuItemBasicElement } from "./MenuItemBasicElement";
 import { Sublabel } from "./Sublabel";
 
-export interface SwitchInputProps {
+export interface SwitchInputProps extends BasicEntryProps {
     children?: any,
     sublabel?: string,
 
@@ -10,10 +10,14 @@ export interface SwitchInputProps {
     onChange(val: boolean): void
 }
 
+SwitchInput.defaultProps = {
+    sizeVariant: "sm"
+}
+
 export function SwitchInput(props: SwitchInputProps) {
 
     return <>
-        <MenuItemBasicElement borderRadius="6px">
+        <MenuItemBasicElement borderRadius="6px" sizeVariant={props.sizeVariant}>
             <Flex width="100%">
                 <Box>{props.children}</Box>
                 <Spacer />

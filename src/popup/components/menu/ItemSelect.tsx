@@ -1,19 +1,16 @@
 import { Box, Text, HTMLChakraProps, Spacer, Icon, Flex } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { MdCheckCircle } from "react-icons/md";
-import { MenuItemBasicElement } from "./MenuItemBasicElement";
+import { BasicEntryProps, MenuItemBasicElement } from "./MenuItemBasicElement";
 import { ScrolledItem } from "./ScrolledItem";
 
-export type ItemSelectorSize = 'sm' | "md" | "bg"
-
-export interface ItemSelectorProps<T> extends HTMLChakraProps<'div'> {
+export interface ItemSelectorProps<T> extends HTMLChakraProps<'div'>, BasicEntryProps {
     options: T[],
     value: T[]
     isMultiselect?: boolean,
     onSelectorValueChange?(selected: T[]): void,
     elementRenderer?(item: T): JSX.Element,
     label?: string,
-    size?: ItemSelectorSize
     scrollAfterHeight?: number
 }
 
@@ -25,32 +22,6 @@ export function ItemSelector<T>(props: ItemSelectorProps<T>) {
     useEffect(() => {
         setSelected(props.value)
     }, [props.value])
-
-    const { size, fontSize, padding } = useMemo(() => {
-
-        let heightVal = "65px"
-        let font = "16px"
-        let padding = "10px 20px"
-
-        switch (props.size) {
-            case 'bg':
-                heightVal = "95px"
-                font = "32px"
-                break;
-            case 'sm':
-                heightVal = "25px"
-                font = "14px"
-                padding = "8px 16px";
-                break;
-            default:
-                heightVal = "65px"
-                font = "16px"
-                padding = "10px 20px";
-                break;
-        }
-
-        return { size: heightVal, fontSize: font, padding };
-    }, [props.size]);
 
     useEffect(() => {
         if (selectedChanges > 0) {
@@ -125,13 +96,11 @@ export function ItemSelector<T>(props: ItemSelectorProps<T>) {
 
             return (<MenuItemBasicElement
                 key={idx}
+                sizeVariant={props.sizeVariant}
                 borderTopRadius={borderTop}
                 borderBottomRadius={borderBottom}
                 borderBottom={borderBottomValue}
                 onClick={onClickHandler}
-                minHeight={size}
-                fontSize={fontSize}
-                padding={padding}
             >
                 <Flex>
                     <>{renderedItem}</>

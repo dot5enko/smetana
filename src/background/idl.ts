@@ -1,34 +1,32 @@
-import { DataTypeAggregatedInfo } from "./types/DataType";
+import { ParsedTypeFromIdl } from "./types/DataType";
 import { DataTypeField, getFieldSize } from "./types/DataTypeField"
 
 export async function parseIdlTypes(idl: any, includeComplex: boolean) { //: Promise<DataType[]> {
 
-    let types = new Map<string, DataTypeField[]>();
+    let types = new Map<string, ParsedTypeFromIdl>();
 
     for (var it of idl.types) {
 
         const parseResult = await parseIdlStruct(it);
-        if (!includeComplex || !parseResult.complex) {
-            types.set(it.name, parseResult.fields)
+        if (includeComplex || !parseResult.complex) {
+            parseResult.name = it.name;
+            parseResult.struct = true
+            types.set(it.name, parseResult)
         }
     }
 
     for (var it of idl.accounts) {
         const parseResult = await parseIdlStruct(it);
-        if (!includeComplex || !parseResult.complex) {
-            types.set(it.name, parseResult.fields)
+        if (includeComplex || !parseResult.complex) {
+            parseResult.name = it.name;
+            types.set(it.name, parseResult)
         }
     }
 
     return types;
 }
 
-interface ParseIdlStructResult {
-    fields: DataTypeField[]
-    info: DataTypeAggregatedInfo
-    complex: boolean
-}
-async function parseIdlStruct(struct: any): Promise<ParseIdlStructResult> {
+async function parseIdlStruct(struct: any): Promise<ParsedTypeFromIdl> {
 
     let result: DataTypeField[] = [];
 
@@ -45,7 +43,8 @@ async function parseIdlStruct(struct: any): Promise<ParseIdlStructResult> {
         let type = "";
 
         if (complexType) {
-            // console.log(` -- skip complex type ${JSON.parse(it.type)}`)
+
+            console.log(` -- skip complex type ${JSON.parse(it.type)}`)
 
             // type = "u8;"+
 
@@ -59,7 +58,10 @@ async function parseIdlStruct(struct: any): Promise<ParseIdlStructResult> {
                 optional: false,
                 label: it.name,
                 field_type: it.type,
-                is_complex_type: false
+                is_complex_type: false,
+                hide: false,
+                is_array: false,
+                array_size: 1
             };
 
             size += await getFieldSize(fieldObj);
@@ -69,18 +71,16 @@ async function parseIdlStruct(struct: any): Promise<ParseIdlStructResult> {
         idx += 1
     }
 
-
-
-    if (noComplex) {
-        console.log(`found not complex type: --${struct.name}`);
-    }
-
     return Promise.resolve({
-        fields: result, complex: !noComplex, info: {
+        name: "",
+        fields: result,
+        complex: !noComplex,
+        info: {
             fields_count: result.length,
             size_bytes: size,
             used_by: 0,
-        }
+        },
+        struct: false
     });
 
 

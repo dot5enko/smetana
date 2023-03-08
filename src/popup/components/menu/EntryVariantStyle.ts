@@ -1,6 +1,7 @@
-export type EntryVariant = 'warning' | 'default' | 'success' | 'error' | 'info'
+export type ColorVariantType = 'warning' | 'default' | 'success' | 'error' | 'info'
+export type SizeVariantType = 'sm' | "md" | 'lg' | 'xs'
 
-export interface EntryVariantStyle {
+export interface ColorVariantStyle {
     hover: {
         backgroundColor: string,
         color: string
@@ -11,8 +12,9 @@ export interface EntryVariantStyle {
     }
 }
 
-export function getVariantStyle(actionVariant: EntryVariant) {
-    let result: EntryVariantStyle = {
+export function getVariantStyle(actionVariant: ColorVariantType) {
+
+    let result: ColorVariantStyle = {
         hover: {
             backgroundColor: "",
             color: "white"
@@ -46,10 +48,52 @@ export function getVariantStyle(actionVariant: EntryVariant) {
             break;
 
         default: {
-            result.style.backgroundColor = "#2f4351"
-            result.hover.backgroundColor = "#283945";
+
+            result.style.backgroundColor = "#363A46"
+            result.style.color = "whiteAlpha.600"
+
+            result.hover.backgroundColor = "#1E2027"
+            result.hover.color = "whiteAlpha.900"
+
         } break;
     }
 
     return result
+}
+
+export interface SizeVariant {
+    minHeight: any
+    fontSize: any
+    padding: any
+}
+
+export function getSizeVariant(variant?: SizeVariantType): SizeVariant {
+
+    let heightVal = "65px"
+    let font = "16px"
+    let padding = "10px 20px"
+
+    switch (variant) {
+        case 'lg':
+            heightVal = "95px"
+            font = "24px"
+            break;
+        case 'sm':
+            heightVal = "45px"
+            font = "14px"
+            padding = "8px 16px";
+            break;
+        case 'xs':
+            heightVal = "25px"
+            font = "14px"
+            padding = "8px 16px";
+            break;
+        default:
+            heightVal = "65px"
+            font = "16px"
+            padding = "10px 20px";
+            break;
+    }
+
+    return { minHeight: heightVal, fontSize: font, padding };
 }

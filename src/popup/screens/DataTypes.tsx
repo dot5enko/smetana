@@ -28,7 +28,7 @@ export function DataTypes(props: DataTypesProps) {
     return <>
         <MultipleItemsRow>
             <ActionButton
-                actionVariant="info"
+                colorVariant="info"
                 action={() => {
                     createNew().then((id) => {
                         setRoute('edit_datatype', "Create new type", id as number)
@@ -37,7 +37,7 @@ export function DataTypes(props: DataTypesProps) {
                     });
                 }}>New type</ActionButton>
             <ActionButton
-                actionVariant="success"
+                colorVariant="success"
                 action={() => {
                     setRoute('import_anchor_type', "Anchor idl import")
                 }}>Import idl</ActionButton>

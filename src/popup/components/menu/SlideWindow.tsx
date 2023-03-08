@@ -46,7 +46,7 @@ export function SlideWindow(props: SlideWindowProps) {
                 <Sublabel>This action could not be undone</Sublabel>
             </MenuItemBasicElement>
             <MultipleItemsRow>
-                <ActionButton actionVariant="warning" action={function (): void {
+                <ActionButton colorVariant="warning" action={function (): void {
                     throw new Error("Function not implemented.");
                 }} >Confirm</ActionButton>
                 <ActionButton action={function (): void {

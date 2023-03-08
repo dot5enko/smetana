@@ -8,6 +8,7 @@ import { Group } from "../components/menu/Group";
 import { DataTypeField, getFieldsById, removeTypeField, updateDatatypeField } from "../../background/types/DataTypeField";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { toast } from "react-toastify";
+import { If } from "../components/menu/If";
 
 export interface EditTypeFieldProps {
     id: any
@@ -61,13 +62,29 @@ export function EditTypeField(props: EditTypeFieldProps) {
             onChange={(name: string) => {
                 changeObject(it => it.label = name)
             }} />
+
         <SwitchInput value={object?.optional} onChange={(val) => {
             changeObject(it => it.optional = val)
         }}
-        // sublabel="whether this field is optional in structure or not"
         >Is optional</SwitchInput>
 
+        <SwitchInput value={object?.hide} onChange={(val) => {
+            changeObject(it => it.hide = val)
+        }}
+        >Hide in view</SwitchInput>
+
+
         <Group name="property type">
+
+            <SwitchInput value={object?.is_array} onChange={(val) => {
+                changeObject(it => it.is_array = val)
+            }}
+            >Is Array</SwitchInput>
+
+            <If condition={object?.is_array}>
+                <TextInput placeholder="array size" />
+            </If>
+
             <SwitchInput value={object?.is_complex_type} onChange={(val) => {
                 changeObject(it => it.is_complex_type = val)
             }}>Complex type</SwitchInput>
@@ -76,13 +93,14 @@ export function EditTypeField(props: EditTypeFieldProps) {
                 <BorshTypeSelect value={object?.field_type as string} onChange={(type: string[]) => {
                     changeObject(it => it.field_type = type[0])
                 }}></BorshTypeSelect> :
-                <ActionButton actionVariant="warning" action={function (): void {
+                <ActionButton colorVariant="warning" action={function (): void {
                     throw new Error("Function not implemented.");
                 }} >not supported yet :(</ActionButton>}
         </Group>
+
         <MenuDivider height={10} width={0} />
         <Group name="danger zone">
-            <ActionButton actionVariant="error" action={() => {
+            <ActionButton sizeVariant="sm" colorVariant="error" action={() => {
                 if (confirm("do you really want to remove this item?")) {
                     removeTypeField(props.id).then(() => {
                         routeBack();

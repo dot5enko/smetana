@@ -2,24 +2,19 @@ import { Box, Flex, HTMLChakraProps, Icon, Spacer } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { MdKeyboardArrowRight } from "react-icons/md";
 import { useExtensionContext } from "../context/ExtensionContext";
-import { EntryVariant, getVariantStyle } from "./EntryVariantStyle";
-import { MenuItemBasicElement } from "./MenuItemBasicElement";
+import { getVariantStyle } from "./EntryVariantStyle";
+import { BasicEntryProps, MenuItemBasicElement } from "./MenuItemBasicElement";
 
-export interface MenuEntryProps extends HTMLChakraProps<"div"> {
+export interface MenuEntryProps extends HTMLChakraProps<"div">, BasicEntryProps {
     submenu?: string,
     submenuTitle?: string
-    entryVariant?: EntryVariant
 }
 
 export function MenuEntry(props: MenuEntryProps) {
 
-    let { children, submenu, submenuTitle, entryVariant, ...rest } = props
+    let { children, submenu, submenuTitle, ...rest } = props
 
     const [title, setTitle] = useState<string>("");
-
-    const variantStyle = useMemo(() => {
-        return getVariantStyle(entryVariant ?? 'default');
-    }, [entryVariant])
 
     useEffect(() => {
         if (submenu) {
@@ -44,8 +39,6 @@ export function MenuEntry(props: MenuEntryProps) {
     return <MenuItemBasicElement
         onClick={clickAction}
         borderRadius="6px"
-        {...variantStyle.style}
-        _hover={{ ...variantStyle.hover }}
         {...rest}
     >
         <Flex>

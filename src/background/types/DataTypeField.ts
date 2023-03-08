@@ -1,8 +1,6 @@
 import { IndexableType } from "dexie";
 import { db } from "../database";
 import { getById } from "./DataType";
-import borsh from "borsh"
-import { DecodeFieldResult } from "./DecodedField";
 
 export interface DataTypeField {
     id?: number
@@ -14,6 +12,10 @@ export interface DataTypeField {
     field_type: string
     is_complex_type: boolean
 
+    is_array: boolean
+    array_size: number
+
+    hide: boolean
 }
 
 const datatypefield = db.table('datatypefield');
@@ -83,7 +85,10 @@ export async function createNewField(parent_type: number): Promise<IndexableType
         label: "",
         optional: false,
         field_type: '',
-        is_complex_type: false
+        is_complex_type: false,
+        hide: false,
+        is_array: false,
+        array_size: 1
     }
     const result = await datatypefield.add(fieldObject)
 

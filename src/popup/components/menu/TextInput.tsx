@@ -1,9 +1,10 @@
 import { Box, Input } from "@chakra-ui/react";
 import { PublicKey } from "@solana/web3.js";
 import { useEffect, useState } from "react";
+import { BasicEntryProps } from "./MenuItemBasicElement";
 import { Sublabel } from "./Sublabel";
 
-export interface TextInputProps {
+export interface TextInputProps  extends BasicEntryProps {
     sublabel?: string,
     value?: string
     onChange?(val: string): void

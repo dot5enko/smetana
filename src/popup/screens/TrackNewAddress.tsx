@@ -173,7 +173,7 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                             </Group>
                         </> : null}
 
-                        <ActionButton actionVariant="info" action={() => { }}>
+                        <ActionButton colorVariant="info" action={() => { }}>
                             <Text>Track</Text>
                             {raw.data.length == 0 ? <Sublabel >Account has no data to track</Sublabel> : null}
                         </ActionButton>

@@ -96,7 +96,7 @@ export function EditDataType(props: EditDataTypeProps) {
                     }} />
                 })}
             </>
-            <ActionButton actionVariant="info" action={function (): void {
+            <ActionButton colorVariant="info" action={function (): void {
                 if (object?.protect_updates) {
                     toast("changes protected", { type: 'warning' })
                 } else {
@@ -108,7 +108,7 @@ export function EditDataType(props: EditDataTypeProps) {
             }}>+ field</ActionButton>
         </Group>
         <Group name={"danger zone"}>
-            <ActionButton actionVariant={orderEditable ? "success" : "default"} action={() => {
+            <ActionButton colorVariant={orderEditable ? "success" : "default"} action={() => {
                 if (object?.protect_updates) {
                     toast("changes protected", { type: 'warning' })
                 } else {
@@ -118,7 +118,7 @@ export function EditDataType(props: EditDataTypeProps) {
             <ActionButton action={() => {
                 changeObject(it => it.protect_updates = !it.protect_updates, true)
             }}>{object?.protect_updates ? "Unprotect updates" : "Protect updates"} {!object?.protect_updates ? <Sublabel>you won't able make any updates into structure while type is protected</Sublabel> : null}</ActionButton>
-            <ActionButton actionVariant="error" action={() => {
+            <ActionButton colorVariant="error" action={() => {
                 if (confirm("really want to delete this item?")) {
                     removeType(props.id).then(() => {
                         routeBack();

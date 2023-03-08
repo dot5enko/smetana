@@ -39,18 +39,13 @@ export function ImportIdl() {
             e.dataTransfer.files[0].text().then((text) => {
                 let idlJson = JSON.parse(text)
 
-                parseIdlTypes(idlJson, false).then((simpleTypes) => {
+                parseIdlTypes(idlJson, true).then((simpleTypes) => {
 
                     let result: ParsedTypeFromIdl[] = [];
 
-                    for (var it0 of simpleTypes) {
+                    for (var parsedFromIdl of simpleTypes) {
 
-                        let parsedFromIdl: ParsedTypeFromIdl = {
-                            fields: it0[1],
-                            name: it0[0]
-                        }
-
-                        result.push(parsedFromIdl)
+                        result.push(parsedFromIdl[1])
                     }
 
                     setTypes(result);
@@ -87,10 +82,25 @@ export function ImportIdl() {
         <Box>
             {types ? <>
                 <ItemSelector isMultiselect={true} elementRenderer={(it) => {
-                    return <Box>
-                        <Text fontWeight={"bold"} color="white">{it.name}</Text>
-                        <Text fontSize={"sm"}>{it.fields.length} fields</Text>
-                    </Box>
+
+                    if (it.struct) {
+                        return <Box>
+                            <Flex gap="5px">
+                                {it.complex ? <Text fontSize="xs" color="red.300">incomplete</Text> : null}
+                                {it.struct ? <Text fontSize="xs" color="gray.300">struct</Text> : null}
+                                <Text fontWeight={"bold"} fontSize="sm" color="white">{it.name}</Text>
+                            </Flex>
+                        </Box>
+                    } else {
+                        return <Box>
+                            <Flex gap="5px">
+                                {it.complex ? <Text fontSize="xs" color="red.300">incomplete</Text> : null}
+                                {it.struct ? <Text fontSize="xs" color="gray.300">struct</Text> : null}
+                            </Flex>
+                            <Text fontWeight={"bold"} color="white">{it.name}</Text>
+                            <Text fontSize={"sm"}>{it.info.size_bytes} bytes in {it.fields.length} fields</Text>
+                        </Box>
+                    }
                 }} value={typesSelected} options={types}
                     onSelectorValueChange={(newval) => {
                         setSelected(newval);

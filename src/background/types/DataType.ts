@@ -3,6 +3,13 @@ import { db } from "../database";
 import { DataTypeField, getFieldsForType, getFieldSize } from "./DataTypeField";
 import { DecodedField, decodeSimpleType } from "./DecodedField";
 
+export interface ParsedTypeFromIdl {
+    fields: DataTypeField[]
+    info: DataTypeAggregatedInfo
+    complex: boolean
+    name: string
+    struct: boolean
+}
 
 export interface DataTypeAggregatedInfo {
     used_by: number,
@@ -131,13 +138,6 @@ export async function decodeType(data: Uint8Array, typ: DataType): Promise<Decod
     }
 
     return { partial: err, fields: result };
-}
-
-
-export interface ParsedTypeFromIdl {
-
-    fields: DataTypeField[]
-    name: string,
 }
 
 export async function importType(t: ParsedTypeFromIdl): Promise<number> {
