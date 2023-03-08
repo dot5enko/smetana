@@ -13,9 +13,10 @@ import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
 import { MenuDivider } from "../components/menu/MenuDivider";
 import { ActionButton } from "../components/menu/ActionButton";
 import { ItemSelector } from "../components/menu/ItemSelect";
-import { DataType, datatypesForProgram, decodeType as decodeTypeFunc } from "../../background/types/DataType";
+import { DataType, datatypesForProgram, decodeType as decodeTypeFunc, DecodeTypeResult } from "../../background/types/DataType";
 import { Group } from "../components/menu/Group";
 import { DataType as DataTypeComponent } from "../components/smetana/DataType";
+import { DecodedType } from "../components/smetana/DecodedType";
 
 export interface TrackNewAddressProps {
     addr?: string
@@ -35,6 +36,8 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
     useEffect(() => {
 
         setErr(undefined);
+        setDecoded(undefined);
+        setDecodeError(false);
 
         if (validAddr != "") {
             setLoading(true);
@@ -71,6 +74,7 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
     const [typesChanges, setTypesChanges] = useState(0);
 
     const [decodeError, setDecodeError] = useState<boolean>(false);
+    const [decoded, setDecoded] = useState<DecodeTypeResult | undefined>(undefined);
 
     useEffect(() => {
         if (decodeType != undefined) {
@@ -83,7 +87,7 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                     if (decoded.partial && decoded.fields.length == 0) {
                         setDecodeError(true);
                     } else {
-                        console.log('decoded data: ', decoded.fields)
+                        setDecoded(decoded);
                     }
                 }).catch(e => {
                     console.warn('unable to decode data : ', e)
@@ -161,12 +165,19 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                                 <Text fontSize="xs">owned by program</Text>
                             </MenuEntry>
                         </MultipleItemsRow>
-                        <MenuDivider width={0} />
+
+                        {decoded ? <>
+                            <MenuDivider width={0} height={10} />
+                            <Group name="decoded">
+                                <DecodedType item={decoded} ></DecodedType>
+                            </Group>
+                        </> : null}
+
                         <ActionButton actionVariant="info" action={() => { }}>
                             <Text>Track</Text>
                             {raw.data.length == 0 ? <Sublabel >Account has no data to track</Sublabel> : null}
                         </ActionButton>
-                        <MenuDivider width={0} />
+                        {/* <MenuDivider width={0} /> */}
 
                         <ItemSelector label="Select compatible decoder for data" onSelectorValueChange={(nval) => {
                             setType(nval[0])
@@ -174,6 +185,7 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                             return <Decoder it={it as DataType} datasize={raw.data.length} />
                         }}></ItemSelector>
                     </> : null))}
+
     </>
 }
 

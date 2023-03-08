@@ -6,7 +6,7 @@ import { Sublabel } from "./Sublabel";
 
 export interface ActionButtonProps extends HTMLChakraProps<'div'> {
     actionVariant?: EntryVariant
-    action(): void
+    action?(): void
     sublabel?: string
 }
 
@@ -20,7 +20,7 @@ export function ActionButton(props: ActionButtonProps) {
 
     return <>
         <MenuItemBasicElement
-            onClick={() => action()}
+            onClick={action}
             textAlign="center"
             borderRadius="6px"
             {...rest} {...style} _hover={{ ...hover }}>

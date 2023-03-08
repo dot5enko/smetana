@@ -119,8 +119,14 @@ export async function decodeType(data: Uint8Array, typ: DataType): Promise<Decod
                     decoded_value: decoderesult.outvalue,
                     present: decoderesult.contains
                 })
+
+                offset += decoderesult.bytesUsed
             }
         }
+    }
+
+    if (offset != data.length) {
+        err = true;
     }
 
     return { partial: err, fields: result };
