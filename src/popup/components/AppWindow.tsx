@@ -58,7 +58,7 @@ function AppWindowInner(props: { children: any }) {
         padding="10px"
         backgroundColor="#353535"
         position="relative"
-        overflow="hidden"
+    // overflow="hidden"
     >
         <Flex direction="column" height="560px">
             <Box padding="5px 0px" height="55px">
@@ -131,7 +131,7 @@ function AppWindowInner(props: { children: any }) {
             </Flex>
             <Spacer />
             <If condition={footer}>
-                <Flex width="100%" minHeight="65px" padding="5px 0" />
+                <Flex marginTop="10px" width="100%" minHeight="65px" padding="5px 0" />
             </If>
             <SlideWindow windowActive={slideActive} />
         </Flex>

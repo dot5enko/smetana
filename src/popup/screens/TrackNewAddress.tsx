@@ -18,6 +18,7 @@ import { Group } from "../components/menu/Group";
 import { decodeType as decodeTypeFunc } from "../../background/borsh";
 import { DecodedType } from "../components/smetana/DecodedType";
 import { toast } from "react-toastify";
+import { BottomContent } from "../components/menu/BottomContent";
 
 export interface TrackNewAddressProps {
     addr?: string
@@ -174,10 +175,12 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                             </Group>
                         </> : null}
 
-                        <ActionButton colorVariant="info" action={() => { }}>
-                            <Text>Track</Text>
-                            {raw.data.length == 0 ? <Sublabel >Account has no data to track</Sublabel> : null}
-                        </ActionButton>
+                        <BottomContent>
+                            <ActionButton colorVariant="info" action={() => { }}>
+                                <Text>Track</Text>
+                                {raw.data.length == 0 ? <Sublabel >Account has no data to track</Sublabel> : null}
+                            </ActionButton>
+                        </BottomContent>
                         {/* <MenuDivider width={0} /> */}
 
                         <ItemSelector label="Select compatible decoder for data" onSelectorValueChange={(nval) => {
