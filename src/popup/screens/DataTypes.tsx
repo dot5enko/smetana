@@ -16,7 +16,7 @@ export interface DataTypesProps {
 
 export function DataTypes(props: DataTypesProps) {
 
-    const { setRoute } = useExtensionContext();
+    const { setRoute, toggleSlide } = useExtensionContext();
     const [query, setQuery] = useState<string>("");
 
     const [items, setItems] = useState<DataTypeInterface[]>([]);
@@ -32,20 +32,9 @@ export function DataTypes(props: DataTypesProps) {
             {/* <MultipleItemsRow> */}
             <MenuEntry
                 colorVariant="info"
-                // submenu="adwad"
                 onClick={() => {
-                    createNew().then((id) => {
-                        setRoute('edit_datatype', "Create new type", false, id as number)
-                    }).catch((e: any) => {
-                        console.error('unable to create new type:', e.message)
-                    });
+                    toggleSlide("new_type");
                 }}>New type</MenuEntry>
-            {/* <ActionButton
-                    colorVariant="success"
-                    action={() => {
-                        setRoute('import_anchor_type', "Anchor idl import", false)
-                    }}>Import idl</ActionButton> */}
-            {/* </MultipleItemsRow> */}
         </BottomContent>
         <TextInput
             sizeVariant="sm"

@@ -8,16 +8,16 @@ import { ExtensionContextProvider, useExtensionContext, useRouteArg } from "./co
 import { MenuDivider } from "./menu/MenuDivider";
 import { MenuEntry } from "./menu/MenuEntry";
 import { MenuEntryType } from "./menu/MenuEntryType";
-import { Route } from "./Router";
+import { Route, SlideRoute } from "./Router";
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { SlideWindow } from "./menu/SlideWindow";
 import { Addresses } from "../screens/Addresses";
-import { TextInput } from "./menu/TextInput";
 import { TrackNewAddress } from "../screens/TrackNewAddress";
 import { ImportIdl } from "../screens/ImportIdl";
 import { If } from "./menu/If";
+import { SlideRoutes } from "../screens/slide/SlideRoutes";
 
 export interface WindowProps extends HTMLChakraProps<'div'> {
     // config: AppWindowConfig
@@ -58,7 +58,7 @@ function AppWindowInner(props: { children: any }) {
         padding="10px"
         backgroundColor="#353535"
         position="relative"
-    // overflow="hidden"
+        overflow="hidden"
     >
         <Flex direction="column" height="560px">
             <Box padding="5px 0px" height="55px">
@@ -133,13 +133,15 @@ function AppWindowInner(props: { children: any }) {
             <If condition={footer}>
                 <Flex marginTop="10px" width="100%" minHeight="65px" padding="5px 0" />
             </If>
-            <SlideWindow windowActive={slideActive} />
+            <SlideWindow windowActive={slideActive} >
+                <SlideRoutes />
+            </SlideWindow>
         </Flex>
     </Box >
 }
 function AboutPage() {
     const { toggleSlide } = useExtensionContext();
-    return <MenuEntry onClick={toggleSlide} >About</MenuEntry>
+    return <MenuEntry onClick={() => toggleSlide("")} >About</MenuEntry>
 }
 
 export function AppWindow(props: WindowProps) {

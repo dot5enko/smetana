@@ -1,5 +1,5 @@
-import { Box, Button, Flex, Spacer, useColorMode } from "@chakra-ui/react"
-import { ChakraProvider, Text } from '@chakra-ui/react'
+import { Flex, useColorMode } from "@chakra-ui/react"
+import { ChakraProvider } from '@chakra-ui/react'
 import { AppWindow } from "./components/AppWindow"
 
 function App() {

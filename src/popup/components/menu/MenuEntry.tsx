@@ -12,7 +12,7 @@ export interface MenuEntryProps extends HTMLChakraProps<"div">, BasicEntryProps 
 
 export function MenuEntry(props: MenuEntryProps) {
 
-    let { children, submenu, submenuTitle, fixedFooter, ...rest } = props
+    let { children, submenu, submenuTitle, fixedFooter, onClick, ...rest } = props
 
     const [title, setTitle] = useState<string>("");
 
@@ -32,13 +32,20 @@ export function MenuEntry(props: MenuEntryProps) {
 
     const { setRoute } = useExtensionContext();
 
-    const clickAction = submenu ? () => {
-        setRoute(
-            submenu as string,
-            title,
-            fixedFooter ?? false
-        );
-    } : props.onClick;
+    const clickAction = (e: any) => {
+
+        if (onClick) {
+            onClick(e)
+        }
+
+        if (submenu) {
+            setRoute(
+                submenu as string,
+                title,
+                fixedFooter ?? false
+            );
+        }
+    };
 
     return <MenuItemBasicElement
         onClick={clickAction}

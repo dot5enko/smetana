@@ -15,13 +15,12 @@ export function SlideWindow(props: SlideWindowProps) {
     const { windowActive, children, ...rest } = props;
     const { toggleSlide } = useExtensionContext();
 
-
     function dismiss() {
 
         setAnimate(false);
 
         setTimeout(() => {
-            toggleSlide()
+            toggleSlide("")
         }, 250);
     }
 
@@ -44,6 +43,7 @@ export function SlideWindow(props: SlideWindowProps) {
             opacity={animate ? 0.5 : 0}
             top="0"
             left={0}
+            onClick={dismiss}
         ></Box>
         <Box
             position={"absolute"}
@@ -64,8 +64,6 @@ export function SlideWindow(props: SlideWindowProps) {
 
                 marginBottom={animate ? "10px" : "-300px"}
 
-                height={"200px"}
-
                 boxShadow="md"
 
                 borderRadius="6px"
@@ -77,16 +75,7 @@ export function SlideWindow(props: SlideWindowProps) {
                 gap="10px"
             // marginBottom="10px"
             >
-                <Box textAlign="center" padding="20px">
-                    <Text fontSize="xl">Remove item?</Text>
-                    <Sublabel>This action could not be undone</Sublabel>
-                </Box>
-                <MultipleItemsRow>
-                    <ActionButton sizeVariant="sm" colorVariant="warning" action={function (): void {
-                        throw new Error("Function not implemented.");
-                    }} >Confirm</ActionButton>
-                    <ActionButton sizeVariant="sm" action={dismiss} >Cancel</ActionButton>
-                </MultipleItemsRow>
+                {props.children}
             </Box>
         </Box >
     </If>

@@ -13,7 +13,8 @@ export interface ExtensionContextType {
     setRpc(arg: string): void
 
     slideActive: boolean,
-    toggleSlide(): void
+    slidePath: string
+    toggleSlide(path: string): void
 
     connection: Connection
 }
@@ -44,6 +45,8 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
 
     const [slideActive, setSlideActive] = useState<boolean>(false);
     const [connection, setConnection] = useState(new Connection(rpc, 'confirmed'))
+
+    const [slidePath, setSlidePath] = useState("");
 
     useEffect(() => {
         // todo use parameter
@@ -92,9 +95,12 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
         }
 
         // slide window 
-        const toggleSlide = () => {
+        const toggleSlide = (path: string) => {
+
+            setSlidePath(path);
             setSlideActive(!slideActive)
         }
+
 
         const value: ExtensionContextType = {
             connection,
@@ -102,7 +108,9 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
             hasBack: routeStack.length > 0,
             rpc, setRpc,
             route: currentRoute,
+
             slideActive, toggleSlide,
+            slidePath
         }
         return value;
 

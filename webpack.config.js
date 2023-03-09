@@ -46,7 +46,6 @@ module.exports = [
             rules: [
                 {
                     test: /\.tsx?$/,
-                    exclude: /node_modules/,
                     use: {
                         loader: 'ts-loader',
                         options: {
@@ -66,6 +65,9 @@ module.exports = [
         },
 
         plugins: [
+            new ProvidePlugin({
+                process: 'process/browser',
+            }),
             new CopyWebpackPlugin({
                 patterns: [
                     {
@@ -77,9 +79,6 @@ module.exports = [
             new DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify(mode),
                 'process.env.EXT_VERSION': JSON.stringify(manifest.version),
-            }),
-            new ProvidePlugin({
-                process: 'process/browser',
             }),
             new HtmlWebpackPlugin({
                 template: './popup/index.html',
