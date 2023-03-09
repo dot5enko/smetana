@@ -76,7 +76,6 @@ export function EditDataType(props: EditDataTypeProps) {
     function fetchObject() {
         getById(props.id).then((obj) => {
             setObject(obj)
-            console.log('got an object fetched', obj)
         }).catch(e => {
             console.error('unable to get an object by id :', props.id)
         });

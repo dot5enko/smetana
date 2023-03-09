@@ -12,7 +12,7 @@ export interface Program {
     is_anchor: boolean
 
     idl_parsed: boolean
-    imported : boolean
+    imported: boolean
 
     // whether account data tryed 
     fetched: boolean
@@ -64,27 +64,27 @@ export async function fetchProgramIdl(conn: Connection, program_id: string): Pro
         const rawAccountInfo = await getSignleRawAccountInfo(conn, idlAddress.toBase58())
 
         programInfo.is_anchor = true;
-        await programtable.update(programInfo.id,programInfo)
+        await programtable.update(programInfo.id, programInfo)
 
         const idlJson = parseIdlFromAccountData(rawAccountInfo.data);
 
         const parseJsonIdlResult = await parseIdlTypes(idlJson, true);
 
         programInfo.idl_parsed = true;
-        await programtable.update(programInfo.id,programInfo)
+        await programtable.update(programInfo.id, programInfo)
 
         for (var it of parseJsonIdlResult.types) {
             try {
-                await importType(it[1]);
+                await importType(program_id, it[1]);
             } catch (e: any) {
                 console.log(`unable to import type ${it[0]}: ${e.message}`, e)
             }
         }
 
         programInfo.imported = true;
-        await programtable.update(programInfo.id,programInfo)
+        await programtable.update(programInfo.id, programInfo)
     }
-    
+
     return Promise.resolve(programInfo);
 }
 

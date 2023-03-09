@@ -1,6 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { DragEventHandler, useEffect, useState } from "react";
-import { importType, ParsedTypeFromIdl } from "../../background/types/DataType";
+import { importType } from "../../background/types/DataType";
 import { parseIdlTypes } from '../../background/idl'
 import { ItemSelector } from "../components/menu/ItemSelect";
 import { MenuDivider } from "../components/menu/MenuDivider";
@@ -8,10 +8,11 @@ import { MenuEntryWithSublabel } from "../components/menu/MenuEntryWithSublabel"
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { toast } from "react-toastify";
 import { BottomContent } from "../components/menu/BottomContent";
+import { ParsedTypeFromIdl } from "src/background/types/ParsedTypeFromIdl";
 
 export function ImportIdl() {
 
-    const { setRoute } = useExtensionContext();
+    const { setRoute, toggleSlide } = useExtensionContext();
 
     const [drag, setDrag] = useState(false);
 
@@ -60,12 +61,12 @@ export function ImportIdl() {
         }
     }
 
-    const importSelected = async () => {
+    const importSelected = async (program_id: string) => {
 
         if (typesSelected.length > 0) {
 
             for (var it of typesSelected) {
-                await importType(it)
+                await importType(program_id, it)
             }
             setRoute('data_types', "Data types", true);
 
@@ -127,7 +128,9 @@ export function ImportIdl() {
         <BottomContent>
             <MenuEntryWithSublabel
                 colorVariant="info"
-                action={importSelected}
+                action={() => {
+                    toggleSlide("import_json_idl")
+                }}
                 text={typesSelected.length == 0 ? "please, select types to import first" : undefined}
             >Import</MenuEntryWithSublabel>
         </BottomContent>

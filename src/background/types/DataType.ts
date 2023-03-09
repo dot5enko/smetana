@@ -2,22 +2,7 @@ import { IndexableType } from "dexie";
 import { db } from "../database";
 import { DataTypeField, getFieldSize } from "./DataTypeField";
 import { DecodedField } from "./DecodedField";
-
-export interface ParsedTypeFromIdl {
-    fields: DataTypeField[]
-    info: DataTypeAggregatedInfo
-    complex: boolean
-    name: string
-    struct: boolean
-
-    discriminator: Uint8Array
-}
-
-export interface DataTypeAggregatedInfo {
-    used_by: number,
-    fields_count: number,
-    size_bytes: number
-}
+import { ParsedTypeFromIdl } from "./ParsedTypeFromIdl";
 
 export interface DataType {
     id?: number
@@ -28,6 +13,12 @@ export interface DataType {
     info: DataTypeAggregatedInfo
     discriminator: Uint8Array
     is_anchor: boolean
+}
+
+export interface DataTypeAggregatedInfo {
+    used_by: number,
+    fields_count: number,
+    size_bytes: number
 }
 
 const datatype = db.table('datatype');
@@ -115,7 +106,7 @@ export interface DecodeTypeResult {
     fields: DecodedField[]
 }
 
-export async function importType(t: ParsedTypeFromIdl): Promise<number> {
+export async function importType(program_id: string, t: ParsedTypeFromIdl): Promise<number> {
 
     const typ: DataType = {
         label: t.name,

@@ -17,9 +17,8 @@ export function DataType(props: DataTypeProps) {
         <Flex gap="5px">
             <Box>
                 <Text fontWeight="bold" color={"white"}>{item.label}</Text>
-                <Text fontSize={"xs"} color="green.300">ProgramId: {addrFormat(item.program_id, 5)}</Text>
                 <Text fontSize={"xs"}>{item.info.fields_count} fields, total <strong>{item.info.size_bytes}</strong> bytes</Text>
-                <Text fontSize={"xs"} color="blue.400">used {item.info.used_by} times</Text>
+                {/* <Text fontSize={"xs"} color="blue.400">used {item.info.used_by} times</Text> */}
             </Box>
             <Spacer />
             <Box alignSelf="center">

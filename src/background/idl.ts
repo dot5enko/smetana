@@ -1,10 +1,10 @@
 import { BinaryReader } from "borsh";
 import { sha256 } from "js-sha256";
 import { inflate } from "pako";
-import { ParsedTypeFromIdl } from "./types/DataType";
 import { DataTypeField, getFieldSize } from "./types/DataTypeField"
 import { Buffer } from "buffer";
 import { PublicKey } from "@solana/web3.js";
+import { ParsedTypeFromIdl } from "./types/ParsedTypeFromIdl";
 
 
 export interface FailedType {
