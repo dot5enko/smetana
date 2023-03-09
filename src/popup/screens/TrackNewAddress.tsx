@@ -182,7 +182,7 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                             </ActionButton>
                         </BottomContent>
                         {/* <MenuDivider width={0} /> */}
-
+                        <Text>{JSON.stringify(raw.data)}</Text>
                         <ItemSelector label="Select compatible decoder for data" onSelectorValueChange={(nval) => {
                             setType(nval[0])
                         }} value={[decodeType]} options={types} elementRenderer={(it) => {
