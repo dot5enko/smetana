@@ -85,8 +85,20 @@ export function decodeSimpleType(data: Uint8Array, typ: DataTypeField): DecodeFi
 
             let array_bytes_used = 0;
 
-            for (var i = 0; i < typ.array_size; i++) {
-                let elementDecodeResult = decodeSimpleType(data, arrayElementTyp)
+            let elements_to_read = typ.array_size;
+
+            if (typ.is_dynamic_size) {
+
+                // read u32 dyn size value first
+                elements_to_read = reader.readU32()
+
+                // count this in global offset
+                array_bytes_used += 4;
+                // todo validate size somehow ?
+            }
+
+            for (var i = 0; i < elements_to_read; i++) {
+                let elementDecodeResult = decodeSimpleType(data.slice(array_bytes_used), arrayElementTyp)
                 if (elementDecodeResult.error) {
 
                     // todo provide proper result

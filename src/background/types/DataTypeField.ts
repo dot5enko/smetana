@@ -14,6 +14,7 @@ export interface DataTypeField {
 
     is_array: boolean
     array_size: number
+    is_dynamic_size: boolean
 
     hide: boolean
 }
@@ -66,8 +67,14 @@ export async function getFieldSize(object: DataTypeField) {
                 throw new Error(`unsupported field type: ${object.field_type}`)
         }
 
-        size += arraySizeModified * elementSize;
-
+        if (!object.is_dynamic_size) {
+            size += arraySizeModified * elementSize;
+        } else {
+            // 4 bytes for data length
+            // + data length itself. 
+            // data size should be marked as dynamic
+            size += 4;
+        }
         return Promise.resolve(size);
     }
 }
@@ -91,7 +98,8 @@ export async function createNewField(parent_type: number): Promise<IndexableType
         is_complex_type: false,
         hide: false,
         is_array: false,
-        array_size: 1
+        array_size: 1,
+        is_dynamic_size: false
     }
     const result = await datatypefield.add(fieldObject)
 

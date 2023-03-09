@@ -1,6 +1,10 @@
+import { BinaryReader } from "borsh";
 import { sha256 } from "js-sha256";
+import { inflate } from "pako";
 import { ParsedTypeFromIdl } from "./types/DataType";
 import { DataTypeField, getFieldSize } from "./types/DataTypeField"
+import { Buffer } from "buffer";
+import { PublicKey } from "@solana/web3.js";
 
 export async function parseIdlTypes(idl: any, includeComplex: boolean) { //: Promise<DataType[]> {
 
@@ -48,8 +52,10 @@ async function parseIdlStruct(struct: any, typesMap: Map<string, ParsedTypeFromI
         is_complex_type: false,
         is_array: false,
         array_size: 1,
-        hide: true
+        hide: true,
+        is_dynamic_size: false
     };
+
     result.push(discriminatorField)
 
     for (var it of struct.type.fields) {
@@ -65,7 +71,8 @@ async function parseIdlStruct(struct: any, typesMap: Map<string, ParsedTypeFromI
             is_complex_type: false,
             hide: false,
             is_array: false,
-            array_size: 1
+            array_size: 1,
+            is_dynamic_size: false
         };
 
         if (complexType) {
@@ -162,4 +169,52 @@ export function calcDiscriminator(typename: string) {
     let hash = sha256.array(val).slice(0, 8);
 
     return hash;
+}
+
+// returns idl json
+export function parseIdlFromAccountData(accountdata: Uint8Array) {
+
+    try {
+        let lenOffset = 0;
+
+        let buf = Buffer.from(accountdata.slice(lenOffset))
+        const reader = new BinaryReader(buf);
+
+        const discriminator = reader.readU64();
+        const authority = new PublicKey(reader.readFixedArray(32));
+
+        console.log(`authority and discriminator : ${discriminator.toString()} : ${authority.toBase58()}`)
+
+        // read data size
+        const datalen = reader.readU32()
+
+        if (datalen > 100000) {
+            throw new Error('error decoding idl account. size should be less than 100k at least')
+        } else {
+            try {
+                const data = reader.readFixedArray(datalen);
+
+                const inflatedIdl = inflate(data);
+                const parsedIdl = JSON.parse(new TextDecoder().decode(inflatedIdl));
+
+                return parsedIdl;
+            } catch (e) {
+                throw new Error('unable to parse idl', {
+                    cause: e
+                })
+            }
+        }
+    } catch (e: any) {
+        throw new Error("unable to get idl data out of idl account", {
+            cause: e
+        })
+    }
+}
+
+export async function genAnchorIdlAddr(program_id: PublicKey) {
+
+    let program_signer = PublicKey.findProgramAddressSync([], program_id)[0];
+    let seed = "anchor:idl"
+    const result = await PublicKey.createWithSeed(program_signer, seed, program_id)
+    return result
 }

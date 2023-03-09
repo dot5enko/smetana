@@ -106,11 +106,15 @@ export function EditTypeField(props: EditTypeFieldProps) {
                     changeObject(it => it.is_array = val)
                 }}
                 >Is Array</SwitchInput>
-
                 <If condition={object?.is_array}>
+                    <SwitchInput value={object?.is_dynamic_size} onChange={(val) => {
+                        changeObject(it => it.is_dynamic_size = val)
+                    }}>dynamic</SwitchInput>
+                </If>
+                <If condition={object?.is_array && !object.is_dynamic_size}>
                     <TextInput sizeVariant="sm"
                         value={arrSize + ""}
-                        placeholder="array size"
+                        placeholder="size"
                         validate="uint+"
                         onChange={(val) => {
                             setArraySize(val);

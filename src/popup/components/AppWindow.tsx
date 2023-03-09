@@ -99,7 +99,7 @@ function AppWindowInner(props: { children: any }) {
                     <AboutPage />
                 </Route>
                 <Route path="track_new_address">
-                    <TrackNewAddress addr="3QwsnHqEo1pq45UbDfura4fmSaWXqbGQMNDbr6pV1G56" />
+                    <TrackNewAddress addr="5CdSANh3iQNeNujsbbQsY8iz4RFRgsMhc7xW3dvqXMPG" />
                 </Route>
                 <Route path="addresses">
                     <Addresses />

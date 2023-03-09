@@ -46,9 +46,21 @@ function Typ(props: { item: DataTypeField }) {
         }
     }, [item.is_complex_type])
 
-    return <>
-        {fieldType}<If condition={item.is_array}>[{item.array_size}]</If>
-    </>
+    if (item.is_array) {
+        if (item.is_dynamic_size) {
+            return <>
+                vec&lt;{fieldType}&gt;
+            </>
+        } else {
+            return <>
+                {fieldType}[{item.array_size}]
+            </>
+        }
+    } else {
+        return <>
+            {fieldType}
+        </>
+    }
 }
 
 export function DataTypeField(props: DataTypeFieldProps) {
@@ -59,7 +71,7 @@ export function DataTypeField(props: DataTypeFieldProps) {
         <Flex>
             <Box>
                 <Flex>
-                    <Text fontWeight="bold" color={item.hide?"gray":"white"}>{item.label ? item.label : "<empty>"}</Text>
+                    <Text fontWeight="bold" color={item.hide ? "gray" : "white"}>{item.label ? item.label : "<empty>"}</Text>
                     {item.optional ? <Text fontSize="xs" color="red">*</Text> : null}
                 </Flex>
                 <Text fontSize={"sm"} color="green.300">{item.field_type ? <Typ item={item}></Typ> : "<error type>"}</Text>

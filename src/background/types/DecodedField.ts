@@ -1,7 +1,4 @@
 import { DataTypeField } from "./DataTypeField"
-import * as borsh from "borsh"
-import { PublicKey } from "@solana/web3.js"
-import { Buffer } from "buffer"
 
 export interface DecodedField {
     field: DataTypeField,

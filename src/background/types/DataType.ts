@@ -9,6 +9,7 @@ export interface ParsedTypeFromIdl {
     complex: boolean
     name: string
     struct: boolean
+
     discriminator: Uint8Array
 }
 

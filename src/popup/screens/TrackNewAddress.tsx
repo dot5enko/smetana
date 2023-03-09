@@ -1,5 +1,5 @@
 import { Box, Skeleton, Text } from "@chakra-ui/react";
-import { LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
 import { useEffect, useState } from "react";
 import { RawAccountInfo } from "../../background/types/RawAccountinfo";
@@ -19,6 +19,7 @@ import { decodeType as decodeTypeFunc } from "../../background/borsh";
 import { DecodedType } from "../components/smetana/DecodedType";
 import { toast } from "react-toastify";
 import { BottomContent } from "../components/menu/BottomContent";
+import { genAnchorIdlAddr, parseIdlFromAccountData } from "../../background/idl";
 
 export interface TrackNewAddressProps {
     addr?: string
@@ -42,6 +43,11 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
         setDecodeError(false);
 
         if (validAddr != "") {
+
+            genAnchorIdlAddr(new PublicKey(validAddr)).then(anchorIdlAccount => {
+                console.log(` idl -> ${anchorIdlAccount.toBase58()}`)
+            });
+
             setLoading(true);
             getAddressInfo(validAddr, connection).then(resp => {
                 if (resp.value != undefined) {
@@ -108,25 +114,25 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
         }
 
         if (raw != undefined) {
+
+            // try decode idl 
+            if (raw.data.length > 1000) {
+                const idlJson = parseIdlFromAccountData(raw.data);
+            }
+
             // todo use config
             datatypesForProgram(raw.owner, "", 100).
                 then((types: DataType[]) => {
                     setTypes(types);
                     setTypesChanges(typesChanges + 1);
-
-                    console.log('set types : ', types)
-
                 }).catch((e: any) => {
                     cleanTypes()
                     console.error('unable to fetch datatypes for program', e.message)
-
                 })
         } else {
             cleanTypes()
         }
     }, [raw])
-
-    // 
 
     return <>
         <TextInput
@@ -182,7 +188,6 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                             </ActionButton>
                         </BottomContent>
                         {/* <MenuDivider width={0} /> */}
-                        <Text>{JSON.stringify(raw.data)}</Text>
                         <ItemSelector label="Select compatible decoder for data" onSelectorValueChange={(nval) => {
                             setType(nval[0])
                         }} value={[decodeType]} options={types} elementRenderer={(it) => {

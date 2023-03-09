@@ -3,6 +3,7 @@ import { delay } from "framer-motion";
 import { toast } from "react-toastify";
 import { DecodeTypeResult } from "src/background/types/DataType";
 import { DecodedField } from "src/background/types/DecodedField";
+import { If } from "../menu/If";
 import { MenuEntry } from "../menu/MenuEntry";
 import { MenuEntryWithSublabel } from "../menu/MenuEntryWithSublabel";
 
@@ -30,7 +31,13 @@ function DecodedField(props: { field: DecodedField }) {
                 autoClose: 300
             })
         }}>
-            <Text fontWeight="bold">{field.field.label}</Text>
+            <Flex gap="5px">
+                <Text fontWeight="bold">{field.field.label}</Text>
+                <If condition={field.field.is_array}>
+                    <Text color="blue.400">{field.decoded_value.length} elements</Text>
+                </If>
+            </Flex>
+
             <Text color="green.400" fontSize="md">{field.decoded_value.toString()}</Text>
         </MenuEntry>
     </>

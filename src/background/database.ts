@@ -11,6 +11,13 @@ db.version(2).stores({
     datatypefield: '++id, datatype_id, order_position ',
 });
 
+db.version(3).stores({
+    data: '++id, address_id, created_at',
+    address: '++id, &address, sync_flag, data_type_id',
+    datatype: '++id, label, program_id, discriminator',
+    datatypefield: '++id, datatype_id, order_position ',
+});
+
 export async function addressHistory(address: PublicKey) {
 
     let adrStr = address.toBase58();
