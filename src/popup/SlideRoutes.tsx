@@ -5,6 +5,7 @@ import { SlideRoute } from "./components/menu/Router";
 import { ActionButton } from "./components/menu/ActionButton";
 import { MenuEntry } from "./components/menu/MenuEntry";
 import { createNew } from "../background/types/DataType";
+import { ImportTypesFromIdl } from "./slide/ImportTypesFromIdl";
 
 export function SlideRoutes() {
 
@@ -13,6 +14,9 @@ export function SlideRoutes() {
     return <>
         <SlideRoute path="confirm">
             <Confirm />
+        </SlideRoute>
+        <SlideRoute path="import_json_idl">
+            <ImportTypesFromIdl/>
         </SlideRoute>
         <SlideRoute path="new_type">
             <ActionButton
