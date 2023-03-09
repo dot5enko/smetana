@@ -3,7 +3,7 @@ import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 
 import { useEffect, useState } from "react";
 import { RawAccountInfo } from "../../background/types/RawAccountinfo";
-import { getAddressInfo } from "../../background/rpc";
+import { getSingleAddressInfo } from "../../background/rpc";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { MenuEntry } from "../components/menu/MenuEntry";
 import { Sublabel } from "../components/menu/Sublabel";
@@ -13,13 +13,14 @@ import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
 import { MenuDivider } from "../components/menu/MenuDivider";
 import { ActionButton } from "../components/menu/ActionButton";
 import { ItemSelector } from "../components/menu/ItemSelect";
-import { DataType, datatypesForProgram, DecodeTypeResult } from "../../background/types/DataType";
+import { DataType, datatypesForDiscriminator, datatypesForProgram, DecodeTypeResult } from "../../background/types/DataType";
 import { Group } from "../components/menu/Group";
 import { decodeType as decodeTypeFunc } from "../../background/borsh";
 import { DecodedType } from "../components/smetana/DecodedType";
 import { toast } from "react-toastify";
 import { BottomContent } from "../components/menu/BottomContent";
 import { genAnchorIdlAddr, parseIdlFromAccountData } from "../../background/idl";
+import { fetchProgramIdl } from "../../background/types/Program";
 
 export interface TrackNewAddressProps {
     addr?: string
@@ -43,13 +44,8 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
         setDecodeError(false);
 
         if (validAddr != "") {
-
-            genAnchorIdlAddr(new PublicKey(validAddr)).then(anchorIdlAccount => {
-                console.log(` idl -> ${anchorIdlAccount.toBase58()}`)
-            });
-
             setLoading(true);
-            getAddressInfo(validAddr, connection).then(resp => {
+            getSingleAddressInfo(validAddr, connection).then(resp => {
                 if (resp.value != undefined) {
 
                     const rawaccount: RawAccountInfo = {
@@ -115,21 +111,28 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
 
         if (raw != undefined) {
 
-            // try decode idl 
-            if (raw.data.length > 1000) {
-                const idlJson = parseIdlFromAccountData(raw.data);
-                console.log("idl json found:", idlJson)
-            }
+            fetchProgramIdl(connection, raw.owner).then((programFetchState) => {
+                let discriminant = raw.data.slice(0, 8)
 
-            // todo use config
-            datatypesForProgram(raw.owner, "", 100).
-                then((types: DataType[]) => {
-                    setTypes(types);
-                    setTypesChanges(typesChanges + 1);
-                }).catch((e: any) => {
-                    cleanTypes()
-                    console.error('unable to fetch datatypes for program', e.message)
+                datatypesForDiscriminator(discriminant).then(types => {
+                    if (types.length == 0) {
+                        datatypesForProgram(raw.owner, "", 50).
+                            then((types: DataType[]) => {
+                                setTypes(types);
+                                setTypesChanges(typesChanges + 1);
+                            }).catch((e: any) => {
+                                cleanTypes()
+                                console.error('unable to fetch datatypes for program', e.message)
+                            })
+                    } else {
+
+                        setType(types[0]);
+
+                        console.log('found codec by discriminant !, count = ', types.length);
+                    }
                 })
+            })
+
         } else {
             cleanTypes()
         }

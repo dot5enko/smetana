@@ -24,7 +24,7 @@ export function Routes() {
             <AboutPage />
         </Route>
         <Route path="track_new_address">
-            <TrackNewAddress addr="5CdSANh3iQNeNujsbbQsY8iz4RFRgsMhc7xW3dvqXMPG" />
+            <TrackNewAddress addr="8szGkuLTAux9XMgZ2vtY39jVSowEcpBfFfD8hXSEqdGC" />
         </Route>
         <Route path="addresses">
             <Addresses />

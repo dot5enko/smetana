@@ -77,13 +77,19 @@ export async function removeType(id: number) {
     return datatype.delete(id);
 }
 
+export async function datatypesForDiscriminator(disc: Uint8Array): Promise<DataType[]> {
+
+    return await datatype.
+        where("discriminator").
+        equals(disc).
+        toArray()
+}
+
 export async function datatypesForProgram(program: string, label: string = "", limit: number): Promise<DataType[]> {
 
     console.log('fetching datatypes with query :', label)
 
     if (label === "") {
-
-        console.log(`filter types by program id "${program}"`)
 
         const result = await datatype.
             where("program_id").

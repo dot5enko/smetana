@@ -24,10 +24,9 @@ export async function parseIdlTypes(idl: any, includeComplex: boolean) {
 
     for (var it of idl.types) {
         try {
-            const parseResult = await parseIdlStruct(it, types);
+            const parseResult = await parseIdlStruct(true,it, types);
             if (includeComplex || !parseResult.complex) {
                 parseResult.name = it.name;
-                parseResult.struct = true
                 parseResult.discriminator = new Uint8Array(calcDiscriminator(it.name))
                 types.set(it.name, parseResult)
             }
@@ -42,7 +41,7 @@ export async function parseIdlTypes(idl: any, includeComplex: boolean) {
 
     for (var it of idl.accounts) {
         try {
-            const parseResult = await parseIdlStruct(it, types);
+            const parseResult = await parseIdlStruct(false,it, types);
             if (includeComplex || !parseResult.complex) {
                 parseResult.name = it.name;
                 parseResult.discriminator = new Uint8Array(calcDiscriminator(it.name))
@@ -60,31 +59,33 @@ export async function parseIdlTypes(idl: any, includeComplex: boolean) {
     return { types, failed };
 }
 
-async function parseIdlStruct(struct: any, typesMap: Map<string, ParsedTypeFromIdl>): Promise<ParsedTypeFromIdl> {
+async function parseIdlStruct(isType: boolean, struct: any, typesMap: Map<string, ParsedTypeFromIdl>): Promise<ParsedTypeFromIdl> {
 
     try {
         let result: DataTypeField[] = [];
 
         // discriminator offset
-        let idx = 1;
-        let size = 8;
+        let idx = isType ? 0 : 1;
+        let size = isType ? 0 : 8;
 
         let noComplex = true;
 
-        let discriminatorField: DataTypeField = {
-            datatype_id: 0,
-            order_position: 0,
-            optional: false,
-            label: "discriminator",
-            field_type: "u64",
-            is_complex_type: false,
-            is_array: false,
-            array_size: 1,
-            hide: true,
-            is_dynamic_size: false
-        };
+        if (!isType) {
+            let discriminatorField: DataTypeField = {
+                datatype_id: 0,
+                order_position: 0,
+                optional: false,
+                label: "discriminator",
+                field_type: "u64",
+                is_complex_type: false,
+                is_array: false,
+                array_size: 1,
+                hide: true,
+                is_dynamic_size: false
+            };
 
-        result.push(discriminatorField)
+            result.push(discriminatorField)
+        }
 
         for (var it of struct.type.fields) {
 
@@ -107,7 +108,7 @@ async function parseIdlStruct(struct: any, typesMap: Map<string, ParsedTypeFromI
                 // workaroud for complex anchor type early support
                 // replaces complex type size with byte array :)
 
-                console.log('type is ', it.type)
+                // console.log('type is ', it.type)
 
                 fieldObj.is_array = true;
                 fieldObj.field_type = 'u8';
@@ -157,7 +158,7 @@ async function parseIdlStruct(struct: any, typesMap: Map<string, ParsedTypeFromI
 
                         const parsedData = typesMap.get(referencedTypeName)
                         if (parsedData) {
-                            console.log('found referenced type ', referencedTypeName, parsedData)
+                            // console.log('found referenced type ', referencedTypeName, parsedData)
 
                             fieldObj.field_type = 'u8';
                             fieldObj.array_size = parsedData.info.size_bytes
@@ -186,9 +187,9 @@ async function parseIdlStruct(struct: any, typesMap: Map<string, ParsedTypeFromI
                 size_bytes: size,
                 used_by: 0,
             },
-            struct: false,
+            struct: isType,
             discriminator: new Uint8Array(8),
-            is_anchor: true
+            is_anchor: !isType
         });
     } catch (e: any) {
         throw new Error('unable to parse json idl: ' + e.message, { cause: e })
