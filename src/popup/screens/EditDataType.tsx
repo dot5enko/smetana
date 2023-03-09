@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { Box, Flex, HTMLChakraProps, Input, Text } from "@chakra-ui/react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { DataType as DataTypeInterface, getById, removeType, updateDatatype } from "../../background/types/DataType";
 import { createNewField, DataTypeField as DataTypeFieldInterface, getFieldsForType } from "../../background/types/DataTypeField";
@@ -8,11 +9,51 @@ import { ActionButton } from "../components/menu/ActionButton";
 import { Group } from "../components/menu/Group";
 import { If } from "../components/menu/If";
 import { Sublabel } from "../components/menu/Sublabel";
+import { SwitchInput } from "../components/menu/SwitchInput";
 import { TextInput } from "../components/menu/TextInput";
 import { DataTypeField } from "../components/smetana/DataTypeField";
 
+import { Buffer } from "buffer"
+import { MenuEntry } from "../components/menu/MenuEntry";
+import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
+
 export interface EditDataTypeProps {
     id: any
+}
+export interface HexEditorProps extends HTMLChakraProps<'div'> {
+    bytes: number
+    onValueChange(val: Uint8Array): void
+    value: Uint8Array
+}
+
+function HexView(props: HexEditorProps) {
+
+    const { value, onValueChange, bytes, gap, ...rest } = props;
+
+    const content = useMemo(() => {
+
+        const inputs = [];
+
+        for (var i = 0; i < bytes; i++) {
+            inputs.push(<Input key={i} {...rest} value={value[i]} onChange={(nval) => {
+                const byteVal = parseInt(nval.target.value);
+
+                if (byteVal > 255 || byteVal < 0) {
+                    // console.log('erroneous input for byte ', i, ' value is ', nval, byteVal)
+                } else {
+                    console.log('value changed for byte', i, byteVal)
+                    value[i] = byteVal;
+                    onValueChange(value)
+                }
+            }} />)
+        }
+
+        return <Flex gap={gap}>
+            {inputs}
+        </Flex>
+    }, [bytes, value])
+
+    return content;
 }
 
 export function EditDataType(props: EditDataTypeProps) {
@@ -81,6 +122,21 @@ export function EditDataType(props: EditDataTypeProps) {
         <TextInput validate='publicKey' invalidTypeLabel="should be valid solana address" placeholder="program_id" sublabel="this type would only be applied to addresses owned by this program" value={object?.program_id} onChange={(newVal) => {
             changeObject(it => it.program_id = newVal)
         }} />
+
+        <MultipleItemsRow>
+            <SwitchInput value={object?.is_anchor} onChange={(val) => {
+                changeObject(it => it.is_anchor = val)
+            }}>Is anchor type</SwitchInput>
+            <If condition={object?.is_anchor && object?.discriminator}>
+                <MenuEntry sizeVariant="sm">
+                    <>Discriminator: </>{object?.discriminator.toString()}
+                </MenuEntry>
+                {/* <Text>{Buffer.from(object?.discriminator as Uint8Array).toString("hex")}</Text> */}
+                {/* <HexView value={object?.discriminator as Uint8Array} bytes={8} gap="5px" padding="2px" onValueChange={(val: Uint8Array) => {
+                changeObject(it => it.discriminator = val)
+            }} /> */}
+            </If>
+        </MultipleItemsRow>
         <Group name="structure">
             <>
                 {items.map((it, idx) => {

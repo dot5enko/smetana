@@ -25,7 +25,7 @@ export function SlideRoutes() {
             <MenuEntry
                 colorVariant="info"
                 onClick={() => {
-                    createNew().then((id) => {
+                    createNew(false).then((id) => {
                         toggleSlide("");
                         setRoute('edit_datatype', "Create new type", false, id as number)
                     }).catch((e: any) => {

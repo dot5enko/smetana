@@ -6,161 +6,193 @@ import { DataTypeField, getFieldSize } from "./types/DataTypeField"
 import { Buffer } from "buffer";
 import { PublicKey } from "@solana/web3.js";
 
-export async function parseIdlTypes(idl: any, includeComplex: boolean) { //: Promise<DataType[]> {
 
+export interface FailedType {
+    name: string
+    cause: any
+}
+
+export interface ParseIdlResult {
+    types: Map<string, ParsedTypeFromIdl>
+    failed: FailedType[]
+}
+
+export async function parseIdlTypes(idl: any, includeComplex: boolean) {
+
+    let failed = [];
     let types = new Map<string, ParsedTypeFromIdl>();
 
     for (var it of idl.types) {
-
-        const parseResult = await parseIdlStruct(it, types);
-        if (includeComplex || !parseResult.complex) {
-            parseResult.name = it.name;
-            parseResult.struct = true
-            parseResult.discriminator = new Uint8Array(calcDiscriminator(it.name))
-            types.set(it.name, parseResult)
+        try {
+            const parseResult = await parseIdlStruct(it, types);
+            if (includeComplex || !parseResult.complex) {
+                parseResult.name = it.name;
+                parseResult.struct = true
+                parseResult.discriminator = new Uint8Array(calcDiscriminator(it.name))
+                types.set(it.name, parseResult)
+            }
+        } catch (e: any) {
+            failed.push({
+                name: it.name,
+                cause: e
+            })
+            console.error(`unable to parse type: ${it.name}: `, e)
         }
     }
 
     for (var it of idl.accounts) {
-        const parseResult = await parseIdlStruct(it, types);
-        if (includeComplex || !parseResult.complex) {
-            parseResult.name = it.name;
-            parseResult.discriminator = new Uint8Array(calcDiscriminator(it.name))
-            types.set(it.name, parseResult)
+        try {
+            const parseResult = await parseIdlStruct(it, types);
+            if (includeComplex || !parseResult.complex) {
+                parseResult.name = it.name;
+                parseResult.discriminator = new Uint8Array(calcDiscriminator(it.name))
+                types.set(it.name, parseResult)
+            }
+        } catch (e: any) {
+            failed.push({
+                name: it.name,
+                cause: e
+            })
+            console.error(`unable to parse type: ${it.name}: `, e)
         }
     }
 
-    return types;
+    return { types, failed };
 }
 
 async function parseIdlStruct(struct: any, typesMap: Map<string, ParsedTypeFromIdl>): Promise<ParsedTypeFromIdl> {
 
-    let result: DataTypeField[] = [];
+    try {
+        let result: DataTypeField[] = [];
 
-    // discriminator offset
-    let idx = 1;
-    let size = 8;
+        // discriminator offset
+        let idx = 1;
+        let size = 8;
 
-    let noComplex = true;
+        let noComplex = true;
 
-    let discriminatorField: DataTypeField = {
-        datatype_id: 0,
-        order_position: 0,
-        optional: false,
-        label: "discriminator",
-        field_type: "u64",
-        is_complex_type: false,
-        is_array: false,
-        array_size: 1,
-        hide: true,
-        is_dynamic_size: false
-    };
-
-    result.push(discriminatorField)
-
-    for (var it of struct.type.fields) {
-
-        const complexType = (typeof it.type !== 'string')
-
-        let fieldObj: DataTypeField = {
-            datatype_id: 0, // reference
-            order_position: idx,
+        let discriminatorField: DataTypeField = {
+            datatype_id: 0,
+            order_position: 0,
             optional: false,
-            label: it.name,
-            field_type: it.type,
+            label: "discriminator",
+            field_type: "u64",
             is_complex_type: false,
-            hide: false,
             is_array: false,
             array_size: 1,
+            hide: true,
             is_dynamic_size: false
         };
 
-        if (complexType) {
-            // workaroud for complex anchor type early support
-            // replaces complex type size with byte array :)
+        result.push(discriminatorField)
 
-            console.log('type is ', it.type)
+        for (var it of struct.type.fields) {
 
-            fieldObj.is_array = true;
-            fieldObj.field_type = 'u8';
+            const complexType = (typeof it.type !== 'string')
 
-            // arrays 
-            if ('array' in it.type) {
+            let fieldObj: DataTypeField = {
+                datatype_id: 0, // reference
+                order_position: idx,
+                optional: false,
+                label: it.name,
+                field_type: it.type,
+                is_complex_type: false,
+                hide: false,
+                is_array: false,
+                array_size: 1,
+                is_dynamic_size: false
+            };
 
-                let arraySize = it.type.array[1]
-                let arrayElementTypeComplex = typeof it.type.array[0] != "string";
+            if (complexType) {
+                // workaroud for complex anchor type early support
+                // replaces complex type size with byte array :)
 
-                fieldObj.array_size = arraySize;
+                console.log('type is ', it.type)
 
-                if (!arrayElementTypeComplex) {
-                    fieldObj.field_type = it.type.array[0];
-                } else {
+                fieldObj.is_array = true;
+                fieldObj.field_type = 'u8';
 
-                    if ('array' in it.type.array[0]) {
-                        console.log('found too nested array. not supported right now')
+                // arrays 
+                if ('array' in it.type) {
 
-                        noComplex = false;
+                    let arraySize = it.type.array[1]
+                    let arrayElementTypeComplex = typeof it.type.array[0] != "string";
+
+                    fieldObj.array_size = arraySize;
+
+                    if (!arrayElementTypeComplex) {
+                        fieldObj.field_type = it.type.array[0];
                     } else {
 
-                        let referencedTypeName = it.type.array[0].defined;
+                        if ('array' in it.type.array[0]) {
+                            console.log('found too nested array. not supported right now')
+
+                            noComplex = false;
+                        } else {
+
+                            let referencedTypeName = it.type.array[0].defined;
+
+                            const parsedData = typesMap.get(referencedTypeName)
+                            if (parsedData) {
+                                console.log('%found referenced type ', referencedTypeName, parsedData)
+
+
+                                // replace struct with byte array
+                                fieldObj.field_type = 'u8';
+                                fieldObj.array_size = parsedData.info.size_bytes
+
+                            } else {
+                                console.log('%not found type ', referencedTypeName)
+                                noComplex = false;
+                            }
+                        }
+
+                    }
+                } else {
+                    if ('defined' in it.type) {
+                        // struct reference
+                        // noComplex = false;
+
+                        let referencedTypeName = it.type.defined
 
                         const parsedData = typesMap.get(referencedTypeName)
                         if (parsedData) {
-                            console.log('%found referenced type ', referencedTypeName, parsedData)
+                            console.log('found referenced type ', referencedTypeName, parsedData)
 
-
-                            // replace struct with byte array
                             fieldObj.field_type = 'u8';
                             fieldObj.array_size = parsedData.info.size_bytes
 
                         } else {
-                            console.log('%not found type ', referencedTypeName)
+                            console.log('not found type ', referencedTypeName)
                             noComplex = false;
                         }
                     }
-
-                }
-            } else {
-                if ('defined' in it.type) {
-                    // struct reference
-                    // noComplex = false;
-
-                    let referencedTypeName = it.type.defined
-
-                    const parsedData = typesMap.get(referencedTypeName)
-                    if (parsedData) {
-                        console.log('found referenced type ', referencedTypeName, parsedData)
-
-                        fieldObj.field_type = 'u8';
-                        fieldObj.array_size = parsedData.info.size_bytes
-
-                    } else {
-                        console.log('not found type ', referencedTypeName)
-                        noComplex = false;
-                    }
                 }
             }
+
+            size += await getFieldSize(fieldObj);
+
+            result.push(fieldObj);
+
+            idx += 1
         }
 
-        size += await getFieldSize(fieldObj);
-
-        result.push(fieldObj);
-
-        idx += 1
+        return Promise.resolve({
+            name: "",
+            fields: result,
+            complex: !noComplex,
+            info: {
+                fields_count: result.length,
+                size_bytes: size,
+                used_by: 0,
+            },
+            struct: false,
+            discriminator: new Uint8Array(8),
+            is_anchor: true
+        });
+    } catch (e: any) {
+        throw new Error('unable to parse json idl: ' + e.message, { cause: e })
     }
-
-    return Promise.resolve({
-        name: "",
-        fields: result,
-        complex: !noComplex,
-        info: {
-            fields_count: result.length,
-            size_bytes: size,
-            used_by: 0,
-        },
-        struct: false,
-        discriminator: new Uint8Array(),
-    });
 }
 
 export function calcDiscriminator(typename: string) {

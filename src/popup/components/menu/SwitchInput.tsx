@@ -8,6 +8,7 @@ export interface SwitchInputProps extends BasicEntryProps {
 
     value?: boolean
     onChange(val: boolean): void
+    flexShrink?: any
 }
 
 SwitchInput.defaultProps = {
@@ -17,7 +18,7 @@ SwitchInput.defaultProps = {
 export function SwitchInput(props: SwitchInputProps) {
 
     return <>
-        <MenuItemBasicElement borderRadius="6px" sizeVariant={props.sizeVariant}>
+        <MenuItemBasicElement borderRadius="6px" sizeVariant={props.sizeVariant} flexShrink={props.flexShrink}>
             <Flex width="100%">
                 <Box>{props.children}</Box>
                 <Spacer />

@@ -118,6 +118,7 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
             // try decode idl 
             if (raw.data.length > 1000) {
                 const idlJson = parseIdlFromAccountData(raw.data);
+                console.log("idl json found:", idlJson)
             }
 
             // todo use config

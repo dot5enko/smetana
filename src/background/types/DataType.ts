@@ -26,12 +26,14 @@ export interface DataType {
     program_id: string
 
     info: DataTypeAggregatedInfo
+    discriminator: Uint8Array
+    is_anchor: boolean
 }
 
 const datatype = db.table('datatype');
 const datatypefield = db.table('datatypefield');
 
-export async function createNew(): Promise<IndexableType> {
+export async function createNew(is_anchor: boolean): Promise<IndexableType> {
 
     const rndName = Math.random().toString(36).slice(2)
 
@@ -43,7 +45,9 @@ export async function createNew(): Promise<IndexableType> {
             used_by: 0,
             fields_count: 0,
             size_bytes: 0,
-        }
+        },
+        is_anchor,
+        discriminator: new Uint8Array(8)
     }
 
     return datatype.add(typ)
@@ -115,7 +119,9 @@ export async function importType(t: ParsedTypeFromIdl): Promise<number> {
             used_by: 0,
             fields_count: 0,
             size_bytes: 0,
-        }
+        },
+        is_anchor: true,
+        discriminator: t.discriminator
     }
 
     const typeid = (await datatype.add(typ)) as number

@@ -41,11 +41,11 @@ export function ImportIdl() {
             e.dataTransfer.files[0].text().then((text) => {
                 let idlJson = JSON.parse(text)
 
-                parseIdlTypes(idlJson, true).then((simpleTypes) => {
+                parseIdlTypes(idlJson, true).then((parseResult) => {
 
                     let result: ParsedTypeFromIdl[] = [];
 
-                    for (var parsedFromIdl of simpleTypes) {
+                    for (var parsedFromIdl of parseResult.types) {
 
                         result.push(parsedFromIdl[1])
                     }
@@ -53,7 +53,7 @@ export function ImportIdl() {
                     setTypes(result);
                     setTypesChanges(typeChanges + 1)
 
-                    console.log('parsed idl:', simpleTypes);
+                    console.log('failed types:', parseResult.failed);
                 });
 
             });
@@ -111,6 +111,9 @@ export function ImportIdl() {
                             </Flex>
                             <Text fontWeight={"bold"} color="white">{it.name}</Text>
                             <Text fontSize={"sm"}>{it.info.size_bytes} bytes in {it.fields.length} fields</Text>
+                            <Text>
+                                {it.discriminator.toString()}
+                            </Text>
                         </Box>
                     }
                 }} value={typesSelected} options={types}

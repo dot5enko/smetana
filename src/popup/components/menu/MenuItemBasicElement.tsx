@@ -12,7 +12,7 @@ export interface MenuItemBasicElementProps extends HTMLChakraProps<'div'>, Basic
 
 export function MenuItemBasicElement(props: MenuItemBasicElementProps) {
 
-    let { children, sizeVariant, colorVariant, ...rest } = props
+    let { children, sizeVariant, colorVariant, flexShrink, ...rest } = props
 
     const sizeVariantProps = useMemo(() => {
         return getSizeVariant(sizeVariant);
@@ -21,6 +21,8 @@ export function MenuItemBasicElement(props: MenuItemBasicElementProps) {
     const { hover, style }: ColorVariantStyle = useMemo(() => {
         return getVariantStyle(colorVariant ?? 'default')
     }, [colorVariant])
+
+    const shrink = flexShrink??"0" 
 
     return <Box
 
@@ -31,6 +33,7 @@ export function MenuItemBasicElement(props: MenuItemBasicElementProps) {
         justifyContent="center"
         display="flex"
         flexDirection="column"
+        flexShrink={shrink}
 
         {...sizeVariantProps}
         {...style}

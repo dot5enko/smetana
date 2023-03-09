@@ -4,17 +4,10 @@ import { PublicKey } from '@solana/web3.js';
 export const db = new Dexie('accounts');
 
 // todo check double initialization
-db.version(2).stores({
+db.version(1).stores({
     data: '++id, address_id, created_at',
     address: '++id, &address, sync_flag, data_type_id',
-    datatype: '++id, label, program_id',
-    datatypefield: '++id, datatype_id, order_position ',
-});
-
-db.version(3).stores({
-    data: '++id, address_id, created_at',
-    address: '++id, &address, sync_flag, data_type_id',
-    datatype: '++id, label, program_id, discriminator',
+    datatype: '++id, label, program_id, discriminator, is_anchor',
     datatypefield: '++id, datatype_id, order_position ',
 });
 
