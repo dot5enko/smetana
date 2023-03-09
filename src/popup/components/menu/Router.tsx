@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useExtensionContext } from "./context/ExtensionContext";
+import { useExtensionContext } from "../context/ExtensionContext";
 
 export interface RouteProps {
     path: string

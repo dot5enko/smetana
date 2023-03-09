@@ -1,7 +1,8 @@
 import { Box, Text } from "@chakra-ui/react";
-import { ActionButton } from "../../components/menu/ActionButton";
-import { MultipleItemsRow } from "../../components/menu/MultipleitemsRow";
-import { Sublabel } from "../../components/menu/Sublabel";
+import { ActionButton } from "../components/menu/ActionButton";
+import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
+import { Sublabel } from "../components/menu/Sublabel";
+
 
 export function Confirm() {
     return <><Box textAlign="center" padding="20px">

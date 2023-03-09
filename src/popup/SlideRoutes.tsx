@@ -1,12 +1,10 @@
-import { SlideRoute } from "../../components/Router";
-import { Confirm } from "./Confirm";
+import { Confirm } from "./slide/Confirm";
 import { Box, Flex, Text } from "@chakra-ui/react"
-import { ActionButton } from "../../components/menu/ActionButton";
-import { useExtensionContext } from "../../components/context/ExtensionContext";
-import { MenuEntry } from "../../components/menu/MenuEntry";
-import { createNew } from "../../../background/types/DataType";
-import { PublicKey } from "@solana/web3.js";
-import { genAnchorIdlAddr } from "src/background/idl";
+import { useExtensionContext } from "./components/context/ExtensionContext";
+import { SlideRoute } from "./components/menu/Router";
+import { ActionButton } from "./components/menu/ActionButton";
+import { MenuEntry } from "./components/menu/MenuEntry";
+import { createNew } from "../background/types/DataType";
 
 export function SlideRoutes() {
 
