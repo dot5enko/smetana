@@ -1,26 +1,15 @@
-import { Box, Skeleton, Text } from "@chakra-ui/react";
-import { LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { Box, MenuDivider, Skeleton, Text } from "@chakra-ui/react";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 import { useEffect, useState } from "react";
-import { RawAccountInfo } from "../../background/types/RawAccountinfo";
-import { getSingleAddressInfo } from "../../background/rpc";
-import { useExtensionContext } from "../components/context/ExtensionContext";
-import { MenuEntry } from "../components/menu/MenuEntry";
-import { Sublabel } from "../components/menu/Sublabel";
-import { TextInput } from "../components/menu/TextInput";
-import { addrFormat } from "../components/smetana/helpers";
-import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
-import { MenuDivider } from "../components/menu/MenuDivider";
-import { ActionButton } from "../components/menu/ActionButton";
-import { ItemSelector } from "../components/menu/ItemSelect";
-import { DataType, datatypesForDiscriminator, datatypesForProgram, DecodeTypeResult } from "../../background/types/DataType";
-import { Group } from "../components/menu/Group";
-import { decodeType as decodeTypeFunc } from "../../background/borsh";
-import { DecodedType } from "../components/smetana/DecodedType";
 import { toast } from "react-toastify";
-import { BottomContent } from "../components/menu/BottomContent";
-import { genAnchorIdlAddr, parseIdlFromAccountData } from "../../background/idl";
-import { fetchProgramIdl } from "../../background/types/Program";
+import { getSingleAddressInfo } from "../../background";
+import { RawAccountInfo, DataType, DecodeTypeResult, fetchProgramIdl, datatypesForDiscriminator, datatypesForProgram } from "../../background/types";
+import { useExtensionContext } from "../components/context/ExtensionContext";
+import { TextInput, ActionButton, Sublabel, MultipleItemsRow, MenuEntry, Group, BottomContent, ItemSelector } from "../components/menu";
+import { addrFormat, DecodedType } from "../components/smetana";
+import { decodeType as decodeTypeFunc } from "../../background"
+
 
 export interface TrackNewAddressProps {
     addr?: string

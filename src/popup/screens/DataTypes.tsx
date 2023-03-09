@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
-import { createNew, findDatatypes } from "../../background/types/DataType";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import { DataType } from "../components/smetana/DataType";
-import { DataType as DataTypeInterface } from "../../background/types/DataType"
-import { TextInput } from "../components/menu/TextInput";
-import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
-import { BottomContent } from "../components/menu/BottomContent";
-import { MenuEntry } from "../components/menu/MenuEntry";
-import { ActionButton } from "../components/menu/ActionButton";
+import { DataType } from "../components/smetana";
+import { DataType as DataTypeInterface, findDatatypes } from "../../background/types"
+import { TextInput, BottomContent, MenuEntry } from "../components/menu";
 
 export let SearchLimit = 30;
 

@@ -1,14 +1,11 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
-import { DragEventHandler, useEffect, useState } from "react";
-import { importType } from "../../background/types/DataType";
-import { parseIdlTypes } from '../../background/idl'
-import { ItemSelector } from "../components/menu/ItemSelect";
-import { MenuDivider } from "../components/menu/MenuDivider";
-import { MenuEntryWithSublabel } from "../components/menu/MenuEntryWithSublabel";
-import { useExtensionContext } from "../components/context/ExtensionContext";
+import { Box, Flex, MenuDivider, Text } from "@chakra-ui/react";
+import { DragEventHandler, useState } from "react";
 import { toast } from "react-toastify";
-import { BottomContent } from "../components/menu/BottomContent";
-import { ParsedTypeFromIdl } from "src/background/types/ParsedTypeFromIdl";
+import { parseIdlTypes } from "../../background";
+import { ParsedTypeFromIdl, importType } from "../../background/types";
+import { useExtensionContext } from "../components/context/ExtensionContext";
+import { ItemSelector, BottomContent, MenuEntryWithSublabel } from "../components/menu";
+
 
 export function ImportIdl() {
 

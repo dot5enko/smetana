@@ -1,5 +1,4 @@
-import { ActionButton, ActionButtonProps } from "./ActionButton"
-import { Sublabel } from "./Sublabel"
+import { ActionButton, ActionButtonProps,Sublabel } from "."
 
 interface MenuEntryWithSublabelProps extends ActionButtonProps {
     text?: string

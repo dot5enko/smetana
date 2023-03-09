@@ -1,9 +1,7 @@
 import { Box, Flex, HTMLChakraProps, Icon, Spacer, Text } from "@chakra-ui/react";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import { DataType as DataTypeInterface, DataTypeAggregatedInfo } from "../../../background/types/DataType";
+import { DataType as DataTypeInterface } from "../../../background/types/DataType";
 import { MenuItemBasicElement } from "../menu/MenuItemBasicElement";
-import { Sublabel } from "../menu/Sublabel";
-import { addrFormat } from "./helpers";
 
 export interface DataTypeProps extends HTMLChakraProps<'div'> {
     item: DataTypeInterface

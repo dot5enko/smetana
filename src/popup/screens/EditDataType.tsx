@@ -1,21 +1,12 @@
-import { Box, Flex, HTMLChakraProps, Input, Text } from "@chakra-ui/react";
+import { Flex, HTMLChakraProps, Input } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { DataType as DataTypeInterface, getById, removeType, updateDatatype } from "../../background/types/DataType";
-import { createNewField, DataTypeField as DataTypeFieldInterface, getFieldsForType } from "../../background/types/DataTypeField";
+import { createNewField, DataTypeField as DataTypeFieldInterface, getFieldsForType, DataType as DataTypeInterface, getById, removeType, updateDatatype } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-
-import { ActionButton } from "../components/menu/ActionButton";
-import { Group } from "../components/menu/Group";
-import { If } from "../components/menu/If";
-import { Sublabel } from "../components/menu/Sublabel";
-import { SwitchInput } from "../components/menu/SwitchInput";
-import { TextInput } from "../components/menu/TextInput";
+import { ActionButton, Group, If, Sublabel, SwitchInput, TextInput, MenuEntry, MultipleItemsRow } from "../components/menu";
 import { DataTypeField } from "../components/smetana/DataTypeField";
 
 import { Buffer } from "buffer"
-import { MenuEntry } from "../components/menu/MenuEntry";
-import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
 
 export interface EditDataTypeProps {
     id: any

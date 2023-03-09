@@ -1,8 +1,7 @@
 import { Box, Text, HTMLChakraProps, Spacer, Icon, Flex } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { MdCheckCircle } from "react-icons/md";
-import { BasicEntryProps, MenuItemBasicElement } from "./MenuItemBasicElement";
-import { ScrolledItem } from "./ScrolledItem";
+import { BasicEntryProps, MenuItemBasicElement,ScrolledItem } from ".";
 
 export interface ItemSelectorProps<T> extends HTMLChakraProps<'div'>, BasicEntryProps {
     options: T[],

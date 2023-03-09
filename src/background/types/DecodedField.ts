@@ -14,3 +14,4 @@ export interface DecodeFieldResult {
     bytesUsed: number
     contains?: boolean
 }
+

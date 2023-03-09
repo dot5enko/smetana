@@ -1,16 +1,9 @@
 import { useEffect, useState } from "react";
-import { ActionButton } from "../components/menu/ActionButton";
-import { MenuDivider } from "../components/menu/MenuDivider";
-import { SwitchInput } from "../components/menu/SwitchInput";
-import { TextInput } from "../components/menu/TextInput";
+import { MenuEntry, If, ActionButton, MenuDivider, SwitchInput, TextInput, Group, MultipleItemsRow } from "../components/menu";
 import { BorshTypeSelect } from "../components/smetana/BorshTypeSelect";
-import { Group } from "../components/menu/Group";
 import { DataTypeField, getFieldsById, getFieldSize, removeTypeField, updateDatatypeField } from "../../background/types/DataTypeField";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { toast } from "react-toastify";
-import { If } from "../components/menu/If";
-import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
-import { MenuEntry } from "../components/menu/MenuEntry";
 
 export interface EditTypeFieldProps {
     id: any

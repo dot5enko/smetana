@@ -1,9 +1,7 @@
 import { Box, Input } from "@chakra-ui/react";
 import { PublicKey } from "@solana/web3.js";
 import { useEffect, useMemo, useState } from "react";
-import { getSizeVariant } from "./EntryVariantStyle";
-import { BasicEntryProps } from "./MenuItemBasicElement";
-import { Sublabel } from "./Sublabel";
+import { getSizeVariant,BasicEntryProps,Sublabel } from ".";
 
 export interface TextInputProps extends BasicEntryProps {
     sublabel?: string,

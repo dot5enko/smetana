@@ -1,7 +1,6 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { toast } from "react-toastify";
-import { DecodeTypeResult } from "src/background/types/DataType";
-import { DecodedField } from "src/background/types/DecodedField";
+import { DecodeTypeResult,DecodedField } from "../../../background/types";
 import { If } from "../menu/If";
 import { MenuEntry } from "../menu/MenuEntry";
 import { MenuEntryWithSublabel } from "../menu/MenuEntryWithSublabel";

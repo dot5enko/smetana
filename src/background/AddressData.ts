@@ -1,5 +1,3 @@
-// import { PublicKey } from "@solana/web3.js"
-
 export interface AddressData {
 
     // for simlicity its type is string

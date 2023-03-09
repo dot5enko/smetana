@@ -1,9 +1,7 @@
 import { Box, Flex, HTMLChakraProps, Icon, Spacer, Text } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdArrowDropDown, MdArrowDropUp, MdKeyboardArrowRight } from "react-icons/md";
-import { DataType } from "src/background/types/DataType";
 import { DataTypeField, moveDown, moveUp } from "../../../background/types/DataTypeField";
-import { If } from "../menu/If";
 import { MenuItemBasicElement } from "../menu/MenuItemBasicElement";
 
 export interface DataTypeFieldProps extends HTMLChakraProps<'div'> {

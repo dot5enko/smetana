@@ -1,6 +1,5 @@
 import { Box, Flex, Spacer, Switch } from "@chakra-ui/react";
-import { BasicEntryProps, MenuItemBasicElement } from "./MenuItemBasicElement";
-import { Sublabel } from "./Sublabel";
+import { BasicEntryProps, MenuItemBasicElement,Sublabel } from ".";
 
 export interface SwitchInputProps extends BasicEntryProps {
     children?: any,

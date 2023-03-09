@@ -1,6 +1,5 @@
 import { HTMLChakraProps } from "@chakra-ui/react";
-import { BasicEntryProps, MenuItemBasicElement } from "./MenuItemBasicElement";
-import { Sublabel } from "./Sublabel";
+import { BasicEntryProps, MenuItemBasicElement,Sublabel } from ".";
 
 export interface ActionButtonProps extends HTMLChakraProps<'div'>, BasicEntryProps {
 

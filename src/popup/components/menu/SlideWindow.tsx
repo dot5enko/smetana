@@ -1,10 +1,7 @@
 import { Box, HTMLChakraProps, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useExtensionContext } from "../context/ExtensionContext";
-import { ActionButton } from "./ActionButton";
 import { If } from "./If";
-import { MultipleItemsRow } from "./MultipleitemsRow";
-import { Sublabel } from "./Sublabel";
 
 export interface SlideWindowProps extends HTMLChakraProps<'div'> {
     windowActive: boolean
