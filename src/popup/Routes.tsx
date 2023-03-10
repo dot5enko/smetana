@@ -11,17 +11,21 @@ import { RpcConfig } from "./screens/RpcConfig";
 import { TrackNewAddress } from "./screens/TrackNewAddress";
 import { AboutPage } from "./slide/About";
 import { Config } from "./screens/Config";
+import { BottomContent } from "./components/menu";
 
 export function Routes() {
 
     return <>
         <Route path="">
-            <MenuEntry submenu="addresses">Favorites</MenuEntry>
+            <MenuEntry submenu="addresses">Watched addresses</MenuEntry>
             <MenuEntry submenu="tags">Tags</MenuEntry>
             <MenuEntry submenu="data_types" fixedFooter={true} >Data types</MenuEntry>
             <MenuDivider width={0} />
             <MenuEntry submenu="config">Settings</MenuEntry>
             <AboutPage />
+            <BottomContent>
+                <MenuEntry submenu="track_new_address" colorVariant="info" fixedFooter={true}>Track new address</MenuEntry>
+            </BottomContent>
         </Route>
         <Route path="track_new_address">
             <TrackNewAddress addr="8szGkuLTAux9XMgZ2vtY39jVSowEcpBfFfD8hXSEqdGC" />
