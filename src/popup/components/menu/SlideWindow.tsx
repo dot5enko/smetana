@@ -10,14 +10,27 @@ export interface SlideWindowProps extends HTMLChakraProps<'div'> {
 export function SlideWindow(props: SlideWindowProps) {
 
     const { windowActive, children, ...rest } = props;
-    const { toggleSlide } = useExtensionContext();
+    const { hideSlide } = useExtensionContext();
+
+    const [actualActive, setActive] = useState(false);
+
+    useEffect(() => {
+
+        if (!windowActive) {
+            dismiss()
+        } else {
+            setActive(windowActive);
+        }
+    }, [windowActive])
+
 
     function dismiss() {
 
         setAnimate(false);
 
         setTimeout(() => {
-            toggleSlide("")
+            setActive(false);
+            hideSlide();
         }, 250);
     }
 
@@ -26,11 +39,11 @@ export function SlideWindow(props: SlideWindowProps) {
 
     useEffect(() => {
         setTimeout(() => {
-            setAnimate(windowActive)
+            setAnimate(actualActive)
         }, 5)
-    }, [windowActive])
+    }, [actualActive])
 
-    return <If condition={windowActive}>
+    return <If condition={actualActive}>
         <Box
             position="absolute"
             width="100%"

@@ -13,8 +13,9 @@ export interface ExtensionContextType {
     setRpc(arg: string): void
 
     slideActive: boolean,
-    slidePath: string
-    toggleSlide(path: string): void
+    slideRoute: RouteHistoryEntry
+    setSlideRoute(val: string, ...args: any[]): void,
+    hideSlide():void
 
     connection: Connection
 }
@@ -39,21 +40,19 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
     const { children, ...rest } = props;
 
     const [currentRoute, setRouteState] = useState<RouteHistoryEntry>({ path: "", title: "", args: [], footerContent: false })
-
     const [routeStack, setRouteStack] = useState<RouteHistoryEntry[]>([]);
+    
     const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, "https://rpc.ankr.com/solana"));
-
-    const [slideActive, setSlideActive] = useState<boolean>(false);
     const [connection, setConnection] = useState(new Connection(rpc, 'confirmed'))
 
-    const [slidePath, setSlidePath] = useState("");
+    const [slideActive, setSlideActive] = useState<boolean>(false);
+    const [slideRoute, setSlideRouteVal] = useState<RouteHistoryEntry>({ path: "", title: "", args: [], footerContent: false })
 
     useEffect(() => {
         // todo use parameter
         setConnection(new Connection(rpc, 'confirmed'))
         console.log('connection changed to: ', rpc)
     }, [rpc])
-
 
     const ctxValue = useMemo(() => {
 
@@ -95,10 +94,23 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
         }
 
         // slide window 
-        const toggleSlide = (path: string) => {
+        const setSlideRoute = (path: string, ...args: any[]) => {
+            
+            const srval:RouteHistoryEntry = {
+                path: path,
+                title: "",
+                args: args,
+                footerContent: false
+            }
 
-            setSlidePath(path);
+            setSlideRouteVal(srval)
             setSlideActive(!slideActive)
+        }
+
+        // slide 
+
+        const hideSlide = () => {
+            setSlideActive(false)
         }
 
 
@@ -109,12 +121,15 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
             rpc, setRpc,
             route: currentRoute,
 
-            slideActive, toggleSlide,
-            slidePath
+            slideActive,
+            setSlideRoute,
+            slideRoute,
+            hideSlide
         }
         return value;
 
-    }, [rpc, slideActive, routeStack, currentRoute, connection])
+    }, [rpc, slideActive, routeStack, currentRoute, connection,
+        slideRoute, slideActive])
 
     return (
         <ExtensionContext.Provider value={ctxValue}>
@@ -135,5 +150,10 @@ export function useExtensionContext(): ExtensionContextType {
 
 export function useRouteArg(idx: number, def?: any): any {
     const { route: { args: routeArgs } } = useExtensionContext();
+    return routeArgs[idx] ?? def;
+}
+
+export function useSlideRouteArg(idx: number, def?: any): any {
+    const { slideRoute: { args: routeArgs } } = useExtensionContext();
     return routeArgs[idx] ?? def;
 }

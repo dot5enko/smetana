@@ -25,16 +25,16 @@ export function Route(props: RouteProps) {
 
 export function SlideRoute(props: RouteProps) {
 
-    const { slidePath } = useExtensionContext();
+    const { slideRoute } = useExtensionContext();
 
     const content = useMemo(() => {
-        if (slidePath == props.path) {
+        if (slideRoute.path == props.path) {
             return props.children;
         } else {
             return null;
         }
 
-    }, [slidePath, props.path, props.children])
+    }, [slideRoute.path, props.path, props.children])
 
     return content;
 }

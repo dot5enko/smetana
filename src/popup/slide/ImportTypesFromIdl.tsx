@@ -10,7 +10,7 @@ import { TextInput } from "../components/menu/TextInput";
 
 export function ImportTypesFromIdl() {
 
-    const { toggleSlide } = useExtensionContext();
+    const { hideSlide, slideRoute : {args} } = useExtensionContext();
 
     const [addr, setAddr] = useState("");
     const [validAddr, setValid] = useState("");
@@ -35,9 +35,11 @@ export function ImportTypesFromIdl() {
         <MenuDivider width={0} />
         <MultipleItemsRow>
             <ActionButton sizeVariant="sm" colorVariant="info" action={() => {
-
+                if (args[0]) {
+                    args[0]()
+                }
             }} >Confirm</ActionButton>
-            <ActionButton sizeVariant="sm" action={() => { toggleSlide("") }} >Cancel</ActionButton>
+            <ActionButton sizeVariant="sm" action={() => { hideSlide() }} >Cancel</ActionButton>
         </MultipleItemsRow>
         <MenuDivider width={0} />
     </>

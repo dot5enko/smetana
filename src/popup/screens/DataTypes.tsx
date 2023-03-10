@@ -11,7 +11,7 @@ export interface DataTypesProps {
 
 export function DataTypes(props: DataTypesProps) {
 
-    const { setRoute, toggleSlide } = useExtensionContext();
+    const { setRoute, setSlideRoute } = useExtensionContext();
     const [query, setQuery] = useState<string>("");
 
     const [items, setItems] = useState<DataTypeInterface[]>([]);
@@ -28,7 +28,7 @@ export function DataTypes(props: DataTypesProps) {
             <MenuEntry
                 colorVariant="info"
                 onClick={() => {
-                    toggleSlide("new_type");
+                    setSlideRoute("new_type");
                 }}>New type</MenuEntry>
         </BottomContent>
         <TextInput

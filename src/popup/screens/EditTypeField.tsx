@@ -12,7 +12,7 @@ export interface EditTypeFieldProps {
 
 export function EditTypeField(props: EditTypeFieldProps) {
 
-    const { routeBack } = useExtensionContext();
+    const { routeBack, setSlideRoute, hideSlide } = useExtensionContext();
     const [object, setObject] = useState<DataTypeField | undefined>(undefined)
     const [fieldSize, setFieldSize] = useState<number | undefined>(undefined);
 
@@ -137,13 +137,16 @@ export function EditTypeField(props: EditTypeFieldProps) {
         <MenuDivider height={10} width={0} />
         <Group name="danger zone">
             <ActionButton sizeVariant="sm" colorVariant="error" action={() => {
-                if (confirm("do you really want to remove this item?")) {
+
+                setSlideRoute("confirm", () => {
+                    hideSlide();
                     removeTypeField(props.id).then(() => {
                         routeBack();
                     }).catch(e => {
                         console.error('unable to remove field:', e)
                     })
-                }
+                }, "do you really want to remove this item?");
+
             }} textAlign="center">Remove</ActionButton>
         </Group>
 

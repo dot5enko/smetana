@@ -52,7 +52,7 @@ export function EditDataType(props: EditDataTypeProps) {
     const [items, setItems] = useState<DataTypeFieldInterface[]>([]);
     const [object, setObject] = useState<DataTypeInterface | undefined>(undefined);
 
-    const { setRoute, routeBack, toggleSlide } = useExtensionContext();
+    const { setRoute, routeBack, setSlideRoute,hideSlide } = useExtensionContext();
 
     const [orderEditable, setOrderEditable] = useState(false);
 
@@ -175,13 +175,16 @@ export function EditDataType(props: EditDataTypeProps) {
                     }
                 }}>{orderEditable ? "Exit edit mode" : "Change property order"}</ActionButton>
                 <ActionButton colorVariant="error" action={() => {
-                    if (confirm("really want to delete this item?")) {
+
+                    setSlideRoute("confirm", () => {
+                        hideSlide();
                         removeType(props.id).then(() => {
                             routeBack();
                         }).catch(e => {
                             console.error('unable to remove field:', e)
                         })
-                    }
+                    }, "really want to delete this item?");
+
                 }}>Delete type</ActionButton>
             </If>
         </Group>

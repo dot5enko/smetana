@@ -9,7 +9,7 @@ import { ItemSelector, BottomContent, MenuEntryWithSublabel,MenuDivider } from "
 
 export function ImportIdl() {
 
-    const { setRoute, toggleSlide } = useExtensionContext();
+    const { setRoute, setSlideRoute } = useExtensionContext();
 
     const [drag, setDrag] = useState(false);
 
@@ -126,7 +126,10 @@ export function ImportIdl() {
             <MenuEntryWithSublabel
                 colorVariant="info"
                 action={() => {
-                    toggleSlide("import_json_idl")
+                    // pass callback as arg
+                    setSlideRoute("import_json_idl",() => {
+                        alert('callback on success fired!')
+                    })
                 }}
                 text={typesSelected.length == 0 ? "please, select types to import first" : undefined}
             >Import</MenuEntryWithSublabel>

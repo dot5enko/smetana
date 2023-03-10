@@ -1,6 +1,6 @@
 import { Confirm } from "./slide/Confirm";
 import { Box, Flex, Text } from "@chakra-ui/react"
-import { useExtensionContext } from "./components/context/ExtensionContext";
+import { useExtensionContext, useSlideRouteArg } from "./components/context/ExtensionContext";
 import { SlideRoute } from "./components/menu/Router";
 import { ActionButton } from "./components/menu/ActionButton";
 import { MenuEntry } from "./components/menu/MenuEntry";
@@ -9,26 +9,31 @@ import { ImportTypesFromIdl } from "./slide/ImportTypesFromIdl";
 
 export function SlideRoutes() {
 
-    const { setRoute, toggleSlide } = useExtensionContext();
+    const { setRoute, hideSlide } = useExtensionContext();
 
     return <>
         <SlideRoute path="confirm">
-            <Confirm />
+            <Confirm
+                action={useSlideRouteArg(0)}
+                label={useSlideRouteArg(1)}
+                sublabel={useSlideRouteArg(2)}
+            />
         </SlideRoute>
         <SlideRoute path="import_json_idl">
-            <ImportTypesFromIdl/>
+            <ImportTypesFromIdl />
         </SlideRoute>
         <SlideRoute path="new_type">
             <ActionButton
                 colorVariant="success"
                 action={() => {
+                    hideSlide();
                     setRoute('import_anchor_type', "Anchor idl import", true)
                 }}>Import idl.json</ActionButton>
             <MenuEntry
                 colorVariant="info"
                 onClick={() => {
                     createNew(false).then((id) => {
-                        toggleSlide("");
+                        hideSlide();
                         setRoute('edit_datatype', "Create new type", false, id as number)
                     }).catch((e: any) => {
                         console.error('unable to create new type:', e.message)
