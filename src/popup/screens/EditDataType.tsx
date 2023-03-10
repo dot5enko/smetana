@@ -1,4 +1,4 @@
-import { Flex, HTMLChakraProps, Input } from "@chakra-ui/react";
+import { Flex, HTMLChakraProps, Input, Skeleton } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { createNewField, DataTypeField as DataTypeFieldInterface, getFieldsForType, DataType as DataTypeInterface, getById, removeType, updateDatatype } from "../../background/types";
@@ -52,7 +52,7 @@ export function EditDataType(props: EditDataTypeProps) {
     const [items, setItems] = useState<DataTypeFieldInterface[]>([]);
     const [object, setObject] = useState<DataTypeInterface | undefined>(undefined);
 
-    const { setRoute, routeBack, setSlideRoute,hideSlide } = useExtensionContext();
+    const { setRoute, routeBack, setSlideRoute, hideSlide } = useExtensionContext();
 
     const [orderEditable, setOrderEditable] = useState(false);
 
@@ -128,22 +128,21 @@ export function EditDataType(props: EditDataTypeProps) {
             </If>
         </MultipleItemsRow>
         <Group name="structure">
-            <>
-                {items.map((it, idx) => {
-                    return <DataTypeField movable={orderEditable} onMoved={() => {
-                        fetchFields();
-                    }} key={idx} item={it} onClick={() => {
-                        if (!orderEditable) {
-                            setRoute(
-                                "edit_typefield",
-                                "Edit " + object?.label + " property",
-                                false,
-                                it.id,
-                                object?.protect_updates);
-                        }
-                    }} />
-                })}
-            </>
+            {items.map((it, idx) => {
+                return <DataTypeField movable={orderEditable} onMoved={() => {
+                    fetchFields();
+                }} key={idx} item={it} onClick={() => {
+                    if (!orderEditable) {
+                        setRoute(
+                            "edit_typefield",
+                            "Edit " + object?.label + " property",
+                            false,
+                            it.id,
+                            object?.protect_updates);
+                    }
+                }} />
+            })}
+
             <If condition={!object?.protect_updates}>
                 <ActionButton colorVariant="info" action={function (): void {
                     if (object?.protect_updates) {

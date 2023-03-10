@@ -110,14 +110,10 @@ export async function importType(program_id: string, t: ParsedTypeFromIdl): Prom
 
     const typ: DataType = {
         label: t.name,
-        protect_updates: false,
-        program_id: "",
-        info: {
-            used_by: 0,
-            fields_count: 0,
-            size_bytes: 0,
-        },
-        is_anchor: true,
+        protect_updates: true,
+        program_id: program_id,
+        info: t.info,
+        is_anchor: !t.struct,
         discriminator: t.discriminator
     }
 

@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { MdKeyboardBackspace, MdSettings } from "react-icons/md"
 import { If } from "./components/menu/If"
 import { SlideWindow } from "./components/menu/SlideWindow"
+import { useEffect, useMemo, useState } from "react"
 
 const AnimationDuration = 150;
 
@@ -61,7 +62,7 @@ function Content() {
 
 function AppWindowInner(props: { routes: any, slideRoutes: any }) {
 
-  const { slideActive, hasBack, routeBack, setSlideRoute, rpc, route: { footerContent: footer, title } } = useExtensionContext();
+  const { slideActive, hasBack, routeBack, setSlideRoute, rpc, route: { footerContent: footer, title, path: routePath } } = useExtensionContext();
 
   return <Box
     width="360px"
@@ -97,11 +98,8 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
           ><Icon as={MdSettings} /></Box>
         </Flex>
       </Box>
-      <Flex
-        // flex="1"
+      <Box
         marginTop="5px"
-        direction="column"
-        gap="5px"
         overflowY="scroll"
         css={{
           '&::-webkit-scrollbar': {
@@ -110,7 +108,7 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
         }}
       >
         {props.routes}
-      </Flex>
+      </Box>
       <Spacer />
       <If condition={footer}>
         <Flex marginTop="10px" width="100%" minHeight="65px" padding="5px 0" />

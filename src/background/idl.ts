@@ -24,10 +24,9 @@ export async function parseIdlTypes(idl: any, includeComplex: boolean) {
 
     for (var it of idl.types) {
         try {
-            const parseResult = await parseIdlStruct(true,it, types);
+            const parseResult = await parseIdlStruct(true, it, types);
             if (includeComplex || !parseResult.complex) {
                 parseResult.name = it.name;
-                parseResult.discriminator = new Uint8Array(calcDiscriminator(it.name))
                 types.set(it.name, parseResult)
             }
         } catch (e: any) {
@@ -41,7 +40,7 @@ export async function parseIdlTypes(idl: any, includeComplex: boolean) {
 
     for (var it of idl.accounts) {
         try {
-            const parseResult = await parseIdlStruct(false,it, types);
+            const parseResult = await parseIdlStruct(false, it, types);
             if (includeComplex || !parseResult.complex) {
                 parseResult.name = it.name;
                 parseResult.discriminator = new Uint8Array(calcDiscriminator(it.name))
