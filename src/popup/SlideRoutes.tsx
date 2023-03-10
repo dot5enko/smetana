@@ -1,5 +1,5 @@
 import { Confirm } from "./slide/Confirm";
-import { Box, Flex, Text } from "@chakra-ui/react"
+import { Box, Flex, Link, Text } from "@chakra-ui/react"
 import { useExtensionContext, useSlideRouteArg } from "./components/context/ExtensionContext";
 import { SlideRoute } from "./components/menu/Router";
 import { ActionButton } from "./components/menu/ActionButton";
@@ -8,6 +8,7 @@ import { createNew } from "../background/types/DataType";
 import { ImportTypesFromIdl } from "./slide/ImportTypesFromIdl";
 import { TrackNewAddressOptions } from "./slide/TrackNewAddressOptions";
 import { Config, RpcConfig } from "./screens";
+import { MenuDivider } from "./components/menu";
 
 export function SlideRoutes() {
 
@@ -52,7 +53,7 @@ export function SlideRoutes() {
                 }}
             >Create manually</MenuEntry>
         </SlideRoute>
-        <SlideRoute path="">
+        <SlideRoute path="about">
             <Flex
                 direction="column"
                 justifyContent="center"
@@ -63,12 +64,13 @@ export function SlideRoutes() {
             >
                 <Box justifySelf={"center"} alignSelf="center">
                     <Text fontSize={"2xl"} textTransform="uppercase">Smetana</Text>
+                    <MenuDivider />
                     <Box fontSize="sm" marginTop="20px">
-                        <Text>solana account data explorer</Text>
-                        <Text>made by <strong>dot5enko</strong></Text>
-                        <Text fontSize="xs">2023</Text>
+                        <Text>solana account data insights made it easy</Text>
+                        <Text fontSize="xs"><Link href="https://twitter.com/fwnd18"><strong>@fwnd18</strong></Link>, 2023,  <Link href="https://github.com/dot5enko/smetana" >source code</Link></Text>
                     </Box>
                 </Box>
+                <MenuDivider width={0} />
             </Flex>
         </SlideRoute>
     </>

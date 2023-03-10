@@ -1,5 +1,4 @@
 import { useRouteArg } from "./components/context/ExtensionContext";
-import { MenuDivider } from "./components/menu/MenuDivider";
 import { MenuEntry } from "./components/menu/MenuEntry";
 import { Route } from "./components/menu/Router";
 import { Addresses } from "./screens/Addresses";
@@ -7,21 +6,16 @@ import { DataTypes } from "./screens/DataTypes";
 import { EditDataType } from "./screens/EditDataType";
 import { EditTypeField } from "./screens/EditTypeField";
 import { ImportIdl } from "./screens/ImportIdl";
-import { RpcConfig } from "./slide/RpcConfig";
 import { TrackNewAddress } from "./screens/TrackNewAddress";
-import { AboutPage } from "./slide/About";
-import { Config } from "./slide/Config";
 import { BottomContent } from "./components/menu";
 
 export function Routes() {
 
     return <>
         <Route path="">
-            <MenuEntry submenu="addresses">Watched addresses</MenuEntry>
+            <MenuEntry submenu="addresses">Watching</MenuEntry>
             <MenuEntry submenu="tags">Tags</MenuEntry>
             <MenuEntry submenu="data_types" fixedFooter={true} >Data types</MenuEntry>
-            <MenuDivider width={0} />
-            <AboutPage />
             <BottomContent>
                 <MenuEntry submenu="track_new_address" colorVariant="info" fixedFooter={true}>Track new address</MenuEntry>
             </BottomContent>

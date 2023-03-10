@@ -36,7 +36,7 @@ export function Route(props: RouteProps) {
         if (action == 'show') {
             setTimeout(() => {
                 setOpacity(1);
-            }, 10)
+            }, 5)
         }
 
         if (action == 'hide') {
@@ -45,7 +45,7 @@ export function Route(props: RouteProps) {
     }, [action])
 
     if (current) {
-        return <Flex direction="column" left="200px" gap="5px" transition="all .3s ease" opacity={opacity} translateX={opacity == 1?"0px":"-200px"}>
+        return <Flex direction="column" gap="5px" transition="all .35s ease" opacity={opacity} translateX={opacity == 1?"-200px":"0px"}>
             {props.children}
         </Flex>
     } else {

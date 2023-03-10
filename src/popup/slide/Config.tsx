@@ -14,5 +14,8 @@ export function Config() {
         <MenuEntry isSlidePath={true} submenu="lang_config">
             Language
         </MenuEntry>
+        <MenuEntry isSlidePath={true} submenu="about">
+            About
+        </MenuEntry>
     </>
 }
