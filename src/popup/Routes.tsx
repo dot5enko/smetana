@@ -8,6 +8,8 @@ import { EditTypeField } from "./screens/EditTypeField";
 import { ImportIdl } from "./screens/ImportIdl";
 import { TrackNewAddress } from "./screens/TrackNewAddress";
 import { BottomContent } from "./components/menu";
+import { EditWatchedAddress } from "./screens/EditWatchedAddress";
+import { DataHistory } from "./screens/DataHistory";
 
 export function Routes() {
 
@@ -37,6 +39,12 @@ export function Routes() {
         </Route>
         <Route path="edit_typefield" >
             <EditTypeField id={useRouteArg(0)} protected={useRouteArg(1, false)} />
+        </Route>
+        <Route path="edit_watchedaddress">
+            <EditWatchedAddress id={useRouteArg(0)} />
+        </Route>
+        <Route path="address_data_history">
+            <DataHistory id={useRouteArg(0)} />
         </Route>
     </>
 }

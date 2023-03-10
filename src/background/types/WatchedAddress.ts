@@ -13,6 +13,8 @@ export interface WatchedAddress {
 
     // number of fails to parse address data by given type
     parse_failed_count: number
+
+    paused: boolean
 }
 
 const watchedaddresstable = db.table('watched_address');
@@ -20,6 +22,11 @@ const watchedaddresstable = db.table('watched_address');
 export async function getWatchedByAddressId(addrid: number): Promise<WatchedAddress | undefined> {
     return watchedaddresstable.get({ address_id: addrid })
 }
+
+export async function getWatchedById(val: number): Promise<WatchedAddress | undefined> {
+    return watchedaddresstable.get({ id: val })
+}
+
 
 export async function createNewWatchedAddress(
     address: string,
@@ -41,7 +48,8 @@ export async function createNewWatchedAddress(
             sync_interval: sync_interval,
             last_sync: 0,
             parse_failed_count: 0,
-            label: label
+            label: label,
+            paused : false,
         }
 
         const id = await watchedaddresstable.add(newWatchedAddrObject);
@@ -51,5 +59,22 @@ export async function createNewWatchedAddress(
     } else {
         return watched;
     }
+}
 
+export async function findWatchedAddresses(label: string, limit: number): Promise<WatchedAddress[]> {
+
+    if (label === "") {
+        return await watchedaddresstable.limit(limit).toArray()
+    }
+
+    return await watchedaddresstable.filter((it: WatchedAddress) => {
+        return it.label.toLowerCase().indexOf(label.toLowerCase()) != -1
+    }).limit(limit).toArray()
+}
+
+
+// todo maybe use update(table:string) + table name validation ?
+// its already 3+ functions like this 
+export async function updateWatched(id: number, changes: any) {
+    watchedaddresstable.update(id, changes);
 }

@@ -1,14 +1,8 @@
-import { Confirm } from "./slide/Confirm";
 import { Box, Flex, Link, Text } from "@chakra-ui/react"
 import { useExtensionContext, useSlideRouteArg } from "./components/context/ExtensionContext";
-import { SlideRoute } from "./components/menu/Router";
-import { ActionButton } from "./components/menu/ActionButton";
-import { MenuEntry } from "./components/menu/MenuEntry";
+import { ActionButton, MenuEntry, SlideRoute, MenuDivider } from "./components/menu";
 import { createNew } from "../background/types/DataType";
-import { ImportTypesFromIdl } from "./slide/ImportTypesFromIdl";
-import { TrackNewAddressOptions } from "./slide/TrackNewAddressOptions";
-import { Config, RpcConfig } from "./screens";
-import { MenuDivider } from "./components/menu";
+import { ImportTypesFromIdl, TrackNewAddressOptions, RpcConfig, Config, Confirm } from "./slide";
 
 export function SlideRoutes() {
 

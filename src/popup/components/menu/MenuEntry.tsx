@@ -9,11 +9,16 @@ export interface MenuEntryProps extends HTMLChakraProps<"div">, BasicEntryProps 
     submenuTitle?: string
     fixedFooter?: boolean
     isSlidePath?: boolean
+    args?: any[]
+}
+
+MenuEntry.defaultProps = {
+    args: []
 }
 
 export function MenuEntry(props: MenuEntryProps) {
 
-    let { children, submenu, submenuTitle, fixedFooter, onClick, isSlidePath, ...rest } = props
+    let { children, submenu, submenuTitle, fixedFooter, onClick, isSlidePath, args, ...rest } = props
 
     const [title, setTitle] = useState<string>("");
 
@@ -43,13 +48,16 @@ export function MenuEntry(props: MenuEntryProps) {
         }
 
         if (submenu) {
+            const argsForSure = args as [];
+
             if (isSlidePath) {
-                setSlideRoute(submenu as string)
+                setSlideRoute(submenu as string, ...argsForSure)
             } else {
                 setRoute(
                     submenu as string,
                     title,
-                    fixedFooter ?? false
+                    fixedFooter ?? false,
+                    ...argsForSure
                 );
             }
         }

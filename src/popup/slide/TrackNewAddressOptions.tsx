@@ -6,7 +6,7 @@ export interface TrackNewAddressOptions {
     action(name: string, interval: number): void
 }
 
-function minutesReadable(minutes: number): string {
+export function minutesReadable(minutes: number): string {
     if (minutes < 60) {
         return minutes + " minute";
     } else {
