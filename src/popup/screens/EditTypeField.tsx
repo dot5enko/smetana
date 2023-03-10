@@ -31,7 +31,6 @@ export function EditTypeField(props: EditTypeFieldProps) {
     useEffect(() => {
         if (changesCount > 0) {
             updateDatatypeField(props.id, object).catch(e => console.error('unable to update field config', e))
-            console.log('alter db object', object)
         }
     }, [changesCount, props.id])
 

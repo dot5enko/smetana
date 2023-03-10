@@ -34,22 +34,8 @@ function App() {
 
 function Content() {
 
-  const { colorMode, toggleColorMode } = useColorMode()
-
   return (
     <Flex alignItems="center" justifyContent="center" >
-      {/* <Flex width="100%">
-          <Box textAlign="left" lineHeight="18px">
-            <Text fontSize="2xl"><strong>S</strong>metana </Text>
-            <Text fontSize="sm" fontStyle="italic">explorer </Text>
-          </Box>
-          <Spacer />
-          <Box justifySelf="end" alignSelf="end">
-            <Button onClick={toggleColorMode}>
-              <Icon as={MdSettings} />
-            </Button>
-          </Box>
-        </Flex> */}
       <Box>
         <ToastContainer position="top-center" limit={1} theme="dark" hideProgressBar={true} closeButton={false} />
         <ExtensionContextProvider>

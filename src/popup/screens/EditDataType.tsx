@@ -83,7 +83,6 @@ export function EditDataType(props: EditDataTypeProps) {
     useEffect(() => {
         if (changesCount > 0) {
             updateDatatype(props.id, object).catch(e => console.error('unable to update type', e.message))
-            console.log('alter db object', object)
         }
     }, [changesCount, props.id])
 
