@@ -3,7 +3,6 @@ import React from "react";
 export function InjectProps(props: any) {
 
     const { children, ...rest } = props;
-
     if (children instanceof Array) {
 
         let newChildren = [];

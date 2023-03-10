@@ -5,7 +5,7 @@ import { ExtensionContextProvider, useExtensionContext } from "./components/cont
 import { Routes } from "./Routes"
 import { SlideRoutes } from "./SlideRoutes"
 import 'react-toastify/dist/ReactToastify.css';
-import { MdKeyboardBackspace } from "react-icons/md"
+import { MdKeyboardBackspace, MdSettings } from "react-icons/md"
 import { If } from "./components/menu/If"
 import { SlideWindow } from "./components/menu/SlideWindow"
 
@@ -61,7 +61,7 @@ function Content() {
 
 function AppWindowInner(props: { routes: any, slideRoutes: any }) {
 
-  const { slideActive, hasBack, routeBack, rpc, route: { footerContent: footer, title } } = useExtensionContext();
+  const { slideActive, hasBack, routeBack, setSlideRoute, rpc, route: { footerContent: footer, title } } = useExtensionContext();
 
   return <Box
     width="360px"
@@ -86,6 +86,15 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
             <Text>{title}</Text>
           </Flex>
           <Spacer />
+          <Box
+            cursor="pointer"
+            border="1px solid gray"
+            padding="10px 15px"
+            borderRadius="6px"
+            onClick={() => {
+              setSlideRoute("config")
+            }}
+          ><Icon as={MdSettings} /></Box>
         </Flex>
       </Box>
       <Flex

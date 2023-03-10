@@ -7,10 +7,10 @@ import { DataTypes } from "./screens/DataTypes";
 import { EditDataType } from "./screens/EditDataType";
 import { EditTypeField } from "./screens/EditTypeField";
 import { ImportIdl } from "./screens/ImportIdl";
-import { RpcConfig } from "./screens/RpcConfig";
+import { RpcConfig } from "./slide/RpcConfig";
 import { TrackNewAddress } from "./screens/TrackNewAddress";
 import { AboutPage } from "./slide/About";
-import { Config } from "./screens/Config";
+import { Config } from "./slide/Config";
 import { BottomContent } from "./components/menu";
 
 export function Routes() {
@@ -21,7 +21,6 @@ export function Routes() {
             <MenuEntry submenu="tags">Tags</MenuEntry>
             <MenuEntry submenu="data_types" fixedFooter={true} >Data types</MenuEntry>
             <MenuDivider width={0} />
-            <MenuEntry submenu="config">Settings</MenuEntry>
             <AboutPage />
             <BottomContent>
                 <MenuEntry submenu="track_new_address" colorVariant="info" fixedFooter={true}>Track new address</MenuEntry>
@@ -32,9 +31,6 @@ export function Routes() {
         </Route>
         <Route path="addresses">
             <Addresses />
-        </Route>
-        <Route path="config">
-            <Config />
         </Route>
         <Route path="import_anchor_type">
             <ImportIdl />

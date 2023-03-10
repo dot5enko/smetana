@@ -29,7 +29,8 @@ export function SlideRoute(props: RouteProps) {
 
     const content = useMemo(() => {
         if (slideRoute.path == props.path) {
-            return props.children;
+            return props.children
+            // <InjectProps isSlidePath={true}></InjectProps>
         } else {
             return null;
         }

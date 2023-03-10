@@ -7,11 +7,11 @@ export function Config() {
     const { rpc } = useExtensionContext();
 
     return <>
-        <MenuEntry submenu="rpc_config" submenuTitle="Network RPC">
+        <MenuEntry isSlidePath={true} submenu="rpc_config" submenuTitle="Network RPC">
             <strong>Network RPC</strong>
             <Text size={"xs"} color="gray.600">{rpc}</Text>
         </MenuEntry>
-        <MenuEntry submenu="lang_config">
+        <MenuEntry isSlidePath={true} submenu="lang_config">
             Language
         </MenuEntry>
     </>
