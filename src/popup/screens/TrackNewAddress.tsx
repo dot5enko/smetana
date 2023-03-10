@@ -1,4 +1,4 @@
-import { Box, MenuDivider, Skeleton, Text } from "@chakra-ui/react";
+import { Box, Skeleton, Text } from "@chakra-ui/react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 import { useEffect, useState } from "react";
@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { getSingleAddressInfo } from "../../background";
 import { RawAccountInfo, DataType, DecodeTypeResult, fetchProgramIdl, datatypesForDiscriminator, datatypesForProgram } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import { TextInput, ActionButton, Sublabel, MultipleItemsRow, MenuEntry, Group, BottomContent, ItemSelector } from "../components/menu";
+import { TextInput, ActionButton, Sublabel, MultipleItemsRow, MenuEntry, Group, BottomContent, ItemSelector,MenuDivider } from "../components/menu";
 import { addrFormat, DecodedType } from "../components/smetana";
 import { decodeType as decodeTypeFunc } from "../../background"
 

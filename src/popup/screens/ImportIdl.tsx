@@ -1,10 +1,10 @@
-import { Box, Flex, MenuDivider, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { DragEventHandler, useState } from "react";
 import { toast } from "react-toastify";
 import { parseIdlTypes } from "../../background";
 import { ParsedTypeFromIdl, importType } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import { ItemSelector, BottomContent, MenuEntryWithSublabel } from "../components/menu";
+import { ItemSelector, BottomContent, MenuEntryWithSublabel,MenuDivider } from "../components/menu";
 
 
 export function ImportIdl() {
