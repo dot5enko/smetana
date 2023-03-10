@@ -24,7 +24,7 @@ export function TrackNewAddressOptions(props: TrackNewAddressOptions) {
     const values = [5, 10, 60, 360];
     const [intervalValue, setIntervalValue] = useState(60);
 
-    return <><Flex textAlign="center" padding="5px" gap="5px" direction="column">
+    return <><Flex textAlign="center" gap="5px" direction="column">
         <Text fontSize="xl">Track options</Text>
         {/* <Sublabel>Select label for address and data fetch interval you need</Sublabel> */}
         <TextInput

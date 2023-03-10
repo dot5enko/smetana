@@ -1,4 +1,4 @@
-import { Box, HTMLChakraProps, Text } from "@chakra-ui/react";
+import { Box, HTMLChakraProps } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { useExtensionContext } from "../context/ExtensionContext";
 import { If } from "./If";
@@ -66,20 +66,21 @@ export function SlideWindow(props: SlideWindowProps) {
             boxSizing="border-box"
         >
             <Box
-                opacity={0.98}
+                opacity={0.97}
                 justifySelf="center"
                 alignSelf="center"
-                width="95%"
+                width="100%"
                 transition="all .3s cubic-bezier(.47,1.64,.41,.8)"
 
-                marginBottom={animate ? "10px" : "-300px"}
+                marginBottom={animate ? "0px" : "-300px"}
 
                 boxShadow="md"
 
-                borderRadius="6px"
+                borderTopRadius="20px"
                 backgroundColor="#1E2027"
-                padding="10px"
                 {...rest}
+
+                padding="20px"
                 display="flex"
                 flexDir="column"
                 gap="10px"
