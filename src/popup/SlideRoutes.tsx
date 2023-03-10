@@ -7,7 +7,7 @@ import { MenuEntry } from "./components/menu/MenuEntry";
 import { createNew } from "../background/types/DataType";
 import { ImportTypesFromIdl } from "./slide/ImportTypesFromIdl";
 import { TrackNewAddressOptions } from "./slide/TrackNewAddressOptions";
-import { Config } from "./screens";
+import { Config, RpcConfig } from "./screens";
 
 export function SlideRoutes() {
 
@@ -20,6 +20,9 @@ export function SlideRoutes() {
                 label={useSlideRouteArg(1)}
                 sublabel={useSlideRouteArg(2)}
             />
+        </SlideRoute>
+        <SlideRoute path="rpc_config">
+            <RpcConfig />
         </SlideRoute>
         <SlideRoute path="config">
             <Config />

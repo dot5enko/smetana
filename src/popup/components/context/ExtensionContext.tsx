@@ -15,7 +15,7 @@ export interface ExtensionContextType {
     slideActive: boolean,
     slideRoute: RouteHistoryEntry
     setSlideRoute(val: string, ...args: any[]): void,
-    hideSlide():void
+    hideSlide(): void
 
     connection: Connection
 }
@@ -41,7 +41,7 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
 
     const [currentRoute, setRouteState] = useState<RouteHistoryEntry>({ path: "", title: "", args: [], footerContent: false })
     const [routeStack, setRouteStack] = useState<RouteHistoryEntry[]>([]);
-    
+
     const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, "https://rpc.ankr.com/solana"));
     const [connection, setConnection] = useState(new Connection(rpc, 'confirmed'))
 
@@ -95,8 +95,8 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
 
         // slide window 
         const setSlideRoute = (path: string, ...args: any[]) => {
-            
-            const srval:RouteHistoryEntry = {
+
+            const srval: RouteHistoryEntry = {
                 path: path,
                 title: "",
                 args: args,
@@ -104,7 +104,7 @@ export function ExtensionContextProvider(props: ExtensionContextProviderProps) {
             }
 
             setSlideRouteVal(srval)
-            setSlideActive(!slideActive)
+            setSlideActive(true)
         }
 
         // slide 

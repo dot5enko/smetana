@@ -3,7 +3,7 @@ import { ItemSelector } from "../components/menu/ItemSelect";
 
 export function RpcConfig() {
 
-    const { rpc, setRpc } = useExtensionContext();
+    const { rpc, setRpc, hideSlide } = useExtensionContext();
 
     const opts = [
         "https://rpc.ankr.com/solana",
@@ -16,6 +16,7 @@ export function RpcConfig() {
     return <>
         <ItemSelector options={opts} value={[rpc]} label={"select rpc you want use for extension"} onSelectorValueChange={(val: string[]) => {
             setRpc(val[0]);
+            hideSlide()
         }}></ItemSelector>
     </>
 }

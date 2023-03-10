@@ -44,8 +44,5 @@ export function Routes() {
         <Route path="edit_typefield" >
             <EditTypeField id={useRouteArg(0)} protected={useRouteArg(1, false)} />
         </Route>
-        <Route path="rpc_config">
-            <RpcConfig />
-        </Route>
     </>
 }
