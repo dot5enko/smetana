@@ -4,3 +4,4 @@ export * from "./DecodedField";
 export * from "./ParsedTypeFromIdl";
 export * from "./Program";
 export * from "./RawAccountinfo";
+export * from "./WatchedAddress"

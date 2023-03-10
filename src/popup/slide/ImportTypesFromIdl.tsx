@@ -1,12 +1,11 @@
 import { Box, Text } from "@chakra-ui/react";
 import { useState } from "react";
-import { useExtensionContext, useRouteArg } from "../components/context/ExtensionContext";
+import { useExtensionContext } from "../components/context/ExtensionContext";
 import { ActionButton } from "../components/menu/ActionButton";
 import { MenuDivider } from "../components/menu/MenuDivider";
 import { MultipleItemsRow } from "../components/menu/MultipleitemsRow";
 import { Sublabel } from "../components/menu/Sublabel";
 import { TextInput } from "../components/menu/TextInput";
-
 
 export function ImportTypesFromIdl() {
 

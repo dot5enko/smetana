@@ -4,9 +4,9 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getSingleAddressInfo } from "../../background";
-import { RawAccountInfo, DataType, DecodeTypeResult, fetchProgramIdl, datatypesForDiscriminator, datatypesForProgram } from "../../background/types";
+import { RawAccountInfo, DataType, DecodeTypeResult, fetchProgramIdl, datatypesForDiscriminator, datatypesForProgram, createNewWatchedAddress } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import { TextInput, ActionButton, Sublabel, MultipleItemsRow, MenuEntry, Group, BottomContent, ItemSelector,MenuDivider } from "../components/menu";
+import { TextInput, ActionButton, Sublabel, MultipleItemsRow, MenuEntry, Group, BottomContent, ItemSelector, MenuDivider } from "../components/menu";
 import { addrFormat, DecodedType } from "../components/smetana";
 import { decodeType as decodeTypeFunc } from "../../background"
 
@@ -17,7 +17,7 @@ export interface TrackNewAddressProps {
 
 export function TrackNewAddress(props: TrackNewAddressProps) {
 
-    const { connection } = useExtensionContext();
+    const { connection, setSlideRoute, hideSlide, setRoute } = useExtensionContext();
 
     const [addr, setAddr] = useState(props.addr ?? "");
     const [validAddr, setValid] = useState("");
@@ -175,9 +175,25 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                         </> : null}
 
                         <BottomContent>
-                            <ActionButton colorVariant="info" action={() => { }}>
+                            <ActionButton colorVariant="info" action={() => {
+                                if (decodeType) {
+                                    setSlideRoute("track_address_options", (label: string, fetchinterval: number) => {
+
+                                        createNewWatchedAddress(
+                                            validAddr,
+                                            decodeType?.id as number,
+                                            fetchinterval,
+                                            label).then(() => {
+                                                // todo move routes to config
+                                                setRoute("addresses", "Addresses", true)
+                                            }).finally(() => {
+                                                hideSlide();
+                                            })
+                                    })
+                                }
+                            }}>
                                 <Text>Track</Text>
-                                {raw.data.length == 0 ? <Sublabel >Account has no data to track</Sublabel> : null}
+                                {!decodeType ? <Sublabel >select type decoder first</Sublabel> : null}
                             </ActionButton>
                         </BottomContent>
                         {/* <MenuDivider width={0} /> */}

@@ -6,6 +6,7 @@ import { ActionButton } from "./components/menu/ActionButton";
 import { MenuEntry } from "./components/menu/MenuEntry";
 import { createNew } from "../background/types/DataType";
 import { ImportTypesFromIdl } from "./slide/ImportTypesFromIdl";
+import { TrackNewAddressOptions } from "./slide/TrackNewAddressOptions";
 
 export function SlideRoutes() {
 
@@ -18,6 +19,9 @@ export function SlideRoutes() {
                 label={useSlideRouteArg(1)}
                 sublabel={useSlideRouteArg(2)}
             />
+        </SlideRoute>
+        <SlideRoute path="track_address_options">
+            <TrackNewAddressOptions action={useSlideRouteArg(0)} />
         </SlideRoute>
         <SlideRoute path="import_json_idl">
             <ImportTypesFromIdl />
