@@ -48,9 +48,9 @@ export function SlideWindow(props: SlideWindowProps) {
             position="absolute"
             width="100%"
             height="100%"
-            backgroundColor="gray"
+            // backgroundColor="gray"
             transition="all .3s ease"
-            opacity={animate ? 0.5 : 0}
+            backdropFilter={animate ? "blur(10px)" : ""}
             top="0"
             left={0}
             onClick={dismiss}
