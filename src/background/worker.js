@@ -6,7 +6,7 @@ async function setup() {
 
     try {
 
-        let rpcAddr = await getKeyValueFromDb(RpcConfigKey, "https://rpc.ankr.com/solana");
+        let rpcAddr = await getKeyValueFromDb(RpcConfigKey, DefaultRpcServer);
 
         console.log(`started with rpc: ${rpcAddr}`)
 
@@ -15,7 +15,8 @@ async function setup() {
 
         chrome.alarms.onAlarm.addListener((alarm) => {
             // perform background actions
-            console.log("do some work here...")
+
+            doPeriodicTask()
         })
 
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

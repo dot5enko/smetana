@@ -77,8 +77,8 @@ export function EditWatchedAddress(props: EditWatchedAddressProps) {
                     changeObject(it => it.sync_interval = newVal[0])
                 }}
             />
-            <SwitchInput value={object?.paused} onChange={(val) => {
-                changeObject(it => it.paused = val)
+            <SwitchInput value={object?.paused == 1} onChange={(val) => {
+                changeObject(it => it.paused = val ? 1 : 0)
             }}
             >Pause</SwitchInput>
 

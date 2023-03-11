@@ -1,4 +1,4 @@
-export * from "./AddressData";
+export * from "./types/AddressData";
 export * from "./borsh";
 export * from "./database";
 export * from "./idl";

@@ -14,7 +14,7 @@ export interface WatchedAddress {
     // number of fails to parse address data by given type
     parse_failed_count: number
 
-    paused: boolean
+    paused: number
 }
 
 const watchedaddresstable = db.table('watched_address');
@@ -49,7 +49,7 @@ export async function createNewWatchedAddress(
             last_sync: 0,
             parse_failed_count: 0,
             label: label,
-            paused : false,
+            paused: 0,
         }
 
         const id = await watchedaddresstable.add(newWatchedAddrObject);
@@ -77,4 +77,23 @@ export async function findWatchedAddresses(label: string, limit: number): Promis
 // its already 3+ functions like this 
 export async function updateWatched(id: number, changes: any) {
     watchedaddresstable.update(id, changes);
+}
+
+export async function getActiveWatchedAddresses(): Promise<WatchedAddress[]> {
+
+    const curtime = new Date().getTime() / 1000;
+
+    return watchedaddresstable.where('paused').equals(0).filter((it: WatchedAddress) => {
+
+        const diff = curtime - it.last_sync;
+        const diffMinutes = diff / 60;
+
+        if (diffMinutes >= it.sync_interval) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }).toArray();
+
 }

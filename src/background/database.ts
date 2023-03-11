@@ -1,5 +1,6 @@
 import Dexie from 'dexie';
 import { PublicKey } from '@solana/web3.js';
+import { AddressData } from './types/AddressData';
 
 export const db = new Dexie('accounts');
 
@@ -7,8 +8,8 @@ export const db = new Dexie('accounts');
 db.version(1).stores({
     data: '++id, address_id, created_at',
     address: '++id, &address',
-    watched_address: '++id, &address_id, data_type_id, sync_interval, last_sync',
-    datatype: '++id, label, program_id, discriminator, is_anchor',
+    watched_address: '++id, &address_id, paused',
+    datatype: '++id, label, program_id, discriminator',
     datatypefield: '++id, datatype_id, order_position ',
     program: '++id, &address_id, is_anchor, fetched',
     config: '&key'
@@ -26,6 +27,16 @@ export async function addressHistory(address: PublicKey) {
     return datatable.where('address').equals(adrStr).toArray();
 }
 
+export async function getAddresById(id: number): Promise<PublicKey> {
+    const result = await addresstable.get(id)
+
+    if (result == null) {
+        return Promise.reject("not found")
+    } else {
+        return new PublicKey(result.address);
+    }
+}
+
 export async function getAddrId(addrStr: string): Promise<number> {
     const address = await addresstable.get({ address: addrStr });
 
@@ -36,5 +47,4 @@ export async function getAddrId(addrStr: string): Promise<number> {
     } else {
         return Promise.resolve(address.id);
     }
-
 }

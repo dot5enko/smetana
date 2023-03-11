@@ -1,5 +1,5 @@
 // import { PublicKey } from "@solana/web3.js";
-import { AddressData } from "../background/AddressData";
+import { AddressData } from "../background/types/AddressData";
 
 interface AddrCacheEntry {
     data?: AddressData
@@ -42,7 +42,7 @@ class ContentContext {
                     lastUpdated: new Date(),
                     fetched: true
                 };
-                this.addressDataCache.set(it.key, newVal);
+                // this.addressDataCache.set(it.key, newVal);
             }
 
             return resp;
@@ -67,7 +67,7 @@ class ContentContext {
                     lastUpdated: new Date(),
                     fetched: true
                 };
-                this.addressDataCache.set(it.key, newVal);
+                // this.addressDataCache.set(it.key, newVal);
             }
 
             return resp;
