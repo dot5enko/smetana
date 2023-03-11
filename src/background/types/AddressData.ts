@@ -1,3 +1,4 @@
+import { Address } from "cluster"
 import { db } from "../database"
 import { RawAccountInfo } from "./RawAccountinfo"
 
@@ -15,13 +16,25 @@ export interface AddressData {
 
 const datatable = db.table("data");
 
+export interface HistoryResponse {
+    total: number,
+    filtered: AddressData[]
+}
 
-export async function getHistory(address_id: number, limit: number): Promise<AddressData[]> {
-    return datatable.
-        where("address_id").
-        equals(address_id).
+export async function getHistory(address_id: number, limit: number): Promise<HistoryResponse> {
+
+
+    let filtered = datatable.where("address_id").equals(address_id);
+
+    let counter = await filtered.count();
+
+    let items = await filtered.
         limit(limit).
+        reverse().
         sortBy('created_at')
+
+    return { total: counter, filtered: items }
+
 }
 
 export async function addNewAddressData(data: RawAccountInfo, address_id: number, t: number) {

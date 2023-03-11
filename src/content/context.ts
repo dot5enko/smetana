@@ -7,7 +7,7 @@ interface AddrCacheEntry {
     fetched: boolean
 }
 
-class ContentContext {
+export class ContentContext {
 
     addressDataCache: Map<string, AddrCacheEntry> = new Map();
 
@@ -75,6 +75,4 @@ class ContentContext {
     }
 }
 
-export default new ContentContext();
-
-
+export const PageContext = new ContentContext();

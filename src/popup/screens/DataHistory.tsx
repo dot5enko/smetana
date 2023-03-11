@@ -8,23 +8,29 @@ export function DataHistory(props: { id?: number }) {
     const { id } = props;
 
     const [entries, setEntries] = useState<AddressData[]>([]);
+    const [entriesCount, setCount] = useState(0);
 
     useEffect(() => {
         if (id) {
             getHistory(id, 30).then((items) => {
-                setEntries(items);
+                setEntries(items.filtered);
+                setCount(items.total)
             })
         } else {
             setEntries([]);
+            setCount(0);
         }
     }, [id])
 
 
     return <>
-        <ActionButton>total {entries.length} entries</ActionButton>
+        <ActionButton>total {entriesCount} entries</ActionButton>
         {entries.map((it) => {
+
+            let date = new Date(it.created_at * 1000);
+
             return <ActionButton>
-                created: {new Date(it.created_at).toISOString()}
+                created: {date.getHours()}:{date.getMinutes()}
             </ActionButton>
         })}
     </>

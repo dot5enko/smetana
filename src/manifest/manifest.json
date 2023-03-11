@@ -13,7 +13,7 @@
         "css/content.css"
       ],
       "matches": [
-        "https://solscan.io/*",
+        "https://solscan.io/tx/*",
         "https://explorer.solana.com/*",
         "https://solana.fm/*"
       ]
