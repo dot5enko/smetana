@@ -15,6 +15,15 @@ export interface AddressData {
 
 const datatable = db.table("data");
 
+
+export async function getHistory(address_id: number, limit: number): Promise<AddressData[]> {
+    return datatable.
+        where("address_id").
+        equals(address_id).
+        limit(limit).
+        sortBy('created_at')
+}
+
 export async function addNewAddressData(data: RawAccountInfo, address_id: number, t: number) {
 
     const item: AddressData = {

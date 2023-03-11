@@ -1,7 +1,8 @@
 import { Connection, PublicKey } from "@solana/web3.js"
 import { db, getAddrId } from "./database"
 import { getKeyValueFromDb, RpcConfigKey } from "./storage"
-
+import { DefaultRpcServer } from "./rpc"
+import { doPeriodicTask } from "./worker"
 async function setup() {
 
     try {
@@ -15,8 +16,9 @@ async function setup() {
 
         chrome.alarms.onAlarm.addListener((alarm) => {
             // perform background actions
-
-            doPeriodicTask()
+            (async () => {
+                await doPeriodicTask()
+            })()
         })
 
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

@@ -1,5 +1,5 @@
 import { AccountInfo, Connection, PublicKey } from "@solana/web3.js";
-import { getAddresById, getAddrId } from "../database";
+import { getAddresById } from "../database";
 import { DefaultRpcCommitment, DefaultRpcServer } from "../rpc";
 import { getKeyValueFromDb, RpcConfigKey } from "../storage";
 import { getActiveWatchedAddresses, RawAccountInfo, updateWatched, WatchedAddress } from "../types";
