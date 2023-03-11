@@ -1,10 +1,16 @@
 import { Connection, PublicKey } from "@solana/web3.js"
 import { db, getAddrId } from "./database"
+import { getKeyValueFromDb, RpcConfigKey } from "./storage"
 
-function setup() {
+async function setup() {
 
     try {
-        let connection = new Connection("https://rpc.ankr.com/solana", "confirmed");
+
+        let rpcAddr = await getKeyValueFromDb(RpcConfigKey, "https://rpc.ankr.com/solana");
+
+        console.log(`started with rpc: ${rpcAddr}`)
+
+        let connection = new Connection(rpcAddr, "confirmed");
         console.log('started. subscribed for messages', connection)
 
         chrome.alarms.onAlarm.addListener((alarm) => {

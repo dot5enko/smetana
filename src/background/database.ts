@@ -10,7 +10,8 @@ db.version(1).stores({
     watched_address: '++id, &address_id, data_type_id, sync_interval, last_sync',
     datatype: '++id, label, program_id, discriminator, is_anchor',
     datatypefield: '++id, datatype_id, order_position ',
-    program: '++id, &address_id, is_anchor, fetched'
+    program: '++id, &address_id, is_anchor, fetched',
+    config: '&key'
 });
 
 const datatable = db.table('data');

@@ -1,6 +1,6 @@
 import { Connection } from "@solana/web3.js";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { getKeyValueOrDefault, setKeyValue } from "../../../background/storage";
+import { getKeyValueOrDefault, RpcConfigKey, setKeyValue } from "../../../background/storage";
 
 export interface ExtensionContextType {
 
@@ -22,8 +22,6 @@ export interface ExtensionContextType {
 }
 
 const ExtensionContext = createContext({} as ExtensionContextType);
-
-const RpcConfigKey = "rpc_config";
 
 interface RouteHistoryEntry {
     path: string,
