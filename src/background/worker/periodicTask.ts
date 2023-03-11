@@ -5,7 +5,6 @@ import { getKeyValueFromDb, RpcConfigKey } from "../storage";
 import { getActiveWatchedAddresses, RawAccountInfo, updateWatched, WatchedAddress } from "../types";
 import { addNewAddressData } from "../types/AddressData";
 
-
 async function addrChunks(list: WatchedAddress[], size: number, entryMap: Map<string, ChunkDataEntry>): Promise<PublicKey[][]> {
 
     let result = [];

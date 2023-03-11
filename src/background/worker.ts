@@ -2,7 +2,8 @@ import { Connection, PublicKey } from "@solana/web3.js"
 import { db, getAddrId } from "./database"
 import { getKeyValueFromDb, RpcConfigKey } from "./storage"
 import { DefaultRpcServer } from "./rpc"
-import { doPeriodicTask } from "./worker"
+import { doPeriodicTask } from "./worker/periodicTask";
+
 async function setup() {
 
     try {
@@ -14,12 +15,11 @@ async function setup() {
         let connection = new Connection(rpcAddr, "confirmed");
         console.log('started. subscribed for messages', connection)
 
-        chrome.alarms.onAlarm.addListener((alarm) => {
-            // perform background actions
-            (async () => {
-                await doPeriodicTask()
-            })()
+        const addAlarmListener = chrome.alarms.onAlarm.addListener((alarm) => {
+            doPeriodicTask()
         })
+
+        console.log('added alarm listener', addAlarmListener)
 
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
@@ -57,7 +57,7 @@ async function setup() {
                                             lastData: cached.data
                                         });
                                     }
-                                } catch (e) {
+                                } catch (e: any) {
                                     console.warn("unable to get item from indexed db:", e.message)
                                 }
 
@@ -80,7 +80,6 @@ async function setup() {
                             sendResponse({
                                 "state": false,
                                 "type": "more than 1 address not supported rn",
-                                "data": respdata
                             })
                             return true
                         }
@@ -101,13 +100,13 @@ async function setup() {
                             db.table('data').add({
                                 address_id: addrId,
                                 created_at: new Date(),
-                                data: respdata.data,
+                                data: respdata?.data,
                             }).then((addrid) => {
 
                                 sendResponse([{
                                     key: curAddrStr,
                                     lastDataTime: new Date(),
-                                    lastData: respdata.data
+                                    lastData: respdata?.data
                                 }])
 
                             }).catch((dberr) => {
@@ -130,7 +129,7 @@ async function setup() {
                         })
                     }
                 }
-            } catch (e) {
+            } catch (e: any) {
                 sendResponse({
                     "state": false,
                     "type": "handle exception",
@@ -148,19 +147,18 @@ async function setup() {
             return true;
         });
 
-        chrome.alarms.create({ periodInMinutes: 1 })
         console.log('extension initialized')
-    } catch (err) {
+    } catch (err: any) {
         console.error('unable to init extension: ', err.message)
     }
 }
 
 chrome.runtime.onInstalled.addListener(() => {
-
-})
-
-chrome.runtime.onStartup.addListener(() => {
-
+    chrome.alarms.get('bgtask', bgtask => {
+        if (!bgtask) {
+            chrome.alarms.create('bgtask', { periodInMinutes: 30 / 60 });
+        }
+    });
 })
 
 setup()

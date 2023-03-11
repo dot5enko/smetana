@@ -7,6 +7,7 @@
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@solana/web3.js": "^1.73.3",
+    "@types/chrome": "^0.0.221",
     "@types/jest": "^27.5.2",
     "@types/node": "^16.18.13",
     "@types/pako": "^2.0.0",

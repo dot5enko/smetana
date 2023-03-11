@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { ActionButton, If, ItemSelector, MenuEntry, ScrolledItem, Sublabel, SwitchInput, TextInput } from "../components/menu";
+import { ActionButton, If, ItemSelector, MenuEntry, Sublabel, SwitchInput, TextInput } from "../components/menu";
 import { minutesReadable } from "../slide";
 import { Text } from "@chakra-ui/react"
-import { getWatchedByAddressId, getWatchedById, updateWatched, WatchedAddress } from "../../background/types";
+import { getWatchedById, updateWatched, WatchedAddress } from "../../background/types";
 import { toast } from "react-toastify";
 
 export interface EditWatchedAddressProps {
@@ -83,7 +83,7 @@ export function EditWatchedAddress(props: EditWatchedAddressProps) {
             >Pause</SwitchInput>
 
             <MenuEntry submenu="data_insight_configuration" args={[id]} >Configure data insights</MenuEntry>
-            <MenuEntry submenu="address_data_history" args={[id]} >Data fetch history</MenuEntry>
+            <MenuEntry submenu="address_data_history" args={[object?.address_id]} >Data fetch history</MenuEntry>
         </If>
         <If condition={err}>
             <ActionButton>{err}</ActionButton>
