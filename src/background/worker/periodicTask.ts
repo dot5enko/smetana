@@ -1,7 +1,7 @@
 import { AccountInfo, Connection, PublicKey } from "@solana/web3.js";
 import { DefaultRpcCommitment, DefaultRpcServer } from "../rpc";
 import { getKeyValueFromDb, RpcConfigKey } from "../storage";
-import { getActiveWatchedAddresses, getAddresById, RawAccountInfo, updateWatched, WatchedAddress } from "../types";
+import { getActiveWatchedAddresses, AddressHandler, RawAccountInfo, updateWatched, WatchedAddress } from "../types";
 import { addNewAddressData } from "../types/AddressData";
 
 async function addrChunks(list: WatchedAddress[], size: number, entryMap: Map<string, ChunkDataEntry>): Promise<PublicKey[][]> {
@@ -10,7 +10,7 @@ async function addrChunks(list: WatchedAddress[], size: number, entryMap: Map<st
     let curChunk: PublicKey[] = [];
 
     for (var it of list) {
-        const addr = await getAddresById(it.address_id);
+        const addr = await AddressHandler.getById(it.address_id);
 
         const addrPk = new PublicKey(addr.address);
         curChunk.push(addrPk);

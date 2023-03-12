@@ -8,7 +8,6 @@ export function Routes() {
     return <>
         <Route path="">
             <MenuEntry submenu="addresses">Watching</MenuEntry>
-            <MenuEntry submenu="tags">Tags</MenuEntry>
             <MenuEntry submenu="data_types" fixedFooter={true} >Data types</MenuEntry>
             <BottomContent>
                 <MenuEntry submenu="track_new_address" colorVariant="info" fixedFooter={true}>Track new address</MenuEntry>

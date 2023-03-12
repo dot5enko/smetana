@@ -1,4 +1,5 @@
 import { db } from "../database";
+import { TypeOperations } from "../TypeOperations";
 
 export interface Address {
     id?: number
@@ -12,15 +13,7 @@ export interface Address {
 
 const addresstable = db.table('address');
 
-export async function getAddresById(id: number): Promise<Address> {
-    const result = await addresstable.get(id)
-
-    if (result == null) {
-        return Promise.reject("not found")
-    } else {
-        return result;
-    }
-}
+export const AddressHandler = new TypeOperations<Address>(addresstable);
 
 export async function getAddrId(addrStr: string): Promise<number> {
     const address = await addresstable.get({ address: addrStr });
@@ -33,9 +26,4 @@ export async function getAddrId(addrStr: string): Promise<number> {
         return Promise.resolve(address.id);
     }
 }
-
-export async function updateAddress(id: number, values: any) {
-    return addresstable.update(id, values);
-}
-
 
