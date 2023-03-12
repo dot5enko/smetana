@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
 import { ActionButton, If, ItemSelector, MenuEntry, Sublabel, SwitchInput, TextInput } from "../components/menu";
 import { minutesReadable } from "../slide";
 import { Text } from "@chakra-ui/react"
-import { getWatchedById, updateWatched, WatchedAddress } from "../../background/types";
-import { toast } from "react-toastify";
+import { useObjectState } from "../components/context/objectState";
+import { WatchedAddressHandler } from "../../background";
 
 export interface EditWatchedAddressProps {
     id?: number
@@ -15,46 +14,7 @@ export function EditWatchedAddress(props: EditWatchedAddressProps) {
 
     const values = [1, 5, 10, 30, 60, 360, 12 * 60];
 
-    const [object, setObject] = useState<WatchedAddress | undefined>(undefined);
-
-    // todo show error
-    const [err, setErr] = useState<string | undefined>(undefined);
-
-    function fetchObject(keyval: number) {
-        setErr(undefined);
-        getWatchedById(keyval).then((obj) => {
-            setObject(obj)
-        }).catch(e => {
-            setErr('unable to get an object by id :' + e.message)
-        });
-    }
-
-    useEffect(() => {
-        if (id != undefined) {
-            fetchObject(id)
-        } else {
-            setChangesCount(0);
-        }
-    }, [id])
-
-
-    const [changesCount, setChangesCount] = useState(0);
-    useEffect(() => {
-        if (changesCount > 0) {
-            updateWatched(id as number, object).catch(e => {
-                toast('unable to update type:' + e.message)
-            })
-        }
-    }, [changesCount, id])
-
-    function changeObject(handler: { (obj: WatchedAddress): void }, unprotect?: boolean) {
-        if (object !== undefined) {
-            handler(object)
-
-            setObject(object)
-            setChangesCount(changesCount + 1)
-        }
-    }
+    const { object, err, changeObject } = useObjectState(WatchedAddressHandler, id);
 
     return <>
         <If condition={id}>

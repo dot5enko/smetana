@@ -1,6 +1,6 @@
 import { IndexableType } from "dexie";
-import { db } from "../database";
-import { DataTypeField, getFieldSize } from "./DataTypeField";
+import { DataTypeHandler } from "../database";
+import { DataTypeFieldHandler, getFieldSize } from "./DataTypeField";
 import { DecodedField } from "./DecodedField";
 import { ParsedTypeFromIdl } from "./ParsedTypeFromIdl";
 
@@ -21,10 +21,9 @@ export interface DataTypeAggregatedInfo {
     size_bytes: number
 }
 
-const datatype = db.table('datatype');
-const datatypefield = db.table('datatypefield');
-
 export async function createNew(is_anchor: boolean): Promise<IndexableType> {
+
+    const table = DataTypeHandler.getTable();
 
     const rndName = Math.random().toString(36).slice(2)
 
@@ -41,14 +40,12 @@ export async function createNew(is_anchor: boolean): Promise<IndexableType> {
         discriminator: new Uint8Array(8)
     }
 
-    return datatype.add(typ)
-}
-
-export async function getById(id: number): Promise<DataType> {
-    return await datatype.get({ id })
+    return table.add(typ)
 }
 
 export async function findDatatypes(label: string, limit: number): Promise<DataType[]> {
+
+    const datatype = DataTypeHandler.getTable();
 
     if (label === "") {
         return await datatype.limit(limit).toArray()
@@ -59,16 +56,9 @@ export async function findDatatypes(label: string, limit: number): Promise<DataT
     }).limit(limit).toArray()
 }
 
-
-export async function updateDatatype(id: number, changes: any) {
-    datatype.update(id, changes);
-}
-
-export async function removeType(id: number) {
-    return datatype.delete(id);
-}
-
 export async function datatypesForDiscriminator(disc: Uint8Array): Promise<DataType[]> {
+
+    const datatype = DataTypeHandler.getTable();
 
     return await datatype.
         where("discriminator").
@@ -77,6 +67,8 @@ export async function datatypesForDiscriminator(disc: Uint8Array): Promise<DataT
 }
 
 export async function datatypesForProgram(program: string, label: string = "", limit: number): Promise<DataType[]> {
+
+    const datatype = DataTypeHandler.getTable();
 
     console.log('fetching datatypes with query :', label)
 
@@ -108,6 +100,8 @@ export interface DecodeTypeResult {
 
 export async function importType(program_id: string, t: ParsedTypeFromIdl): Promise<number> {
 
+    const datatype = DataTypeHandler.getTable();
+
     const typ: DataType = {
         label: t.name,
         protect_updates: true,
@@ -125,7 +119,7 @@ export async function importType(program_id: string, t: ParsedTypeFromIdl): Prom
 
         fieldit.datatype_id = typeid;
 
-        await datatypefield.add(fieldit)
+        await DataTypeFieldHandler.getTable().add(fieldit)
 
         typ.info.fields_count += 1;
         typ.info.size_bytes += await getFieldSize(fieldit);

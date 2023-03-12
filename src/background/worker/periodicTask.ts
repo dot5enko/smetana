@@ -1,7 +1,8 @@
 import { AccountInfo, Connection, PublicKey } from "@solana/web3.js";
+import { AddressHandler, WatchedAddressHandler } from "../database";
 import { DefaultRpcCommitment, DefaultRpcServer } from "../rpc";
 import { getKeyValueFromDb, RpcConfigKey } from "../storage";
-import { getActiveWatchedAddresses, AddressHandler, RawAccountInfo, updateWatched, WatchedAddress } from "../types";
+import { getActiveWatchedAddresses, RawAccountInfo, WatchedAddress } from "../types";
 import { addNewAddressData } from "../types/AddressData";
 
 async function addrChunks(list: WatchedAddress[], size: number, entryMap: Map<string, ChunkDataEntry>): Promise<PublicKey[][]> {
@@ -62,7 +63,7 @@ async function processData(items: ChunkDataEntry[]) {
 
         let w = it.watched as WatchedAddress;
 
-        await updateWatched(w.id as number, {
+        await WatchedAddressHandler.update(w.id as number, {
             last_sync: curt
         })
 

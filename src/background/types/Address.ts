@@ -1,4 +1,4 @@
-import { db } from "../database";
+import { AddressHandler, db } from "../database";
 import { TypeOperations } from "../TypeOperations";
 
 export interface Address {
@@ -11,15 +11,14 @@ export interface Address {
     labelColor?: string
 }
 
-const addresstable = db.table('address');
-
-export const AddressHandler = new TypeOperations<Address>(addresstable);
-
 export async function getAddrId(addrStr: string): Promise<number> {
-    const address = await addresstable.get({ address: addrStr });
+
+    const table = AddressHandler.getTable();
+
+    const address = await table.get({ address: addrStr });
 
     if (address == null) {
-        return await addresstable.add({
+        return await table.add({
             address: addrStr,
         }) as number;
     } else {

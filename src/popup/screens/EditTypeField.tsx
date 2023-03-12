@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { MenuEntry, If, ActionButton, MenuDivider, SwitchInput, TextInput, Group, MultipleItemsRow } from "../components/menu";
 import { BorshTypeSelect } from "../components/smetana/BorshTypeSelect";
-import { DataTypeField, getFieldsById, getFieldSize, removeTypeField, updateDatatypeField } from "../../background/types/DataTypeField";
+import { DataTypeFieldHandler, getFieldSize } from "../../background/types/DataTypeField";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import { toast } from "react-toastify";
+import {  } from "../../background/database";
+import { useObjectState } from "../components/context/objectState";
 
 export interface EditTypeFieldProps {
     id: any
@@ -13,32 +14,20 @@ export interface EditTypeFieldProps {
 export function EditTypeField(props: EditTypeFieldProps) {
 
     const { routeBack, setSlideRoute, hideSlide } = useExtensionContext();
-    const [object, setObject] = useState<DataTypeField | undefined>(undefined)
-    const [fieldSize, setFieldSize] = useState<number | undefined>(undefined);
+
+    // todo pass is protected
+    const { object, changeObject } = useObjectState(DataTypeFieldHandler, props.id, props.protected, "type is protected, unprotect first");
+
+    const [arraySize, setArraySize] = useState<string | undefined>();
 
     useEffect(() => {
-        if (props.id != undefined) {
-            getFieldsById(props.id).then((item) => {
-                setObject(item);
-                setChangesCount(changesCount + 1)
-            }).catch(e => {
-                console.error('unable to get data type field :', props.id, e.message)
-            });
+        if (object?.array_size) {
+            setArraySize(object?.array_size + "");
         }
-    }, [props.id])
-
-    const [changesCount, setChangesCount] = useState(0);
-    useEffect(() => {
-        if (changesCount > 0) {
-            updateDatatypeField(props.id, object).catch(e => console.error('unable to update field config', e))
-        }
-    }, [changesCount, props.id])
-
-    const [arrSize, setArraySize] = useState<string | undefined>(undefined);
-
-    useEffect(() => {
-        setArraySize(object?.array_size + "")
     }, [object?.array_size])
+
+
+    const [fieldSize, setFieldSize] = useState<number | undefined>(undefined);
 
     // recalc size
     useEffect(() => {
@@ -52,21 +41,6 @@ export function EditTypeField(props: EditTypeFieldProps) {
             setFieldSize(undefined);
         }
     }, [object?.array_size, object?.field_type, object?.is_array, object?.optional, object?.is_complex_type])
-
-    function changeObject(handler: { (obj: DataTypeField): void }) {
-        if (props.protected) {
-            toast('changes protected, unprotect first', { type: 'warning' })
-        } else {
-            if (object !== undefined) {
-
-                // is it passed by reference?
-                handler(object)
-
-                setObject(object)
-                setChangesCount(changesCount + 1)
-            }
-        }
-    }
 
     return <>
         <TextInput
@@ -105,7 +79,7 @@ export function EditTypeField(props: EditTypeFieldProps) {
                 </If>
                 <If condition={object?.is_array && !object.is_dynamic_size}>
                     <TextInput sizeVariant="sm"
-                        value={arrSize + ""}
+                        value={arraySize + ""}
                         placeholder="size"
                         validate="uint+"
                         onChange={(val) => {
@@ -139,9 +113,9 @@ export function EditTypeField(props: EditTypeFieldProps) {
 
                 setSlideRoute("confirm", () => {
                     hideSlide();
-                    removeTypeField(props.id).then(() => {
+                    DataTypeFieldHandler.remove(props.id).then(() => {
                         routeBack();
-                    }).catch(e => {
+                    }).catch((e: any) => {
                         console.error('unable to remove field:', e)
                     })
                 }, "do you really want to remove this item?");

@@ -1,5 +1,5 @@
 import { getAddrId } from "."
-import { db } from "../database"
+import { db, WatchedAddressHandler } from "../database"
 
 export interface WatchedAddress {
     id?: number
@@ -18,16 +18,11 @@ export interface WatchedAddress {
     paused: number
 }
 
-const watchedaddresstable = db.table('watched_address');
+const watchedaddresstable = WatchedAddressHandler.getTable()
 
 export async function getWatchedByAddressId(addrid: number): Promise<WatchedAddress | undefined> {
     return watchedaddresstable.get({ address_id: addrid })
 }
-
-export async function getWatchedById(val: number): Promise<WatchedAddress | undefined> {
-    return watchedaddresstable.get({ id: val })
-}
-
 
 export async function createNewWatchedAddress(
     address: string,
@@ -73,12 +68,6 @@ export async function findWatchedAddresses(label: string, limit: number): Promis
     }).limit(limit).toArray()
 }
 
-
-// todo maybe use update(table:string) + table name validation ?
-// its already 3+ functions like this 
-export async function updateWatched(id: number, changes: any) {
-    watchedaddresstable.update(id, changes);
-}
 
 export async function getActiveWatchedAddresses(): Promise<WatchedAddress[]> {
 

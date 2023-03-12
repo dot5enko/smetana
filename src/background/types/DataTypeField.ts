@@ -1,6 +1,7 @@
 import { IndexableType } from "dexie";
-import { db } from "../database";
-import { getById } from "./DataType";
+import { DataTypeField } from "src/popup/components/smetana";
+import { DataTypeHandler, db } from "../database";
+import { TypeOperations } from "../TypeOperations";
 
 export interface DataTypeField {
     id?: number
@@ -19,8 +20,50 @@ export interface DataTypeField {
     hide: boolean
 }
 
-const datatypefield = db.table('datatypefield');
-const datatype = db.table('datatype');
+
+
+export class DataTypeFieldOperations extends TypeOperations<DataTypeField> {
+    async beforeUpdate(self: DataTypeField, changes: any) {
+
+        // detect type changes
+        const fieldObject = self;
+
+        if (fieldObject.field_type != changes.field_type) {
+            // type changed
+            const typeObject = await DataTypeHandler.getById(fieldObject.datatype_id);
+
+            if (typeObject.id != null) {
+                typeObject.info.size_bytes -= await getFieldSize(fieldObject);
+                typeObject.info.size_bytes += await getFieldSize(changes)
+
+                await DataTypeHandler.update(typeObject.id, typeObject)
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    async beforeRemove(self: DataTypeField) {
+
+        const fieldObject = self;
+        const typeObject = await DataTypeHandler.getById(fieldObject.datatype_id);
+
+        typeObject.info.fields_count -= 1;
+
+        typeObject.info.size_bytes -= await getFieldSize(fieldObject);
+        await DataTypeHandler.update(typeObject.id as number, typeObject)
+
+        return true;
+    }
+}
+
+
+export const DataTypeFieldHandler = new DataTypeFieldOperations(db.table('datatypefield'));
+
+const datatypefield = DataTypeFieldHandler.getTable()
+const datatype = DataTypeHandler.getTable()
 
 export async function getFieldSize(object: DataTypeField) {
     if (object.is_complex_type) {
@@ -81,7 +124,7 @@ export async function getFieldSize(object: DataTypeField) {
 
 export async function createNewField(parent_type: number): Promise<IndexableType> {
 
-    const typeObject = await getById(parent_type);
+    const typeObject = await DataTypeHandler.getById(parent_type);
     const fields = await getFieldsForType(parent_type);
 
     let max_order_position = 0;
@@ -119,44 +162,6 @@ export async function getFieldsForType(parent_type: number): Promise<DataTypeFie
         .sortBy("order_position");
 
 }
-
-// todo fix typo
-export async function getFieldsById(id: number): Promise<DataTypeField> {
-    return datatypefield.get({ id });
-}
-
-// todo add try catch
-export async function updateDatatypeField(id: number, changes: any) {
-
-    // detect type changes
-    const fieldObject = await getFieldsById(id);
-
-    if (fieldObject.field_type != changes.field_type) {
-        // type changed
-        const typeObject = await getById(fieldObject.datatype_id);
-
-        typeObject.info.size_bytes -= await getFieldSize(fieldObject);
-        typeObject.info.size_bytes += await getFieldSize(changes)
-
-        await datatype.update(typeObject.id, typeObject)
-    }
-
-    return datatypefield.update(id, changes);
-}
-
-export async function removeTypeField(id: number) {
-
-    const fieldObject = await getFieldsById(id);
-    const typeObject = await getById(fieldObject.datatype_id);
-
-    typeObject.info.fields_count -= 1;
-
-    typeObject.info.size_bytes -= await getFieldSize(fieldObject);
-    await datatype.update(typeObject.id, typeObject)
-
-    return datatypefield.delete(id);
-}
-
 
 export async function moveUp(id: number) {
     const val: DataTypeField = await datatypefield.get(id);
@@ -198,3 +203,6 @@ export async function moveDown(id: number) {
 
 
 }
+
+
+

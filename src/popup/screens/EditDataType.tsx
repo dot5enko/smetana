@@ -1,12 +1,14 @@
-import { Flex, HTMLChakraProps, Input, Skeleton } from "@chakra-ui/react";
+import { Flex, HTMLChakraProps, Input } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { createNewField, DataTypeField as DataTypeFieldInterface, getFieldsForType, DataType as DataTypeInterface, getById, removeType, updateDatatype } from "../../background/types";
+import { createNewField, DataTypeField as DataTypeFieldInterface, getFieldsForType} from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { ActionButton, Group, If, Sublabel, SwitchInput, TextInput, MenuEntry, MultipleItemsRow } from "../components/menu";
 import { DataTypeField } from "../components/smetana/DataTypeField";
 
 import { Buffer } from "buffer"
+import { DataTypeHandler } from "../../background";
+import { useObjectState } from "../components/context/objectState";
 
 export interface EditDataTypeProps {
     id: any
@@ -50,11 +52,11 @@ function HexView(props: HexEditorProps) {
 export function EditDataType(props: EditDataTypeProps) {
 
     const [items, setItems] = useState<DataTypeFieldInterface[]>([]);
-    const [object, setObject] = useState<DataTypeInterface | undefined>(undefined);
 
     const { setRoute, routeBack, setSlideRoute, hideSlide } = useExtensionContext();
 
     const [orderEditable, setOrderEditable] = useState(false);
+    const [prot, setProtected] = useState<boolean | undefined>();
 
     function fetchFields() {
         getFieldsForType(props.id).then((items) => {
@@ -64,45 +66,14 @@ export function EditDataType(props: EditDataTypeProps) {
         });
     }
 
-    function fetchObject() {
-        getById(props.id).then((obj) => {
-            setObject(obj)
-        }).catch(e => {
-            console.error('unable to get an object by id :', props.id)
-        });
-    }
-
     useEffect(() => {
         if (props.id != undefined) {
             fetchFields();
-            fetchObject()
         }
     }, [props.id])
 
-    const [changesCount, setChangesCount] = useState(0);
-    useEffect(() => {
-        if (changesCount > 0) {
-            updateDatatype(props.id, object).catch(e => console.error('unable to update type', e.message))
-        }
-    }, [changesCount, props.id])
 
-    function changeObject(handler: { (obj: DataTypeInterface): void }, unprotect?: boolean) {
-
-        if (object !== undefined) {
-
-            // allow if its unprotection
-
-            if (object.protect_updates && !unprotect) {
-                toast('updates protected!', { type: 'warning' });
-            } else {
-                // is it passed by reference?
-                handler(object)
-
-                setObject(object)
-                setChangesCount(changesCount + 1)
-            }
-        }
-    }
+    const { changeObject, object } = useObjectState(DataTypeHandler, props.id, prot, "changes protected. uprotect first");
 
     return <>
         <TextInput placeholder="label" sublabel="this is what you'll see in explorer" value={object?.label} onChange={(newVal) => {
@@ -176,7 +147,7 @@ export function EditDataType(props: EditDataTypeProps) {
 
                     setSlideRoute("confirm", () => {
                         hideSlide();
-                        removeType(props.id).then(() => {
+                        DataTypeHandler.remove(props.id).then(() => {
                             routeBack();
                         }).catch(e => {
                             console.error('unable to remove field:', e)

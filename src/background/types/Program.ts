@@ -1,6 +1,6 @@
 import { Connection, PublicKey } from "@solana/web3.js"
 import { getAddrId } from "."
-import { db } from "../database"
+import { db, ProgramHandler } from "../database"
 import { genAnchorIdlAddr, parseIdlFromAccountData, parseIdlTypes } from "../idl"
 import { importType } from "./DataType"
 import { getSignleRawAccountInfo } from "./RawAccountinfo"
@@ -19,7 +19,7 @@ export interface Program {
     fetched: boolean
 }
 
-const programtable = db.table('program');
+const programtable = ProgramHandler.getTable()
 
 export async function getProgramAddrById(address_id: number): Promise<Program> {
 

@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { AddressHandler, getAddrId } from "../../background/types";
+import { AddressHandler } from "../../background/database";
+import { getAddrId } from "../../background/types";
 import { useObjectState } from "../components/context/objectState";
 import { ColorPicker, If, SwitchInput, TextInput, twitterColors } from "../components/menu";
 

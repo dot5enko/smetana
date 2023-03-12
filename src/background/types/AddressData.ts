@@ -1,4 +1,5 @@
-import { db } from "../database"
+import { AddressDataHandler, db } from "../database"
+import { TypeOperations } from "../TypeOperations"
 import { RawAccountInfo } from "./RawAccountinfo"
 
 export interface AddressData {
@@ -13,8 +14,6 @@ export interface AddressData {
     context_slot: number
 }
 
-const datatable = db.table("data");
-
 export interface HistoryResponse {
     total: number,
     filtered: AddressData[]
@@ -22,6 +21,8 @@ export interface HistoryResponse {
 
 export async function getHistory(address_id: number, limit: number): Promise<HistoryResponse> {
 
+
+    const datatable = AddressDataHandler.getTable();
 
     let filtered = datatable.where("address_id").equals(address_id);
 
@@ -45,6 +46,9 @@ export async function addNewAddressData(data: RawAccountInfo, address_id: number
         lamports: data.lamports,
         context_slot: data.context_slot
     }
+
+    const datatable = AddressDataHandler.getTable();
+
 
     return datatable.add(item);
 }
