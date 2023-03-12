@@ -7,4 +7,5 @@ export * from "./RawAccountinfo";
 export * from "./WatchedAddress"
 export * from "./AddressData"
 export * from "./Address"
+export * from "./ContentResponse"
 

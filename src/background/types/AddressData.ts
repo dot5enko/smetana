@@ -1,5 +1,4 @@
 import { AddressDataHandler, db } from "../database"
-import { TypeOperations } from "../TypeOperations"
 import { RawAccountInfo } from "./RawAccountinfo"
 
 export interface AddressData {

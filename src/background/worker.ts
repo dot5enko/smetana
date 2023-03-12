@@ -1,9 +1,10 @@
 import { Connection, PublicKey } from "@solana/web3.js"
-import { db } from "./database"
+import { AddressHandler, db } from "./database"
 import { getKeyValueFromDb, RpcConfigKey } from "./storage"
 import { DefaultRpcServer } from "./rpc"
 import { doPeriodicTask } from "./worker/periodicTask";
 import { getAddrId } from "./types";
+import { ContentResponse } from "./types/ContentResponse";
 
 async function setup() {
 
@@ -33,7 +34,7 @@ async function setup() {
                         // fetch cache from database
                         let addrs = request.address;
 
-                        let response_state = [];
+                        let response_state: ContentResponse[] = [];
 
                         //   sync 
                         let doneRequests = 0;
@@ -45,19 +46,20 @@ async function setup() {
                             (async (curAddrStr) => {
                                 try {
                                     const addrId = await getAddrId(curAddrStr);
+                                    const addrInfo = await AddressHandler.getById(addrId);
 
                                     let cached = await db.table('data').get({
                                         address_id: addrId
                                     })
 
-                                    if (cached != null) {
-                                        console.log(` -- response item pushed: ${addrId} => ${curAddrStr}`)
-                                        response_state.push({
-                                            key: curAddrStr,
-                                            lastDataTime: cached.created_at,
-                                            lastData: cached.data
-                                        });
+
+                                    const responseItem: ContentResponse = {
+                                        Address: addrInfo,
+                                        LastData: cached
                                     }
+
+                                    response_state.push(responseItem);
+
                                 } catch (e: any) {
                                     console.warn("unable to get item from indexed db:", e.message)
                                 }
