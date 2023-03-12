@@ -9,6 +9,13 @@ const addressesToOmit = new Set<string>([
     "11111111111111111111111111111111"
 ]);
 
+const accountLinks = new Map<string, string>([
+    ["explorer.solana.com", "https://explorer.solana.com/address/"],
+    ["solscan.io", "https://solscan.io/account/"],
+    ["solana.fm", "https://solana.fm/address/"],
+]);
+
+
 var observeDOM = (function () {
     var MutationObserver = window.MutationObserver;
 
@@ -33,70 +40,74 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
     for (var it of links) {
         var hrefAttr = it.href;
 
-        if (hrefAttr.startsWith("https://solscan.io/account")) {
+        let splitParts = new URL(hrefAttr).pathname.split("\/")
+        let addr = splitParts[splitParts.length - 1]
 
-            let splitParts = hrefAttr.split("\/")
-            let addr = splitParts[splitParts.length - 1]
+        // at this point data should already fetched
+        let addrData = pageContext.getData(addr);
 
-            // at this point data should already fetched
-            let addrData = pageContext.getData(addr);
+        if (it.querySelector(".smetanaExplorer") == null) {
 
-            if (it.querySelector(".smetanaExplorer") == null) {
+            const badge = document.createElement("span");
+            badge.style.border = "1px solid black"
+            badge.style.padding = "4px"
+            badge.style.marginRight = "10px";
+            badge.style.borderRadius = "4px";
+            badge.style.color = 'white';
+            badge.style.backgroundColor = "#189AB4";
+            badge.onclick = async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
 
-                const badge = document.createElement("span");
-                badge.style.border = "1px solid black"
-                badge.style.padding = "4px"
-                badge.style.marginRight = "10px";
-                badge.style.borderRadius = "4px";
-                badge.style.color = 'white';
-                badge.style.backgroundColor = "#189AB4";
-                badge.onclick = async function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
+                let popupDiv = document.querySelector(".smetana-popup") as HTMLElement;
 
-                    let popupDiv = document.querySelector(".smetana-popup") as HTMLElement;
+                popupDiv.style.display = "block";
+                popupDiv.style.opacity = "1";
 
-                    popupDiv.style.display = "block";
-                    popupDiv.style.opacity = "1";
+                var xPosition = e.clientX + window.pageXOffset - popupDiv.clientWidth / 2;
+                var yPosition = e.clientY + window.pageYOffset - popupDiv.clientHeight / 2;
 
-                    var xPosition = e.clientX + window.pageXOffset - popupDiv.clientWidth / 2;
-                    var yPosition = e.clientY + window.pageYOffset - popupDiv.clientHeight / 2;
+                popupDiv.style.top = yPosition + "px";
+                popupDiv.style.left = xPosition + "px";
 
-                    popupDiv.style.top = yPosition + "px";
-                    popupDiv.style.left = xPosition + "px";
+                let addressValueHolder = document.querySelector('.addressValue') as HTMLElement
+                addressValueHolder.innerText = addr;
 
-                    let addressValueHolder = document.querySelector('.addressValue') as HTMLElement
-                    addressValueHolder.innerText = addr;
+                // set data 
 
-                    // set data 
+                {
+                    let popupdata = document.querySelector('.popup-data') as HTMLElement
+                    popupdata.innerText = JSON.stringify(addrData)
 
-                    {
-                        let popupdata = document.querySelector('.popup-data') as HTMLElement
-                        popupdata.innerText = JSON.stringify(addrData)
+                    // current addr data 
+                    // use data view strategy interface
 
-                        // current addr data 
-                        // use data view strategy interface
-
-                        const getFreshBtn = document.querySelector(".getFresh") as HTMLElement
-                        getFreshBtn.setAttribute('data-id', addr)
-                    }
-
+                    const getFreshBtn = document.querySelector(".getFresh") as HTMLElement
+                    getFreshBtn.setAttribute('data-id', addr)
                 }
 
-                badge.classList.add("smetanaExplorer");
-                badge.innerText = "@" + addr.substring(0, 4);
-
-                it.prepend(badge);
             }
-            // }
+
+            badge.classList.add("smetanaExplorer");
+            badge.innerText = "@" + addr.substring(0, 4);
+
+            it.prepend(badge);
         }
+        // }
     }
 }
 
-function handleUpdatedNode(pageContext: ContentContext, docPart?: HTMLElement) {
+function handleUpdatedNode(domain: string, pageContext: ContentContext, docPart?: HTMLElement) {
 
-    if (!docPart) {
+    if (!docPart || !(docPart instanceof HTMLElement)) {
         return;
+    }
+
+    const domainPrefix = accountLinks.get(domain)
+
+    if (domainPrefix == null) {
+        console.warn('unknown/unsupported domain: ', domain)
+        return
     }
 
     var links = docPart.querySelectorAll("a");
@@ -113,9 +124,9 @@ function handleUpdatedNode(pageContext: ContentContext, docPart?: HTMLElement) {
             for (var it of links) {
                 var hrefAttr = it.href;
 
-                if (hrefAttr.startsWith("https://solscan.io/account")) {
+                if (hrefAttr.startsWith(domainPrefix)) {
 
-                    let splitParts = hrefAttr.split("\/")
+                    let splitParts = new URL(hrefAttr).pathname.split("\/")
                     let addr = splitParts[splitParts.length - 1]
 
                     if (!addressesToOmit.has(addr)) {
@@ -128,8 +139,6 @@ function handleUpdatedNode(pageContext: ContentContext, docPart?: HTMLElement) {
 
                             addrsToFetch.push(addr)
                         }
-                    } else {
-                        console.log(`skipped address due to blacklist: ${addr}`)
                     }
                 }
             }
@@ -156,6 +165,8 @@ function handleUpdatedNode(pageContext: ContentContext, docPart?: HTMLElement) {
 
 document.addEventListener("DOMContentLoaded", function () {
 
+    console.log('dom was loaded?')
+
     const bodyObj = document.querySelector('body');
 
     // popup object
@@ -178,10 +189,12 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    const domain = window.location.host;
+
     observeDOM(bodyObj as Node, function (m) {
         for (var mutations of m) {
             for (var addedNode of mutations.addedNodes) {
-                handleUpdatedNode(PageContext, addedNode as HTMLAnchorElement)
+                handleUpdatedNode(domain, PageContext, addedNode as HTMLAnchorElement)
             }
         }
     });
