@@ -1,12 +1,9 @@
 import { Box, Flex, Spacer, Switch } from "@chakra-ui/react";
-import { BasicEntryProps, MenuItemBasicElement,Sublabel } from ".";
+import { BasicEntryProps, InputGenericProps, MenuItemBasicElement, Sublabel } from ".";
 
-export interface SwitchInputProps extends BasicEntryProps {
+export interface SwitchInputProps extends InputGenericProps<boolean>, BasicEntryProps {
     children?: any,
     sublabel?: string,
-
-    value?: boolean
-    onChange(val: boolean): void
     flexShrink?: any
 }
 

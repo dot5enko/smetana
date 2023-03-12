@@ -1,5 +1,6 @@
 import { Connection, PublicKey } from "@solana/web3.js"
-import { db, getAddrId } from "../database"
+import { getAddrId } from "."
+import { db } from "../database"
 import { genAnchorIdlAddr, parseIdlFromAccountData, parseIdlTypes } from "../idl"
 import { importType } from "./DataType"
 import { getSignleRawAccountInfo } from "./RawAccountinfo"

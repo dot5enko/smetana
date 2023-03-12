@@ -16,3 +16,5 @@ export * from "./SlideWindow";
 export * from "./Sublabel";
 export * from "./SwitchInput";
 export * from "./TextInput";
+export * from "./ColorPicker"
+export * from "./InputGeneric"

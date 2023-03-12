@@ -1,8 +1,7 @@
 import { AccountInfo, Connection, PublicKey } from "@solana/web3.js";
-import { getAddresById } from "../database";
 import { DefaultRpcCommitment, DefaultRpcServer } from "../rpc";
 import { getKeyValueFromDb, RpcConfigKey } from "../storage";
-import { getActiveWatchedAddresses, RawAccountInfo, updateWatched, WatchedAddress } from "../types";
+import { getActiveWatchedAddresses, getAddresById, RawAccountInfo, updateWatched, WatchedAddress } from "../types";
 import { addNewAddressData } from "../types/AddressData";
 
 async function addrChunks(list: WatchedAddress[], size: number, entryMap: Map<string, ChunkDataEntry>): Promise<PublicKey[][]> {
@@ -12,13 +11,15 @@ async function addrChunks(list: WatchedAddress[], size: number, entryMap: Map<st
 
     for (var it of list) {
         const addr = await getAddresById(it.address_id);
-        curChunk.push(addr);
+
+        const addrPk = new PublicKey(addr.address);
+        curChunk.push(addrPk);
 
         // push map outside
         // todo eliminate toBase58 call here 
-        entryMap.set(addr.toBase58(), {
+        entryMap.set(addr.address, {
             address_id: it.address_id,
-            pubkey: addr,
+            pubkey: addrPk,
             info: undefined,
             watched: it
         })

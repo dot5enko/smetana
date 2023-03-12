@@ -15,7 +15,6 @@ const accountLinks = new Map<string, string>([
     ["solana.fm", "https://solana.fm/address/"],
 ]);
 
-
 var observeDOM = (function () {
     var MutationObserver = window.MutationObserver;
 
@@ -89,7 +88,10 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
             }
 
             badge.classList.add("smetanaExplorer");
-            badge.innerText = "@" + addr.substring(0, 4);
+
+            it.innerText = "@" + addr.substring(0, 4);
+
+            badge.innerText = "[smetana]";
 
             it.prepend(badge);
         }

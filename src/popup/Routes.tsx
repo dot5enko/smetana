@@ -1,16 +1,8 @@
 import { useRouteArg } from "./components/context/ExtensionContext";
-import { MenuEntry } from "./components/menu/MenuEntry";
-import { Route } from "./components/menu/Router";
-import { Addresses } from "./screens/Addresses";
-import { DataTypes } from "./screens/DataTypes";
-import { EditDataType } from "./screens/EditDataType";
-import { EditTypeField } from "./screens/EditTypeField";
-import { ImportIdl } from "./screens/ImportIdl";
-import { TrackNewAddress } from "./screens/TrackNewAddress";
-import { BottomContent } from "./components/menu";
-import { EditWatchedAddress } from "./screens/EditWatchedAddress";
+import { BottomContent, ColorPicker, Route, MenuEntry } from "./components/menu";
+import { TrackNewAddress, Addresses, ImportIdl, DataTypes, EditDataType, EditTypeField, EditWatchedAddress } from "./screens";
+import { BasicAddrEdit } from "./screens/BasicAddrEdit";
 import { DataHistory } from "./screens/DataHistory";
-
 export function Routes() {
 
     return <>
@@ -21,6 +13,10 @@ export function Routes() {
             <BottomContent>
                 <MenuEntry submenu="track_new_address" colorVariant="info" fixedFooter={true}>Track new address</MenuEntry>
             </BottomContent>
+            <MenuEntry submenu="basic_addr_edit" args={["A35xZFvr3xsRdaV6jnMrNujzBkKx3hApXTDCfj1AVpmm"]} >Edit me</MenuEntry>
+        </Route>
+        <Route path="basic_addr_edit">
+            <BasicAddrEdit id={useRouteArg(0)} />
         </Route>
         <Route path="track_new_address">
             <TrackNewAddress addr="8szGkuLTAux9XMgZ2vtY39jVSowEcpBfFfD8hXSEqdGC" />
