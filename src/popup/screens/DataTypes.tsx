@@ -12,6 +12,7 @@ export interface DataTypesProps {
 export function DataTypes(props: DataTypesProps) {
 
     const { setRoute, setSlideRoute } = useExtensionContext();
+    
     const [query, setQuery] = useState<string>("");
 
     const [items, setItems] = useState<DataTypeInterface[]>([]);

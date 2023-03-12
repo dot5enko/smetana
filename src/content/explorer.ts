@@ -35,6 +35,8 @@ var observeDOM = (function () {
     }
 })()
 
+let currentSideIsLeft = true;
+
 function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentContext) {
     for (var it of links) {
         var hrefAttr = it.href;
@@ -59,22 +61,44 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
                 e.preventDefault();
                 e.stopPropagation();
 
+                const directionLeft = e.clientX > window.innerWidth / 2;
+                currentSideIsLeft = directionLeft;
+
                 let popupDiv = document.querySelector(".smetana-popup") as HTMLElement;
+                let splash = document.querySelector(".smetana-splash") as HTMLElement;
+
+                if (directionLeft) {
+                    popupDiv.style.right = "";
+                    popupDiv.style.left = "-500px";
+                } else {
+                    popupDiv.style.left = "";
+                    popupDiv.style.right = "-500px";
+                }
 
                 popupDiv.style.display = "block";
-                popupDiv.style.opacity = "1";
+                splash.style.display = "block";
 
-                var xPosition = e.clientX + window.pageXOffset - popupDiv.clientWidth / 2;
-                var yPosition = e.clientY + window.pageYOffset - popupDiv.clientHeight / 2;
+                setTimeout(() => {
+                    splash.style.opacity = "0.4"
+                    popupDiv.style.opacity = "1";
 
-                popupDiv.style.top = yPosition + "px";
-                popupDiv.style.left = xPosition + "px";
+                    if (directionLeft) {
+                        popupDiv.style.left = "0px";
+                    } else {
+                        popupDiv.style.right = "0px";
+                    }
+                })
+
+                // var xPosition = e.clientX + window.pageXOffset - popupDiv.clientWidth / 2;
+                // var yPosition = e.clientY + window.pageYOffset - popupDiv.clientHeight / 2;
+
+                // popupDiv.style.top = yPosition + "px";
+                // popupDiv.style.left = xPosition + "px";
 
                 let addressValueHolder = document.querySelector('.addressValue') as HTMLElement
                 addressValueHolder.innerText = addr;
 
                 // set data 
-
                 {
                     let popupdata = document.querySelector('.popup-data') as HTMLElement
                     popupdata.innerText = JSON.stringify(addrData)
@@ -191,6 +215,28 @@ document.addEventListener("DOMContentLoaded", function () {
         {
             let getBtn = document.querySelector(".getFresh");
             let popupdata = document.querySelector('.popup-data') as HTMLElement
+
+            let popup = document.querySelector('.smetana-popup') as HTMLElement
+            let splash = document.querySelector(".smetana-splash") as HTMLElement;
+            splash.addEventListener('click', () => {
+                // hide splash 
+                splash.style.opacity = "0";
+                popup.style.opacity = "0";
+
+                if (currentSideIsLeft) {
+                    popup.style.right = "";
+                    popup.style.left = "-500px";
+                } else {
+                    popup.style.left = "";
+                    popup.style.right = "-500px";
+                }
+
+                setTimeout(() => {
+                    splash.style.display = "none";
+                    popup.style.display = "none";
+                }, 300)
+
+            })
 
             getBtn?.addEventListener('click', function (e) {
                 const addrVal = getBtn?.getAttribute('data-id')
