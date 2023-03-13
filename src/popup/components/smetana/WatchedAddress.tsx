@@ -18,7 +18,6 @@ export function WatchedAddress(props: WatchedAddressProps) {
             AddressDataHandler.getTable().where("address_id").equals(item.address_id).count().then(total_items => {
                 setEntries(total_items);
             })
-
         } else {
             setEntries(0);
         }

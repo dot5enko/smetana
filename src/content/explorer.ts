@@ -58,6 +58,7 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
             badge.style.mixBlendMode = 'difference'
             // badge.style.backgroundColor = "#189AB4";
             badge.onclick = async function (e) {
+
                 e.preventDefault();
                 e.stopPropagation();
 
@@ -69,7 +70,7 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
 
                 const args = [addr];
 
-                createIframe("chrome-extension://mdbomlnaacppcahjcbcnipmcfcjigkdb/index.html#basic_addr_edit=" + JSON.stringify(args));
+                createIframe(ext_url + "#addr_view=" + JSON.stringify(args));
 
                 if (directionLeft) {
                     popupDiv.style.right = "";
@@ -200,16 +201,18 @@ function handleUpdatedNode(domain: string, pageContext: ContentContext, docPart?
     }
 }
 
-document.addEventListener("DOMContentLoaded", function () {
+const ext_url = chrome.runtime.getURL("index.html");
 
-    console.log('dom was loaded?')
+document.addEventListener("DOMContentLoaded", function () {
 
     const bodyObj = document.querySelector('body');
 
     // popup object
     {
         createPopupObject();
-        createIframe("chrome-extension://mdbomlnaacppcahjcbcnipmcfcjigkdb/index.html");
+
+        // todo initialize iframe only when user clicks on address
+        createIframe(ext_url);
 
         // setup callbacks
         {

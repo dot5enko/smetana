@@ -66,7 +66,7 @@ async function processData(items: ChunkDataEntry[]) {
 
 }
 
-export async function doPeriodicTask() {
+export default async function doPeriodicTask() {
 
     console.log("doPeriodicTask() called")
 

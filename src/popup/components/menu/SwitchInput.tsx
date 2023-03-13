@@ -19,7 +19,6 @@ export function SwitchInput(props: SwitchInputProps) {
                 <Box>{props.children}</Box>
                 <Spacer />
                 <Switch colorScheme={"green"} isChecked={props.value} onChange={(event: any) => {
-                    console.log('change event fired')
                     props.onChange(event.target.checked)
                 }} />
             </Flex>

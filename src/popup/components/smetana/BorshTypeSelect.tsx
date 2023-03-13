@@ -18,7 +18,5 @@ const opts = [
 
 export function BorshTypeSelect(props: { value: string, onChange: { (val: string[]): void } }) {
 
-    console.log(`type select value is "${props.value}"`, props.value)
-
     return <ItemSelector sizeVariant="sm" options={opts} value={[props.value]} onSelectorValueChange={props.onChange} ></ItemSelector >
 }

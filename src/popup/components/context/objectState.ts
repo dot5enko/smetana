@@ -47,9 +47,10 @@ export function useObjectState<T>(dbhandler: TypeOperations<T>, id?: number,
     useEffect(() => {
         if (object_id && changesCount > 0) {
             dbhandler.update(object_id, object)
-                .catch(e => console.error('unable to update object', e.message))
-
-            console.log('update object: ', object)
+                .catch(e => {
+                    console.error('unable to update object', e.message)
+                    setErr(e.message)
+                })
         }
     }, [changesCount, object_id])
 
