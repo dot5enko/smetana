@@ -67,7 +67,9 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
                 let popupDiv = document.querySelector(".smetana-popup-iframe") as HTMLElement;
                 let splash = document.querySelector(".smetana-splash") as HTMLElement;
 
-                createIframe("chrome-extension://mdbomlnaacppcahjcbcnipmcfcjigkdb/index.html#basic_addr_edit=" + addr);
+                const args = [addr];
+
+                createIframe("chrome-extension://mdbomlnaacppcahjcbcnipmcfcjigkdb/index.html#basic_addr_edit=" + JSON.stringify(args));
 
                 if (directionLeft) {
                     popupDiv.style.right = "";
@@ -81,8 +83,7 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
                 splash.style.display = "block";
 
                 setTimeout(() => {
-                    splash.style.opacity = "0.4"
-                    popupDiv.style.opacity = "1";
+                    splash.style.opacity = "0.1"
 
                     if (directionLeft) {
                         popupDiv.style.left = "0px";
@@ -111,7 +112,6 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
                     const getFreshBtn = document.querySelector(".getFresh") as HTMLElement
                     getFreshBtn.setAttribute('data-id', addr)
                 }
-
             }
 
             badge.classList.add("smetanaExplorer");
@@ -224,7 +224,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 // hide splash 
                 splash.style.opacity = "0";
-                popup.style.opacity = "0";
+                // popup.style.opacity = "0";
 
                 if (currentSideIsLeft) {
                     popup.style.right = "";

@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Spacer, Text, keyframes } from "@chakra-ui/react"
+import { Box, Flex, Icon, Spacer, Text } from "@chakra-ui/react"
 import { ChakraProvider } from '@chakra-ui/react'
 import { ToastContainer } from "react-toastify"
 import { ExtensionContextProvider, useExtensionContext } from "./components/context/ExtensionContext"
@@ -6,22 +6,8 @@ import { Routes } from "./Routes"
 import { SlideRoutes } from "./SlideRoutes"
 import 'react-toastify/dist/ReactToastify.css';
 import { MdKeyboardBackspace, MdSettings } from "react-icons/md"
-import { If } from "./components/menu/If"
-import { SlideWindow } from "./components/menu/SlideWindow"
-import { useEffect } from "react"
-
-const AnimationDuration = 150;
-
-const fademove = keyframes`
-    50% {
-        transform: translateX(5px);
-        opacity: 0;
-    }
-    100% {
-        transform: translateX(0px);
-        opacity: 1;
-    }
-`
+import { If, SlideWindow } from "./components/menu"
+import { useEffect, useState } from "react"
 
 function App() {
 
@@ -46,13 +32,30 @@ function Content() {
 }
 
 
+const useHash = () => {
+  const [path, setPath] = useState(window.location.hash);
+  const listenToPopstate = () => {
+    const winPath = window.location.hash;
+    setPath(winPath);
+  };
+  useEffect(() => {
+    window.addEventListener("popstate", listenToPopstate);
+    return () => {
+      window.removeEventListener("popstate", listenToPopstate);
+    };
+  }, []);
+  return path;
+};
+
 function AppWindowInner(props: { routes: any, slideRoutes: any }) {
 
   const { setRoute } = useExtensionContext();
 
+  const hash = useHash();
+
   useEffect(() => {
-    if (window.location.hash != "") {
-      const prevVal = window.location.hash;
+    if (hash != "") {
+      const prevVal = hash;
 
       let [routePath, argsRaw] = prevVal.substring(1).split("=")
 
@@ -64,9 +67,11 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
 
       setRoute(routePath, "", false, ...args)
 
+      console.log(`route change should happen. route = > ${routePath}`)
+
       window.location.hash = ""
     }
-  }, [window.location.hash])
+  }, [hash])
 
   const { slideActive, hasBack, routeBack, setSlideRoute, rpc, route: { footerContent: footer, title, path: routePath } } = useExtensionContext();
 
