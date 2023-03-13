@@ -3,7 +3,7 @@ import { AddressDataHandler, AddressHandler, db } from "./database"
 import { getKeyValueFromDb, RpcConfigKey } from "./storage"
 import { DefaultRpcCommitment, DefaultRpcServer } from "./rpc"
 import { ChunkDataEntry, doPeriodicTask } from "./worker/periodicTask";
-import { getAddrId, setAddrIdOwner, toRawAccountInfo } from "./types";
+import { addNewAddressData, getAddrId, getTypeToDecode, RawAccountInfo, setAddrIdOwner, toRawAccountInfo } from "./types";
 import { ContentResponse } from "./types/ContentResponse";
 
 async function setup() {
@@ -53,14 +53,14 @@ async function setup() {
                                     })
 
                                     // check if there is type 
-                                    let typ = undefined;
+                                    let typ = await getTypeToDecode(addrId, false);
 
                                     const totalEntries = await AddressDataHandler.getTable().where('address_id').equals(addrInfo.id as number).count();
 
                                     const responseItem: ContentResponse = {
                                         Address: addrInfo,
                                         LastData: cached,
-                                        Type: typ,
+                                        Type: typ.typ,
                                         DataCount: totalEntries
                                     }
 
@@ -135,7 +135,7 @@ async function setup() {
                                                 item.info = toRawAccountInfo(
                                                     respAccData,
                                                     accsResponse.context.slot,
-                                                    false
+                                                    true
                                                 )
                                             }
                                             mappedData.push(item);
@@ -152,14 +152,17 @@ async function setup() {
                                 }
                             }
 
+                            let curt = new Date().getTime() / 1000;
                             for (var entryItem of resultMap.values()) {
 
-                                await setAddrIdOwner(entryItem.address_id, await getAddrId(entryItem.info?.owner as string))
-                                await db.table('data').add({
-                                    address_id: entryItem.address_id,
-                                    created_at: new Date(),
-                                    data: entryItem.info?.data,
-                                })
+                                if (entryItem.info) {
+                                    addNewAddressData(
+                                        entryItem.info,
+                                        entryItem.address_id,
+                                        curt,
+                                        await getAddrId(entryItem.info.owner)
+                                    )
+                                }
                             }
 
                             sendResponse({

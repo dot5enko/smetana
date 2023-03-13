@@ -1,4 +1,5 @@
 import { AddressDataHandler } from "../database"
+import { getAddrId, setAddrIdOwner } from "./Address"
 import { RawAccountInfo } from "./RawAccountinfo"
 
 export interface AddressData {
@@ -36,7 +37,7 @@ export async function getHistory(address_id: number, limit: number): Promise<His
 
 }
 
-export async function addNewAddressData(data: RawAccountInfo, address_id: number, t: number) {
+export async function addNewAddressData(data: RawAccountInfo, address_id: number, t: number, owner?: number) {
 
     const item: AddressData = {
         address_id,
@@ -48,6 +49,13 @@ export async function addNewAddressData(data: RawAccountInfo, address_id: number
 
     const datatable = AddressDataHandler.getTable();
 
+    if (owner) {
+        await setAddrIdOwner(
+            item.address_id,
+            owner,
+            item.data.length
+        )
+    }
 
     return datatable.add(item);
 }

@@ -8,7 +8,9 @@ export interface Address {
 
     hasColor?: boolean
     labelColor?: string
+
     program_owner: number
+    datalen: number
 }
 
 export async function getAddrId(addrStr: string): Promise<number> {
@@ -26,9 +28,13 @@ export async function getAddrId(addrStr: string): Promise<number> {
     }
 }
 
-export async function setAddrIdOwner(id: number, owner_id: number) {
+export async function setAddrIdOwner(id: number, owner_id: number, datalen: number) {
+
+    // todo fetch first ?
+
     return AddressHandler.getTable().update(id, {
-        program_owner: owner_id
+        program_owner: owner_id,
+        datalen: datalen
     })
 }
 

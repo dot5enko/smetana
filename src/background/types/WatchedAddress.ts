@@ -1,5 +1,5 @@
 import { getAddrId } from "."
-import { db, WatchedAddressHandler } from "../database"
+import { WatchedAddressHandler } from "../database"
 
 export interface WatchedAddress {
     id?: number

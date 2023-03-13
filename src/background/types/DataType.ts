@@ -153,15 +153,37 @@ export interface HasTypeResponse {
     fetched: boolean
 }
 
-async function getTypeToDecode(address_id: number, fetchidl: boolean): Promise<HasTypeResponse> {
+// todo add discriminator bytes ?
+export async function getTypeToDecode(address_id: number, fetchidl: boolean, discriminator?: Uint8Array): Promise<HasTypeResponse> {
 
     let result: HasTypeResponse = {
         fetched: fetchidl
     }
 
+    if (discriminator) {
+
+        const types = await datatypesForDiscriminator(discriminator);
+
+
+        if (types.length > 0) {
+            if (types.length > 1) {
+                console.log('--- more than 1 datatype are found by discriminator, codec could be wrong, perform filtering by program owner first')
+            }
+
+            const syncedT = await getDataTypeForSync(types[0]);
+            result.typ = syncedT;
+            return result;
+        }
+
+    }
+
+
     const watchedAddr = await WatchedAddressHandler.getById(address_id);
 
     if (watchedAddr != null) {
+
+        console.log('there is watched address there, type should be just fine to find')
+
         const typref = await DataTypeHandler.getById(watchedAddr.data_type_id)
         const syncedT = await getDataTypeForSync(typref);
         result.typ = syncedT;
@@ -169,13 +191,17 @@ async function getTypeToDecode(address_id: number, fetchidl: boolean): Promise<H
         return result;
     }
 
+
+    console.log(' --- no watched address were found : (')
     const address: Address = await AddressHandler.getTable().
-        where("address_id").
+        where("id").
         equals(address_id).
         first();
 
     // todo fetch address if fetchidl = true
     if (address != null && address.program_owner != null) {
+
+        console.log(' ---- address found:', address)
 
         const program: Program = await ProgramHandler.getTable().
             where('address_id').
@@ -183,22 +209,33 @@ async function getTypeToDecode(address_id: number, fetchidl: boolean): Promise<H
             first()
 
         if (program != null) {
+
+            console.log(' ----- program found:', program)
+
             const program_addr = await AddressHandler.getById(address.program_owner);
 
             const typeRef: DataType = await DataTypeHandler.getTable().
                 where('program_id').
                 equals(program_addr.address).
-                first()
+                // todo fix this
+                filter((it: DataType) => {
+                    console.log(it.info.size_bytes, ' == ', address.datalen)
+                    return it.info.size_bytes == address.datalen;
+                }).first()
 
-            const syncedT = await getDataTypeForSync(typeRef);
-            result.typ = syncedT;
+            if (typeRef) {
+                const syncedT = await getDataTypeForSync(typeRef);
+                result.typ = syncedT;
+            } else {
+                console.log('unable to find a type to decode')
+            }
 
         } else {
             // fetch idl if needed
         }
     } else {
         // force fetch addr
-
+        console.log(" ### address not found :(", address)
     }
 
     return result;

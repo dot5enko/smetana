@@ -4,7 +4,7 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getSingleAddressInfo } from "../../background";
-import { RawAccountInfo, DataType, DecodeTypeResult, fetchProgramIdl, datatypesForDiscriminator, datatypesForProgram, createNewWatchedAddress, getDataTypeForSync } from "../../background/types";
+import { RawAccountInfo, DataType, DecodeTypeResult, fetchProgramIdl, datatypesForDiscriminator, datatypesForProgram, createNewWatchedAddress, getDataTypeForSync, getAddrId, getTypeToDecode, getSignleRawAccountInfo } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { TextInput, ActionButton, Sublabel, MultipleItemsRow, MenuEntry, Group, BottomContent, ItemSelector, MenuDivider } from "../components/menu";
 import { addrFormat, DecodedType } from "../components/smetana";
@@ -33,24 +33,13 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
         setDecodeError(false);
 
         if (validAddr != "") {
+
             setLoading(true);
-            getSingleAddressInfo(validAddr, connection).then(resp => {
-                if (resp.value != undefined) {
+            getSignleRawAccountInfo(connection, validAddr).then(rawaccount => {
 
-                    const rawaccount: RawAccountInfo = {
-                        context_slot: resp.context.slot,
-                        data: resp.value?.data,
-                        executable: resp.value?.executable,
-                        lamports: resp.value?.lamports,
-                        owner: resp.value.owner.toBase58()
-                    }
+                setFound(true);
+                setRaw(rawaccount)
 
-                    setFound(true);
-                    setRaw(rawaccount)
-                } else {
-                    setFound(false);
-                    setRaw(undefined)
-                }
                 setLoading(false)
             }).catch(e => {
                 setLoading(false)

@@ -107,16 +107,11 @@ export async function doPeriodicTask() {
                     let item = resultMap.get(pubkey.toBase58());
                     if (item) {
                         if (respAccData) {
-
                             item.info = toRawAccountInfo(
                                 respAccData,
                                 accsResponse.context.slot,
                                 false
                             )
-
-                            // set owner for addresses
-                            // todo put flag in memory cache 
-                            await setAddrIdOwner(item.address_id, await getAddrId(item.info.owner))
                         }
                         mappedData.push(item);
                     } else {
