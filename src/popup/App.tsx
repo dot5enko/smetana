@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Spacer, useColorMode, Text, keyframes } from "@chakra-ui/react"
+import { Box, Flex, Icon, Spacer, Text, keyframes } from "@chakra-ui/react"
 import { ChakraProvider } from '@chakra-ui/react'
 import { ToastContainer } from "react-toastify"
 import { ExtensionContextProvider, useExtensionContext } from "./components/context/ExtensionContext"
@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { MdKeyboardBackspace, MdSettings } from "react-icons/md"
 import { If } from "./components/menu/If"
 import { SlideWindow } from "./components/menu/SlideWindow"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect } from "react"
 
 const AnimationDuration = 150;
 
@@ -47,6 +47,26 @@ function Content() {
 
 
 function AppWindowInner(props: { routes: any, slideRoutes: any }) {
+
+  const { setRoute } = useExtensionContext();
+
+  useEffect(() => {
+    if (window.location.hash != "") {
+      const prevVal = window.location.hash;
+
+      let [routePath, argsRaw] = prevVal.substring(1).split("=")
+
+      let args = [];
+
+      if (argsRaw) {
+        args = JSON.parse(decodeURIComponent(argsRaw))
+      }
+
+      setRoute(routePath, "", false, ...args)
+
+      window.location.hash = ""
+    }
+  }, [window.location.hash])
 
   const { slideActive, hasBack, routeBack, setSlideRoute, rpc, route: { footerContent: footer, title, path: routePath } } = useExtensionContext();
 

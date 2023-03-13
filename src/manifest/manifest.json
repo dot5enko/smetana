@@ -20,7 +20,11 @@
     }
   ],
   "permissions": [
-    "alarms"
+    "alarms",
+    "tabs",
+    "webRequest",
+    "webNavigation",
+    "storage"
   ],
   "background": {
     "service_worker": "js/background.js",
@@ -29,5 +33,15 @@
   "action": {
     "default_popup": "index.html",
     "default_title": "Open Smetana Explorer"
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "index.html"
+      ],
+      "matches": [
+        "*://*/*"
+      ]
+    }
+  ]
 }

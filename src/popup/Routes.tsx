@@ -12,7 +12,6 @@ export function Routes() {
             <BottomContent>
                 <MenuEntry submenu="track_new_address" colorVariant="info" fixedFooter={true}>Track new address</MenuEntry>
             </BottomContent>
-            <MenuEntry submenu="basic_addr_edit" args={["A35xZFvr3xsRdaV6jnMrNujzBkKx3hApXTDCfj1AVpmm"]} >Edit me</MenuEntry>
         </Route>
         <Route path="basic_addr_edit">
             <BasicAddrEdit id={useRouteArg(0)} />

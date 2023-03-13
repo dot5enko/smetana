@@ -1,6 +1,6 @@
 
 import { ContentContext, PageContext } from "./context";
-import { createPopupObject } from "./popup"
+import { createIframe, createPopupObject } from "./popup"
 
 const addressesToOmit = new Set<string>([
     "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL",
@@ -64,8 +64,10 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
                 const directionLeft = e.clientX > window.innerWidth / 2;
                 currentSideIsLeft = directionLeft;
 
-                let popupDiv = document.querySelector(".smetana-popup") as HTMLElement;
+                let popupDiv = document.querySelector(".smetana-popup-iframe") as HTMLElement;
                 let splash = document.querySelector(".smetana-splash") as HTMLElement;
+
+                createIframe("chrome-extension://mdbomlnaacppcahjcbcnipmcfcjigkdb/index.html#basic_addr_edit=" + addr);
 
                 if (directionLeft) {
                     popupDiv.style.right = "";
@@ -207,15 +209,19 @@ document.addEventListener("DOMContentLoaded", function () {
     // popup object
     {
         createPopupObject();
+        createIframe("chrome-extension://mdbomlnaacppcahjcbcnipmcfcjigkdb/index.html");
 
         // setup callbacks
         {
             let getBtn = document.querySelector(".getFresh");
+
+            // todo fix
             let popupdata = document.querySelector('.popup-data') as HTMLElement
 
-            let popup = document.querySelector('.smetana-popup') as HTMLElement
+            let popup = document.querySelector('.smetana-popup-iframe') as HTMLElement
             let splash = document.querySelector(".smetana-splash") as HTMLElement;
             splash.addEventListener('click', () => {
+
                 // hide splash 
                 splash.style.opacity = "0";
                 popup.style.opacity = "0";

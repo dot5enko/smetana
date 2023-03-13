@@ -31,6 +31,11 @@ async function setup() {
                 switch (request.command) {
                     case "fetch_addresses_state": {
 
+                        console.log('ext_url', chrome.runtime.getURL(
+                            ""
+                        ));
+
+
                         // fetch cache from database
                         let addrs = request.address;
 
