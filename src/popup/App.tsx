@@ -49,7 +49,7 @@ const useHash = () => {
 
 function AppWindowInner(props: { routes: any, slideRoutes: any }) {
 
-  const { setRoute } = useExtensionContext();
+  const { setRoute, cleanupHistory } = useExtensionContext();
 
   const hash = useHash();
 
@@ -64,7 +64,8 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
       if (argsRaw) {
         args = JSON.parse(decodeURIComponent(argsRaw))
       }
-
+      
+      cleanupHistory();
       setRoute(routePath, "", false, ...args)
 
       console.log(`route change should happen. route = > ${routePath}`)
@@ -76,13 +77,13 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
   const { slideActive, hasBack, routeBack, setSlideRoute, rpc, route: { footerContent: footer, title, path: routePath } } = useExtensionContext();
 
   return <Box
-    width="360px"
+    width="100vw"
     padding="10px"
     backgroundColor="#353535"
     position="relative"
     overflow="hidden"
   >
-    <Flex direction="column" height="560px">
+    <Flex direction="column" height="100vh" boxSizing="border-box">
       <Box padding="5px 0px" height="55px">
         <Flex>
           {hasBack ? <Box

@@ -1,6 +1,6 @@
 import { useRouteArg } from "./components/context/ExtensionContext";
 import { BottomContent, ColorPicker, Route, MenuEntry } from "./components/menu";
-import { TrackNewAddress, Addresses, ImportIdl, DataTypes, EditDataType, EditTypeField, EditWatchedAddress } from "./screens";
+import { TrackNewAddress, Addresses, ImportIdl, DataTypes, EditDataType, EditTypeField, EditWatchedAddress, AddressDashboard } from "./screens";
 import { BasicAddrEdit } from "./screens/BasicAddrEdit";
 import { DataHistory } from "./screens/DataHistory";
 export function Routes() {
@@ -12,6 +12,9 @@ export function Routes() {
             <BottomContent>
                 <MenuEntry submenu="track_new_address" colorVariant="info" fixedFooter={true}>Track new address</MenuEntry>
             </BottomContent>
+        </Route>
+        <Route path="addr_view">
+            <AddressDashboard id={useRouteArg(0)} />
         </Route>
         <Route path="basic_addr_edit">
             <BasicAddrEdit id={useRouteArg(0)} />

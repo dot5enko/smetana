@@ -6,6 +6,7 @@ export interface ExtensionContextType {
 
     route: RouteHistoryEntry,
     setRoute(val: string, title: string, footer: boolean, ...args: any[]): void,
+    cleanupHistory():void;
 
     routeBack(): void
     hasBack: boolean
@@ -114,12 +115,18 @@ export function ExtensionContextProvider(props: { children?: JSX.Element }) {
             setSlideActive(false)
         }
 
+        const cleanupHistory = () => {
+            setRouteStack([]);
+        }
+
         const value: ExtensionContextType = {
             connection,
+            rpc, setRpc,
+
             setRoute, routeBack,
             hasBack: routeStack.length > 0,
-            rpc, setRpc,
             route: currentRoute,
+            cleanupHistory,
 
             slideActive,
             setSlideRoute,

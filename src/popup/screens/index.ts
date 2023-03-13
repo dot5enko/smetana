@@ -5,3 +5,4 @@ export * from "./EditTypeField";
 export * from "./ImportIdl";
 export * from "./TrackNewAddress";
 export * from "./EditWatchedAddress"
+export * from "./AddressDashboard"
