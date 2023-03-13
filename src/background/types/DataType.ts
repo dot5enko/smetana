@@ -1,6 +1,7 @@
 import { IndexableType } from "dexie";
-import { DataTypeHandler } from "../database";
-import { DataTypeFieldHandler, getFieldSize } from "./DataTypeField";
+import { Address, Program } from ".";
+import { AddressHandler, DataTypeHandler, ProgramHandler, WatchedAddressHandler } from "../database";
+import { DataTypeField, DataTypeFieldHandler, getFieldsForType, getFieldSize } from "./DataTypeField";
 import { DecodedField } from "./DecodedField";
 import { ParsedTypeFromIdl } from "./ParsedTypeFromIdl";
 
@@ -98,6 +99,21 @@ export interface DecodeTypeResult {
     fields: DecodedField[]
 }
 
+export interface DataTypeSync {
+    typ: DataType
+    fields: DataTypeField[]
+}
+
+export async function getDataTypeForSync(typ: DataType): Promise<DataTypeSync> {
+
+    const result: DataTypeSync = {
+        typ: typ,
+        fields: await getFieldsForType(typ.id as number)
+    };
+
+    return result;
+}
+
 export async function importType(program_id: string, t: ParsedTypeFromIdl): Promise<number> {
 
     const datatype = DataTypeHandler.getTable();
@@ -132,3 +148,58 @@ export async function importType(program_id: string, t: ParsedTypeFromIdl): Prom
     return Promise.resolve(typeid);
 }
 
+export interface HasTypeResponse {
+    typ?: DataTypeSync,
+    fetched: boolean
+}
+
+async function getTypeToDecode(address_id: number, fetchidl: boolean): Promise<HasTypeResponse> {
+
+    let result: HasTypeResponse = {
+        fetched: fetchidl
+    }
+
+    const watchedAddr = await WatchedAddressHandler.getById(address_id);
+
+    if (watchedAddr != null) {
+        const typref = await DataTypeHandler.getById(watchedAddr.data_type_id)
+        const syncedT = await getDataTypeForSync(typref);
+        result.typ = syncedT;
+
+        return result;
+    }
+
+    const address: Address = await AddressHandler.getTable().
+        where("address_id").
+        equals(address_id).
+        first();
+
+    // todo fetch address if fetchidl = true
+    if (address != null && address.program_owner != null) {
+
+        const program: Program = await ProgramHandler.getTable().
+            where('address_id').
+            equals(address.program_owner).
+            first()
+
+        if (program != null) {
+            const program_addr = await AddressHandler.getById(address.program_owner);
+
+            const typeRef: DataType = await DataTypeHandler.getTable().
+                where('program_id').
+                equals(program_addr.address).
+                first()
+
+            const syncedT = await getDataTypeForSync(typeRef);
+            result.typ = syncedT;
+
+        } else {
+            // fetch idl if needed
+        }
+    } else {
+        // force fetch addr
+
+    }
+
+    return result;
+}

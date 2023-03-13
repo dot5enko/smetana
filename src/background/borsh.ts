@@ -1,15 +1,13 @@
 import { PublicKey } from "@solana/web3.js";
-import { DataType, DecodeTypeResult } from "./types/DataType";
-import { DataTypeField, getFieldsForType } from "./types/DataTypeField";
-import { DecodedField, DecodeFieldResult } from "./types/DecodedField";
+import { DecodedField, DecodeFieldResult,DataTypeField,DataTypeSync, DecodeTypeResult  } from "./types";
 import * as borsh from "borsh"
 import { Buffer } from "buffer"
 
-export async function decodeType(data: Uint8Array, typ: DataType): Promise<DecodeTypeResult> {
+export function decodeType(data: Uint8Array, typ: DataTypeSync): DecodeTypeResult {
 
     let result: DecodedField[] = [];
 
-    const fields = await getFieldsForType(typ.id as number);
+    const fields = typ.fields;
 
     let offset = 0;
     let err = false;

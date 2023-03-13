@@ -1,8 +1,8 @@
-import { AccountInfo, Connection, PublicKey } from "@solana/web3.js";
+import { Connection, PublicKey } from "@solana/web3.js";
 import { AddressHandler, WatchedAddressHandler } from "../database";
 import { DefaultRpcCommitment, DefaultRpcServer } from "../rpc";
 import { getKeyValueFromDb, RpcConfigKey } from "../storage";
-import { getActiveWatchedAddresses, RawAccountInfo, WatchedAddress } from "../types";
+import { getActiveWatchedAddresses, getAddrId, RawAccountInfo, setAddrIdOwner, toRawAccountInfo, WatchedAddress } from "../types";
 import { addNewAddressData } from "../types/AddressData";
 
 async function addrChunks(list: WatchedAddress[], size: number, entryMap: Map<string, ChunkDataEntry>): Promise<PublicKey[][]> {
@@ -41,18 +41,6 @@ export interface ChunkDataEntry {
     pubkey: PublicKey,
     info?: RawAccountInfo
     watched?: WatchedAddress
-}
-
-function toRawAccountInfo(acc: AccountInfo<Buffer>, slot: number, includeOwner: boolean = false) {
-    const rawaccount: RawAccountInfo = {
-        context_slot: slot,
-        data: acc.data,
-        executable: acc.executable,
-        lamports: acc.lamports,
-        owner: includeOwner ? acc.owner.toBase58() : ""
-    }
-
-    return rawaccount;
 }
 
 async function processData(items: ChunkDataEntry[]) {
@@ -126,6 +114,9 @@ export async function doPeriodicTask() {
                                 false
                             )
 
+                            // set owner for addresses
+                            // todo put flag in memory cache 
+                            await setAddrIdOwner(item.address_id, await getAddrId(item.info.owner))
                         }
                         mappedData.push(item);
                     } else {

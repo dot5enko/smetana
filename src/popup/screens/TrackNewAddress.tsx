@@ -4,7 +4,7 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { getSingleAddressInfo } from "../../background";
-import { RawAccountInfo, DataType, DecodeTypeResult, fetchProgramIdl, datatypesForDiscriminator, datatypesForProgram, createNewWatchedAddress } from "../../background/types";
+import { RawAccountInfo, DataType, DecodeTypeResult, fetchProgramIdl, datatypesForDiscriminator, datatypesForProgram, createNewWatchedAddress, getDataTypeForSync } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { TextInput, ActionButton, Sublabel, MultipleItemsRow, MenuEntry, Group, BottomContent, ItemSelector, MenuDivider } from "../components/menu";
 import { addrFormat, DecodedType } from "../components/smetana";
@@ -72,21 +72,23 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
     useEffect(() => {
         if (decodeType != undefined) {
 
-            console.log('going to decode data ...')
-
             setDecodeError(false);
-            decodeTypeFunc(raw?.data as Uint8Array, decodeType).
-                then((decoded) => {
+
+            getDataTypeForSync(decodeType).then(fulltype => {
+
+                let decoded = decodeTypeFunc(raw?.data as Uint8Array, fulltype);
+                try {
                     if (decoded.partial && decoded.fields.length == 0) {
                         setDecodeError(true);
                     } else {
                         setDecoded(decoded);
                     }
-                }).catch(e => {
+                } catch (e: any) {
                     console.warn('unable to decode data : ', e)
                     toast('unable to decode data: ' + e.message);
                     setDecodeError(true);
-                })
+                }
+            })
         }
     }, [decodeType])
 

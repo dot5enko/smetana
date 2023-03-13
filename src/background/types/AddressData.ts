@@ -1,4 +1,4 @@
-import { AddressDataHandler, db } from "../database"
+import { AddressDataHandler } from "../database"
 import { RawAccountInfo } from "./RawAccountinfo"
 
 export interface AddressData {
@@ -43,7 +43,7 @@ export async function addNewAddressData(data: RawAccountInfo, address_id: number
         created_at: t,
         data: data.data,
         lamports: data.lamports,
-        context_slot: data.context_slot
+        context_slot: data.context_slot,
     }
 
     const datatable = AddressDataHandler.getTable();

@@ -1,5 +1,4 @@
-import { AddressHandler, db } from "../database";
-import { TypeOperations } from "../TypeOperations";
+import { AddressHandler } from "../database";
 
 export interface Address {
     id?: number
@@ -9,6 +8,7 @@ export interface Address {
 
     hasColor?: boolean
     labelColor?: string
+    program_owner: number
 }
 
 export async function getAddrId(addrStr: string): Promise<number> {
@@ -24,5 +24,11 @@ export async function getAddrId(addrStr: string): Promise<number> {
     } else {
         return Promise.resolve(address.id);
     }
+}
+
+export async function setAddrIdOwner(id: number, owner_id: number) {
+    return AddressHandler.getTable().update(id, {
+        program_owner: owner_id
+    })
 }
 

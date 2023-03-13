@@ -1,4 +1,4 @@
-import { Connection } from "@solana/web3.js"
+import { AccountInfo, Connection } from "@solana/web3.js"
 import { getSingleAddressInfo } from "../rpc"
 
 export interface RawAccountInfo {
@@ -9,18 +9,23 @@ export interface RawAccountInfo {
     owner: string
 }
 
+export function toRawAccountInfo(acc: AccountInfo<Buffer>, slot: number, includeOwner: boolean = false) {
+    const rawaccount: RawAccountInfo = {
+        context_slot: slot,
+        data: acc.data,
+        executable: acc.executable,
+        lamports: acc.lamports,
+        owner: includeOwner ? acc.owner.toBase58() : ""
+    }
+
+    return rawaccount;
+}
+
 export function getSignleRawAccountInfo(conn: Connection, address: string): Promise<RawAccountInfo> {
 
     return getSingleAddressInfo(address, conn).then(resp => {
         if (resp.value != undefined) {
-            const rawaccount: RawAccountInfo = {
-                context_slot: resp.context.slot,
-                data: resp.value?.data,
-                executable: resp.value?.executable,
-                lamports: resp.value?.lamports,
-                owner: resp.value.owner.toBase58()
-            }
-
+            const rawaccount: RawAccountInfo = toRawAccountInfo(resp.value, resp.context.slot, true)
 
             return rawaccount;
         }

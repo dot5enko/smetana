@@ -1,9 +1,9 @@
 import { Connection, PublicKey } from "@solana/web3.js"
-import { AddressHandler, db } from "./database"
+import { AddressDataHandler, AddressHandler, db } from "./database"
 import { getKeyValueFromDb, RpcConfigKey } from "./storage"
-import { DefaultRpcServer } from "./rpc"
-import { doPeriodicTask } from "./worker/periodicTask";
-import { getAddrId } from "./types";
+import { DefaultRpcCommitment, DefaultRpcServer } from "./rpc"
+import { ChunkDataEntry, doPeriodicTask } from "./worker/periodicTask";
+import { getAddrId, setAddrIdOwner, toRawAccountInfo } from "./types";
 import { ContentResponse } from "./types/ContentResponse";
 
 async function setup() {
@@ -25,9 +25,9 @@ async function setup() {
 
         chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
-            try {
-                console.log(`got a request from page : command ${request.command}`);
+            console.log(`got a request from page : command ${request.command}`);
 
+            (async () => {
                 switch (request.command) {
                     case "fetch_addresses_state": {
 
@@ -52,10 +52,16 @@ async function setup() {
                                         address_id: addrId
                                     })
 
+                                    // check if there is type 
+                                    let typ = undefined;
+
+                                    const totalEntries = await AddressDataHandler.getTable().where('address_id').equals(addrInfo.id as number).count();
 
                                     const responseItem: ContentResponse = {
                                         Address: addrInfo,
-                                        LastData: cached
+                                        LastData: cached,
+                                        Type: typ,
+                                        DataCount: totalEntries
                                     }
 
                                     response_state.push(responseItem);
@@ -77,52 +83,90 @@ async function setup() {
                         break;
                     case "fetch_addresses_data": {
 
-                        let addrs = request.address;
+                        let addrs: string[] = request.address;
+                        let chunks: PublicKey[][] = [];
 
-                        if (addrs.length > 1) {
+                        if (addrs.length > 100) {
                             sendResponse({
                                 "state": false,
-                                "type": "more than 1 address not supported rn",
+                                "type": "too much accounts",
                             })
-                            return true
+                            return;
                         }
 
-                        // hardcoded 1 address as of now
+                        let chunk1: PublicKey[] = addrs.map((it) => new PublicKey(it))
+                        chunks.push(chunk1);
 
-                        let curAddrStr = addrs[0];
-                        let addr = new PublicKey(curAddrStr);
-                        console.warn('address to fetch now : ', curAddrStr)
+                        {
+                            let mappedData: ChunkDataEntry[] = [];
 
-                        connection.getAccountInfo(
-                            addr,
-                            "confirmed",
-                        ).then(async (respdata) => {
+                            const resultMap = new Map<string, ChunkDataEntry>();
 
-                            const addrId = await getAddrId(curAddrStr);
+                            for (var it of addrs) {
+                                let mapEntry: ChunkDataEntry = {
+                                    address_id: await getAddrId(it),
+                                    pubkey: new PublicKey(it)
+                                }
+                                resultMap.set(it, mapEntry);
+                            }
 
-                            db.table('data').add({
-                                address_id: addrId,
-                                created_at: new Date(),
-                                data: respdata?.data,
-                            }).then((addrid) => {
+                            for (var chunk of chunks) {
 
-                                sendResponse([{
-                                    key: curAddrStr,
-                                    lastDataTime: new Date(),
-                                    lastData: respdata?.data
-                                }])
+                                // todo introduce pause ?
+                                // console.log('fetching chunk of addresses : ', chunk.length)
 
-                            }).catch((dberr) => {
-                                console.warn("unable to store item to database : ", dberr.message)
-                            });
-                        }).catch((errFound) => {
+                                try {
+
+                                    const accsResponse = await connection.getMultipleAccountsInfoAndContext(chunk, {
+                                        commitment: DefaultRpcCommitment
+                                    })
+
+                                    // console.log('done with fetching accs. got response ', accsResponse.value.length, ' length')
+
+                                    let idx = 0;
+
+                                    for (var respAccData of accsResponse.value) {
+                                        const pubkey = chunk[idx]
+                                        // todo optimize pk to string transform here
+                                        let item = resultMap.get(pubkey.toBase58());
+                                        if (item) {
+                                            if (respAccData) {
+
+                                                item.info = toRawAccountInfo(
+                                                    respAccData,
+                                                    accsResponse.context.slot,
+                                                    false
+                                                )
+                                            }
+                                            mappedData.push(item);
+                                        } else {
+                                            console.warn('this shouldnt happen. not found item addr cache')
+                                        }
+                                    }
+
+                                } catch (e: any) {
+
+                                    // handle error properly
+                                    // redo ?
+                                    console.warn('got an error while fetching account chunks: ' + e.message, e)
+                                }
+                            }
+
+                            for (var entryItem of resultMap.values()) {
+
+                                await setAddrIdOwner(entryItem.address_id, await getAddrId(entryItem.info?.owner as string))
+                                await db.table('data').add({
+                                    address_id: entryItem.address_id,
+                                    created_at: new Date(),
+                                    data: entryItem.info?.data,
+                                })
+                            }
+
                             sendResponse({
-                                "state": false,
-                                "type": "fetch error",
-                                "err": errFound.message
+                                "items": Array.from(mappedData.values())
                             })
-                        });
 
+                        }
                     } break;
                     default: {
                         console.warn(`unknown command ${request.command}`)
@@ -132,13 +176,16 @@ async function setup() {
                         })
                     }
                 }
-            } catch (e: any) {
+
+            })().catch((e: any) => {
                 sendResponse({
                     "state": false,
                     "type": "handle exception",
                     "err": e.message
                 });
-            }
+            })
+
+
 
             // chrome.windows.create({
             //     url: chrome.runtime.getURL("index.html"),

@@ -117,9 +117,6 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
             let addrDATA = addrData?.address;
 
             if (addrDATA) {
-
-                console.log(' --- ', addrDATA)
-
                 let label = addrDATA?.label;
                 if (label) {
                     it.style.color = addrData?.address?.labelColor ?? "";

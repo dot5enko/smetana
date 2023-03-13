@@ -1,11 +1,17 @@
 // import { PublicKey } from "@solana/web3.js";
-import { Address, AddressData, ContentResponse } from "../background/types";
+import { ChunkDataEntry } from "src/background/worker/periodicTask";
+import { Address, AddressData, ContentResponse, DataType, RawAccountInfo } from "../background/types";
 
 interface AddrCacheEntry {
-    data?: AddressData
+    data?: RawAccountInfo
     address?: Address
     lastUpdated?: Date
+    datatype?: DataType,
     fetched: boolean
+}
+
+export interface FetchAddressesDataResponse {
+    items: ChunkDataEntry[]
 }
 
 export class ContentContext {
@@ -35,18 +41,20 @@ export class ContentContext {
             "smetana": true,
             "command": "fetch_addresses_data",
             "address": addrs,
-        }).then((resp: AddressData[]) => {
+        }).then((resp: FetchAddressesDataResponse) => {
 
             let respIdx = 0;
 
-            for (var it of resp) {
+            console.log('response for fetch_addresses_data: ', resp)
+
+            for (var it of resp.items) {
 
                 const key = addrs[respIdx];
 
                 const info = this.addressDataCache.get(key)
 
                 let newVal: AddrCacheEntry = {
-                    data: it,
+                    data: it.info,
                     address: info?.address,
                     lastUpdated: new Date(),
                     fetched: true
@@ -74,9 +82,18 @@ export class ContentContext {
             console.log('got a response from background worker :', resp)
 
             for (var it of resp) {
+
+                let raccinfo: RawAccountInfo = {
+                    context_slot: it.LastData?.context_slot as number,
+                    data: it.LastData?.data as Uint8Array,
+                    executable: false,
+                    lamports: it.LastData?.lamports as number,
+                    owner: ""
+                };
+
                 let newVal: AddrCacheEntry = {
-                    data: it.LastData,
-                    address: it.Address, 
+                    data: raccinfo,
+                    address: it.Address,
                     lastUpdated: new Date(),
                     fetched: true
                 };
