@@ -1,4 +1,4 @@
-import { ActionButton, ActionButtonProps,Sublabel } from "."
+import { ActionButton, ActionButtonProps, Label, MenuEntry, MenuEntryProps } from "."
 
 interface MenuEntryWithSublabelProps extends ActionButtonProps {
     text?: string
@@ -10,6 +10,6 @@ export function MenuEntryWithSublabel(props: MenuEntryWithSublabelProps) {
 
     return <ActionButton {...rest}>
         {children}
-        {text ? <Sublabel>{text}</Sublabel> : null}
+        {text ? <Label fontSize="xs">{text}</Label> : null}
     </ActionButton >
 }

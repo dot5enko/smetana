@@ -1,18 +1,9 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { useState } from "react";
-import { Sublabel, ActionButton, TextInput, ItemSelector, ScrolledItem } from "../components/menu";
+import { Sublabel, ActionButton, TextInput, ItemSelector, ScrolledItem, minutesReadable, Label } from "../components/menu";
 
 export interface TrackNewAddressOptions {
     action(name: string, interval: number): void
-}
-
-export function minutesReadable(minutes: number): string {
-    if (minutes < 60) {
-        return minutes + " minute";
-    } else {
-        let hours = minutes / 60;
-        return hours + " hour";
-    }
 }
 
 export function TrackNewAddressOptions(props: TrackNewAddressOptions) {
@@ -25,7 +16,7 @@ export function TrackNewAddressOptions(props: TrackNewAddressOptions) {
     const [intervalValue, setIntervalValue] = useState(60);
 
     return <><Flex textAlign="center" gap="5px" direction="column">
-        <Text fontSize="xl">Track options</Text>
+        <Label fontSize="xl">Track options</Label>
         {/* <Sublabel>Select label for address and data fetch interval you need</Sublabel> */}
         <TextInput
             sizeVariant="sm"
@@ -41,7 +32,7 @@ export function TrackNewAddressOptions(props: TrackNewAddressOptions) {
                 value={[intervalValue]}
                 elementRenderer={(it) => {
                     return <>
-                        <Text>{minutesReadable(it)}</Text>
+                        <Label>{minutesReadable(it)}</Label>
                     </>
                 }}
                 onSelectorValueChange={(newVal) => {

@@ -31,9 +31,7 @@ export function Addresses(props: AddressesProps) {
                 setQuery(newVal)
             }}></TextInput>
         {items.map((it, idx) => {
-            return <WatchedAddress key={idx} item={it} onClick={() => {
-                setRoute("edit_watchedaddress", "Edit watched address", false, it.id);
-            }} />
+            return <WatchedAddress key={idx} item={it} />
         })}
     </>
 }

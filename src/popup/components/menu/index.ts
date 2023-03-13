@@ -18,3 +18,6 @@ export * from "./SwitchInput";
 export * from "./TextInput";
 export * from "./ColorPicker"
 export * from "./InputGeneric"
+export * from "./Label"
+export * from "./TextLabel"
+export * from "./tools"

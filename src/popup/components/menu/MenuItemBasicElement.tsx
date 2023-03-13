@@ -5,6 +5,7 @@ import { ColorVariantStyle, ColorVariantType, getSizeVariant, getVariantStyle, S
 export interface BasicEntryProps {
     sizeVariant?: SizeVariantType
     colorVariant?: ColorVariantType
+    noHover?: boolean
 }
 
 export interface MenuItemBasicElementProps extends HTMLChakraProps<'div'>, BasicEntryProps {
@@ -12,7 +13,7 @@ export interface MenuItemBasicElementProps extends HTMLChakraProps<'div'>, Basic
 
 export function MenuItemBasicElement(props: MenuItemBasicElementProps) {
 
-    let { children, sizeVariant, colorVariant, flexShrink, ...rest } = props
+    let { children, sizeVariant, colorVariant, flexShrink, noHover, ...rest } = props
 
     const sizeVariantProps = useMemo(() => {
         return getSizeVariant(sizeVariant);
@@ -22,12 +23,14 @@ export function MenuItemBasicElement(props: MenuItemBasicElementProps) {
         return getVariantStyle(colorVariant ?? 'default')
     }, [colorVariant])
 
-    const shrink = flexShrink??"0" 
+    const shrink = flexShrink ?? "0"
+
+    let hoverProps = noHover ? {} : hover;
 
     return <Box
 
         width="100%"
-        cursor="pointer"
+        cursor={noHover?"":"pointer"}
         transition="all .2s ease"
 
         justifyContent="center"
@@ -39,7 +42,7 @@ export function MenuItemBasicElement(props: MenuItemBasicElementProps) {
         {...style}
 
         _hover={{
-            ...hover
+            ...hoverProps
         }}
 
         {...rest}

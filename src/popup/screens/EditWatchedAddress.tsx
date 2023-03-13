@@ -1,6 +1,4 @@
-import { ActionButton, If, ItemSelector, MenuEntry, Sublabel, SwitchInput, TextInput } from "../components/menu";
-import { minutesReadable } from "../slide";
-import { Text } from "@chakra-ui/react"
+import { ActionButton, If, ItemSelector, Label, MenuEntry, minutesReadable, Sublabel, SwitchInput, TextInput } from "../components/menu";
 import { useObjectState } from "../components/context/objectState";
 import { WatchedAddressHandler } from "../../background";
 
@@ -30,7 +28,7 @@ export function EditWatchedAddress(props: EditWatchedAddressProps) {
                 value={[object?.sync_interval as number]}
                 elementRenderer={(it) => {
                     return <>
-                        <Text>{minutesReadable(it)}</Text>
+                        <Label>{minutesReadable(it)}</Label>
                     </>
                 }}
                 onSelectorValueChange={(newVal) => {

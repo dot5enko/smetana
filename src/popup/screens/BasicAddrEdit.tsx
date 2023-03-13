@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { AddressHandler } from "../../background/database";
 import { getAddrId } from "../../background/types";
 import { useObjectState } from "../components/context/objectState";
-import { ColorPicker, If, SwitchInput, TextInput, twitterColors } from "../components/menu";
+import { ColorPicker, If, SwitchInput, TextInput, twitterColors,TextLabel } from "../components/menu";
 
 export function BasicAddrEdit(props: { id: string | number }) {
 
@@ -22,6 +22,7 @@ export function BasicAddrEdit(props: { id: string | number }) {
     const { object, changeObject } = useObjectState(AddressHandler, objectId);
 
     return <>
+        <TextLabel sizeVariant="sm">{object?.address}</TextLabel>
         <TextInput placeholder="label" sublabel="this is what you'll see in explorer instead of address" value={object?.label ?? ""} onChange={(newVal) => {
             changeObject(it => it.label = newVal)
         }} />
