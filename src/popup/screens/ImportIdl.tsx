@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { parseIdlTypes } from "../../background";
 import { ParsedTypeFromIdl, importType } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import { ItemSelector, BottomContent, MenuEntryWithSublabel,MenuDivider } from "../components/menu";
+import { ItemSelector, BottomContent, MenuEntryWithSublabel, MenuDivider } from "../components/menu";
 
 
 export function ImportIdl() {
@@ -127,8 +127,8 @@ export function ImportIdl() {
                 colorVariant="info"
                 action={() => {
                     // pass callback as arg
-                    setSlideRoute("import_json_idl",() => {
-                        alert('callback on success fired!')
+                    setSlideRoute("import_json_idl", (program_id: string) => {
+                        importSelected(program_id)
                     })
                 }}
                 text={typesSelected.length == 0 ? "please, select types to import first" : undefined}

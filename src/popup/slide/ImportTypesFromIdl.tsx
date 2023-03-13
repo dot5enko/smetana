@@ -35,7 +35,8 @@ export function ImportTypesFromIdl() {
         <MultipleItemsRow>
             <ActionButton sizeVariant="sm" colorVariant="info" action={() => {
                 if (args[0]) {
-                    args[0]()
+                    args[0](validAddr)
+                    hideSlide()
                 }
             }} >Confirm</ActionButton>
             <ActionButton sizeVariant="sm" action={() => { hideSlide() }} >Cancel</ActionButton>

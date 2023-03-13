@@ -64,11 +64,9 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
       if (argsRaw) {
         args = JSON.parse(decodeURIComponent(argsRaw))
       }
-      
+
       cleanupHistory();
       setRoute(routePath, "", false, ...args)
-
-      console.log(`route change should happen. route = > ${routePath}`)
 
       window.location.hash = ""
     }

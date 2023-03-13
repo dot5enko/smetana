@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { AddressData, AddressHandler, getLastHistoryEntryOrFetch, WatchedAddressHandler } from "../../background";
-import { Address, DataTypeSync, getAddrId, WatchedAddress } from "../../background/types";
+import { Address, DataTypeSync, getAddrId, getDataTypeForSync, getTypeToDecode, WatchedAddress } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { If, Label, MenuEntry, TextLabel } from "../components/menu";
 import { WatchedAddress as WatchedAddressComponent, } from "../components/smetana";
@@ -17,7 +17,7 @@ export function AddressDashboard(props: { id: string | number }) {
     const [object, setObject] = useState<Address | undefined>();
     const [watched, setWatched] = useState<WatchedAddress | undefined>();
     const [lastData, setData] = useState<AddressData | undefined>();
-    const [typ, setType] = useState<DataTypeSync| undefined>();
+    const [typ, setType] = useState<DataTypeSync | undefined>();
 
     useEffect(() => {
         if (typeof id === 'number') {
@@ -53,8 +53,28 @@ export function AddressDashboard(props: { id: string | number }) {
 
 
     useEffect(() => {
-        
-    },[lastData]);
+
+
+        let discriminatorBytes = undefined;
+
+        if (lastData && lastData.data.length > 8) {
+            discriminatorBytes = lastData?.data.slice(0, 8);
+        }
+
+        getTypeToDecode(
+            object as Address,
+            true,
+            discriminatorBytes
+        ).then((hasType) => {
+            if (hasType.typ) {
+                setType(hasType.typ);
+                console.log('got type to decode current address');
+            } else {
+                console.log('type not found');
+            }
+        })
+
+    }, [lastData]);
 
 
 
