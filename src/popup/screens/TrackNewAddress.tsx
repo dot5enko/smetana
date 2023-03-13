@@ -3,12 +3,11 @@ import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { getSingleAddressInfo } from "../../background";
 import { RawAccountInfo, DataType, DecodeTypeResult, fetchProgramIdl, datatypesForDiscriminator, datatypesForProgram, createNewWatchedAddress, getDataTypeForSync, getAddrId, getTypeToDecode, getSignleRawAccountInfo } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { TextInput, ActionButton, Sublabel, MultipleItemsRow, MenuEntry, Group, BottomContent, ItemSelector, MenuDivider } from "../components/menu";
 import { addrFormat, DecodedType } from "../components/smetana";
-import { decodeType as decodeTypeFunc } from "../../background"
+import { AddressHandler, decodeType as decodeTypeFunc } from "../../background"
 
 
 export interface TrackNewAddressProps {
@@ -35,19 +34,22 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
         if (validAddr != "") {
 
             setLoading(true);
-            getSignleRawAccountInfo(connection, validAddr).then(rawaccount => {
+            AddressHandler.getTable().get({ address: validAddr }).then((addrObj) => {
+                return getSignleRawAccountInfo(connection, addrObj).then(rawaccount => {
 
-                setFound(true);
-                setRaw(rawaccount)
+                    setFound(true);
+                    setRaw(rawaccount)
 
-                setLoading(false)
-            }).catch(e => {
-                setLoading(false)
-                setFound(false);
-                setRaw(undefined)
-                setErr(e.message)
-                console.error('unable to fetch address info : ', e.message)
-            })
+                    setLoading(false)
+                }).catch(e => {
+                    setLoading(false)
+                    setFound(false);
+                    setRaw(undefined)
+                    setErr(e.message)
+                    console.error('unable to fetch address info : ', e.message)
+                })
+            });
+
         }
     }, [validAddr, connection])
 

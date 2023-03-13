@@ -154,7 +154,9 @@ export interface HasTypeResponse {
 }
 
 // todo add discriminator bytes ?
-export async function getTypeToDecode(address_id: number, fetchidl: boolean, discriminator?: Uint8Array): Promise<HasTypeResponse> {
+export async function getTypeToDecode(address: Address, fetchidl: boolean, discriminator?: Uint8Array): Promise<HasTypeResponse> {
+
+    const address_id = address.id as number;
 
     let result: HasTypeResponse = {
         fetched: fetchidl
@@ -191,12 +193,7 @@ export async function getTypeToDecode(address_id: number, fetchidl: boolean, dis
         return result;
     }
 
-
     console.log(' --- no watched address were found : (')
-    const address: Address = await AddressHandler.getTable().
-        where("id").
-        equals(address_id).
-        first();
 
     // todo fetch address if fetchidl = true
     if (address != null && address.program_owner != null) {

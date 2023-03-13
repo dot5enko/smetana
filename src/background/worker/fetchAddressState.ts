@@ -26,7 +26,7 @@ export default async (request: any, sendResponse: ResponseSender) => {
                 })
 
                 // check if there is type 
-                let typ = await getTypeToDecode(addrId, false);
+                let typ = await getTypeToDecode(addrInfo, false);
 
                 const totalEntries = await AddressDataHandler.getTable().where('address_id').equals(addrInfo.id as number).count();
 

@@ -1,6 +1,9 @@
-import { AddressDataHandler } from "../database"
-import { getAddrId, setAddrIdOwner } from "./Address"
-import { RawAccountInfo } from "./RawAccountinfo"
+import { Connection } from "@solana/web3.js"
+import { timeNow } from "../../popup/components/menu"
+import { AddressDataHandler, AddressHandler } from "../database"
+import { getRpcConnection } from "../worker/getRpcConnection"
+import { Address, setAddrIdOwner } from "./Address"
+import { getSignleRawAccountInfo, RawAccountInfo } from "./RawAccountinfo"
 
 export interface AddressData {
 
@@ -19,8 +22,39 @@ export interface HistoryResponse {
     filtered: AddressData[]
 }
 
-export async function getHistory(address_id: number, limit: number): Promise<HistoryResponse> {
+export async function forceFetchData(connection: Connection, address: Address): Promise<AddressData> {
+    await getSignleRawAccountInfo(connection, address);
+    const refreshed = await getHistory(address.id as number, 1);
+    return refreshed.filtered[0];
+}
 
+export async function getLastHistoryEntryOrFetch(connection: Connection, address: Address, expiry_seconds: number = 0): Promise<AddressData> {
+
+
+    if (expiry_seconds === -1) {
+        // fetch fresh
+        return forceFetchData(connection, address)
+    } else {
+        const lastHistory = await getHistory(address.id as number, 1);
+
+        let expired = true;
+        const item = lastHistory.filtered[0] ?? undefined;
+
+        if (lastHistory.total != 0) {
+            const time_passed = timeNow() - item.created_at;
+            expired = time_passed > expiry_seconds;
+        }
+
+        if (expired) {
+            return forceFetchData(connection, address)
+        } else {
+            return item;
+        }
+
+    }
+}
+
+export async function getHistory(address_id: number, limit: number): Promise<HistoryResponse> {
 
     const datatable = AddressDataHandler.getTable();
 

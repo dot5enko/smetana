@@ -1,6 +1,6 @@
 import { AccountInfo, Connection } from "@solana/web3.js"
 import { getSingleAddressInfo } from "../rpc"
-import { getAddrId, addNewAddressData } from "."
+import { getAddrId, addNewAddressData, Address } from "."
 
 export interface RawAccountInfo {
     context_slot: number
@@ -22,20 +22,25 @@ export function toRawAccountInfo(acc: AccountInfo<Buffer>, slot: number, include
     return rawaccount;
 }
 
-export function getSignleRawAccountInfo(conn: Connection, address: string): Promise<RawAccountInfo> {
+export function getSignleRawAccountInfo(conn: Connection, address: Address): Promise<RawAccountInfo> {
 
-    return getSingleAddressInfo(address, conn).then((resp) => {
+    return getSingleAddressInfo(address.address, conn).then((resp) => {
         if (resp.value != undefined) {
             const rawaccount: RawAccountInfo = toRawAccountInfo(resp.value, resp.context.slot, true);
 
-            console.log("single raw account getting info and pushing data to db");
-
             (async () => {
+
+                let program_id = address.program_owner;
+
+                if (address.program_owner == null || address.program_owner == 0) {
+                    program_id = await getAddrId(resp.value?.owner.toBase58() as string)
+                }
+
                 addNewAddressData(
                     rawaccount,
-                    await getAddrId(address),
+                    address.id as number,
                     new Date().getTime() / 1000,
-                    await getAddrId(resp.value?.owner.toBase58() as string)
+                    program_id,
                 )
             })()
 

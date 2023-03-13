@@ -6,3 +6,8 @@ export function minutesReadable(minutes: number): string {
         return hours + " hour";
     }
 }
+
+
+export function timeNow(): number {
+    return new Date().getTime()/1000;
+}

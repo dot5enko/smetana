@@ -1,7 +1,8 @@
 import { Connection, PublicKey } from "@solana/web3.js"
 import { getAddrId } from "."
-import { db, ProgramHandler } from "../database"
+import { AddressHandler, db, ProgramHandler } from "../database"
 import { genAnchorIdlAddr, parseIdlFromAccountData, parseIdlTypes } from "../idl"
+import { getSingleAddressInfo } from "../rpc"
 import { importType } from "./DataType"
 import { getSignleRawAccountInfo } from "./RawAccountinfo"
 
@@ -62,7 +63,11 @@ export async function fetchProgramIdl(conn: Connection, program_id: string): Pro
         programInfo.fetched = true;
         await programtable.update(programInfo.id, programInfo)
 
-        const rawAccountInfo = await getSignleRawAccountInfo(conn, idlAddress.toBase58())
+        const idlId = await getAddrId(idlAddress.toBase58())
+
+        const addrData = await AddressHandler.getById(idlId);
+
+        const rawAccountInfo = await getSignleRawAccountInfo(conn, addrData)
 
         programInfo.is_anchor = true;
         await programtable.update(programInfo.id, programInfo)
