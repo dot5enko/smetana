@@ -83,7 +83,7 @@ export function EditTypeField(props: EditTypeFieldProps) {
                     </If>
                 </SwitchInput>
                 <If condition={object?.references_type}>
-                    <TypeSelectorSearchbox value={object?.referenced_type_id} onSelectorValueChange={nval => {
+                    <TypeSelectorSearchbox placeholder="referemced type search query" value={object?.referenced_type_id} onSelectorValueChange={nval => {
                         changeObject(it => it.referenced_type_id = nval.id as number)
                     }} />
                 </If>

@@ -8,11 +8,18 @@ import { ItemSelector, Label, ScrolledItem, TextInput } from "../menu";
 export interface TypeSelectorSearchboxProps {
     onSelectorValueChange(val: DataType): void
     value?: number
+    placeholder?: string
+    limitHeight: number
+    elementRenderer?(item: DataType): JSX.Element,
+}
+
+TypeSelectorSearchbox.defaultProps = {
+    limitHeight: 200
 }
 
 export function TypeSelectorSearchbox(props: TypeSelectorSearchboxProps) {
 
-    const { onSelectorValueChange, value, ...rest } = props;
+    const { onSelectorValueChange, value, elementRenderer, limitHeight, placeholder, ...rest } = props;
 
     const [query, setQuery] = useState<string>("");
     const items = useDataTypes(query);
@@ -30,7 +37,7 @@ export function TypeSelectorSearchbox(props: TypeSelectorSearchboxProps) {
                 setValueTyp(vt)
                 setInnerValue(value);
 
-                console.log('type was selected : ',vt.label, 'inner value now ', vt)
+                console.log('type was selected : ', vt.label, 'inner value now ', vt)
             })
         }
     }, [value])
@@ -39,12 +46,12 @@ export function TypeSelectorSearchbox(props: TypeSelectorSearchboxProps) {
     return <>
         <TextInput
             sizeVariant="sm"
-            placeholder="referemced type search query"
+            placeholder={placeholder ?? ""}
             value={query}
             onChange={(newVal) => {
                 setQuery(newVal)
             }}></TextInput>
-        <ScrolledItem height={200}>
+        <ScrolledItem height={limitHeight}>
             <ItemSelector
                 onSelectorValueChange={(val) => {
                     const dt = val[0] as DataType;
@@ -58,9 +65,9 @@ export function TypeSelectorSearchbox(props: TypeSelectorSearchboxProps) {
                 }}
                 sizeVariant="sm"
                 options={items} value={[valueTyp]}
-                elementRenderer={(it) => {
+                elementRenderer={elementRenderer ?? ((it) => {
                     return <TypeCondensed item={it as DataType} />
-                }}></ItemSelector>
+                })}></ItemSelector>
         </ScrolledItem>
     </>
 }
