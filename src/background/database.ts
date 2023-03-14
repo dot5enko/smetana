@@ -1,12 +1,12 @@
 import Dexie from 'dexie';
 import { TypeOperations } from './TypeOperations';
-import { Address, AddressData, DataType, DataTypeField, getFieldSize, WatchedAddress } from './types';
+import { Address, AddressData, DataType, DataTypeField, WatchedAddress } from './types';
 
 export const db = new Dexie('accounts');
 
 // todo check double initialization
 db.version(1).stores({
-    address: '++id, &address',
+    address: '++id, &address, type_assigned',
     data: '++id, address_id, created_at',
     watched_address: '++id, &address_id, paused',
     datatype: '++id, label, program_id, discriminator',

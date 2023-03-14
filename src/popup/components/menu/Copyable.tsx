@@ -17,6 +17,7 @@ Copyable.defaultProps = {
     showIcon: false
 }
 
+// todo use absolute copy label 
 export function Copyable(props: CopyableProps) {
     const [copied, setCopied] = useState(false);
 
@@ -35,14 +36,11 @@ export function Copyable(props: CopyableProps) {
                 setCopied(false)
             }, 450)
         }}>
-        {!copied ?
-            <>
-                <If condition={hover && props.showIcon} marginRight="5px">
-                    <Icon display="inline" as={CopyIcon} ></Icon>
-                </If>
-                {props.children}
-            </> :
-            <Label color="blue.400">{props.copyLabel}</Label>
-        }
+        {/* <Flex> */}
+        <If condition={hover && props.showIcon} marginRight="5px">
+            <Icon display="inline" as={CopyIcon} ></Icon>
+        </If>
+        {!copied ? (props.children) : <Label color="blue.400">{props.copyLabel}</Label>}
+        {/* </Flex> */}
     </Box>
 }

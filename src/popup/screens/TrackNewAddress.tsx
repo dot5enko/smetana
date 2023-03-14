@@ -8,6 +8,7 @@ import { useExtensionContext } from "../components/context/ExtensionContext";
 import { TextInput, ActionButton, Sublabel, MultipleItemsRow, MenuEntry, Group, BottomContent, ItemSelector, MenuDivider } from "../components/menu";
 import { addrFormat, DecodedType } from "../components/smetana";
 import { AddressHandler, decodeType as decodeTypeFunc } from "../../background"
+import { Decoder } from "../components/smetana/Decoder";
 
 
 export interface TrackNewAddressProps {
@@ -208,16 +209,3 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
     </>
 }
 
-function Decoder(props: { it: DataType, datasize: number }) {
-
-    const matchSize = props.datasize === props.it.info.size_bytes;
-
-    return <Box>
-        {matchSize ?
-            <Text fontSize="xs" color="green.400">matched by size</Text> :
-            <Text fontSize="xs" color="orange.400">type size is not equal to data size</Text>
-        }
-        <Text fontWeight="bold" color={"white"}>{props.it.label}</Text>
-        <Text fontSize="sm"><strong>{props.it.info.size_bytes}</strong> bytes, {props.it.info.fields_count} fields</Text>
-    </Box>
-}

@@ -1,5 +1,6 @@
 import { IndexableType } from "dexie";
-import { Address, Program } from ".";
+import { DataType } from "src/popup/components/smetana";
+import { Address, Program, setAddrType } from ".";
 import { AddressHandler, DataTypeHandler, ProgramHandler, WatchedAddressHandler } from "../database";
 import { DataTypeField, DataTypeFieldHandler, getFieldsForType, getFieldSize } from "./DataTypeField";
 import { DecodedField } from "./DecodedField";
@@ -173,13 +174,27 @@ export interface HasTypeResponse {
 }
 
 // todo add discriminator bytes ?
-export async function getTypeToDecode(address: Address, fetchidl: boolean, discriminator?: Uint8Array): Promise<HasTypeResponse> {
-
-    const address_id = address.id as number;
+export async function getTypeToDecode(address: Address, fetchidl: boolean, discriminator?: Uint8Array, forceFallback?: boolean): Promise<HasTypeResponse> {
 
     let result: HasTypeResponse = {
         fetched: fetchidl
     }
+
+    if (address.type_assigned && !forceFallback) {
+        const typ = await DataTypeHandler.getById(address.type_assigned);
+        if (typ == null) {
+            console.warn(`this shouldn't happen, assigned type is null for ${address.address}, using fallback`);
+        } else {
+            const synced = await getDataTypeForSync(typ);
+
+            console.log(' --- using cached type for address');
+
+            result.typ = synced;
+            return result;
+        }
+    }
+
+    const address_id = address.id as number;
 
     if (discriminator) {
 
@@ -252,6 +267,10 @@ export async function getTypeToDecode(address: Address, fetchidl: boolean, discr
     } else {
         // force fetch addr
         console.log(" ### address not found :(", address)
+    }
+
+    if (result.typ) {
+        await setAddrType(address_id, result.typ.typ.id as number);
     }
 
     return result;

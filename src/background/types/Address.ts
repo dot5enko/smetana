@@ -11,6 +11,8 @@ export interface Address {
 
     program_owner: number
     datalen: number
+
+    type_assigned?: number
 }
 
 export async function getAddrId(addrStr: string): Promise<number> {
@@ -44,9 +46,15 @@ export async function setAddrIdOwner(id: number, owner_id: number, datalen: numb
 
     // todo fetch first ?
 
-    return AddressHandler.getTable().update(id, {
+    return AddressHandler.update(id, {
         program_owner: owner_id,
         datalen: datalen
+    })
+}
+
+export async function setAddrType(id: number, type_id : number) {
+    AddressHandler.update(id, {
+        type_assigned: type_id
     })
 }
 

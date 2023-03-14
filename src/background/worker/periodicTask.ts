@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { AddressHandler, WatchedAddressHandler } from "../database";
 import { DefaultRpcCommitment, DefaultRpcServer } from "../rpc";
-import { getKeyValueFromDb, RpcConfigKey } from "../storage";
+import { getAndSet, getKeyValueFromDb, RpcConfigKey } from "../storage";
 import { getActiveWatchedAddresses, getAddrId, RawAccountInfo, setAddrIdOwner, toRawAccountInfo, WatchedAddress } from "../types";
 import { addNewAddressData } from "../types/AddressData";
 

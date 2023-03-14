@@ -1,7 +1,7 @@
 import { Skeleton } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import { AddressData, AddressHandler, DataTypeHandler, decodeType, getLastHistoryEntryOrFetch, WatchedAddressHandler } from "../../background";
-import { Address, DataTypeSync, getAddrId, getDataTypeForSync, getTypeToDecode, WatchedAddress } from "../../background/types";
+import { Address, DataTypeSync, getAddrId, getDataTypeForSync, getTypeToDecode, setAddrType, WatchedAddress } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { ActionButton, Group, If, Label, MenuDivider, MenuEntry, Sublabel, TextLabel } from "../components/menu";
 import { Copyable } from "../components/menu/Copyable";
@@ -156,7 +156,7 @@ export function AddressDashboard(props: AddressDashboardProps) {
             Explorer presentation
             {currentRep}
         </MenuEntry>
-        <Sublabel><Copyable showIcon={true}>{object?.address}</Copyable></Sublabel>
+        <Copyable><Sublabel>{object?.address}</Sublabel></Copyable>
         <If condition={watched}>
             <WatchedAddressComponent item={watched as WatchedAddress} />
         </If>
@@ -180,5 +180,13 @@ export function AddressDashboard(props: AddressDashboardProps) {
                 </Group>
             </> : null}
         </>}
+
+        <MenuEntry submenu="addr_default_type" submenuTitle="change addr default type codec" args={[objectId]} >
+            Change default type
+            <Label fontSize="xs" color="green.300">
+                {typ?.typ.label}
+            </Label>
+        </MenuEntry>
+
     </>
 }

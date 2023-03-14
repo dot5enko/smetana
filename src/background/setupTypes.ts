@@ -1,4 +1,4 @@
-import { getKeyValueFromDb, setKeyValueToDb } from "./storage";
+import { getAndSet, setKeyValueToDb } from "./storage";
 import { DataTypeField, importType, ParsedTypeFromIdl } from "./types";
 
 
@@ -24,11 +24,11 @@ const setup_done_key = "setup_types";
 
 export async function setup_types(): Promise<boolean> {
 
-    let setup_done = await getKeyValueFromDb(setup_done_key, "0");
+    let setup_done = await getAndSet(setup_done_key, "0", "1");
 
     if (setup_done == "0") {
 
-        console.log('default types initialized!');
+        console.log('default types initalization start!');
 
         const tokeneg = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
         const spl_mint: ParsedTypeFromIdl = {
@@ -75,8 +75,6 @@ export async function setup_types(): Promise<boolean> {
             discriminator: new Uint8Array(0)
         }
         await importType(tokeneg, spl_token);
-
-        setKeyValueToDb(setup_done_key, "1");
 
         return true;
     }
