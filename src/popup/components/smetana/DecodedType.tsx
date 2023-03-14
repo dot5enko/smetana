@@ -1,6 +1,8 @@
-import { Flex, Text } from "@chakra-ui/react";
-import { useMemo } from "react";
-import { DecodeTypeResult, DecodedField } from "../../../background/types";
+import { Flex, Icon, Text } from "@chakra-ui/react";
+import { useMemo, useState } from "react";
+import { MdLink } from "react-icons/md";
+import { DataTypeHandler } from "../../../background";
+import { DecodeTypeResult, DecodedField, DataType } from "../../../background/types";
 import { Label } from "../menu";
 import { Copyable } from "../menu/Copyable";
 import { If } from "../menu/If";
@@ -25,8 +27,18 @@ function DecodedFieldComponent(props: { field: DecodedField }) {
 
     const { field } = props;
 
+    const [typ, setTyp] = useState<DataType | undefined>();
+
     const referencedPk = useMemo(() => {
-        if (field.field.references_type) {
+
+        if (field.field.label === "mint") {
+            console.log('recalc type reference');
+        }
+
+        if (field.field.references_type && field.field.referenced_type_id) {
+
+            DataTypeHandler.getById(field.field.referenced_type_id).then(val => setTyp(val))
+
             return field.decoded_value.toBase58();
         } else {
             return "";
@@ -49,6 +61,14 @@ function DecodedFieldComponent(props: { field: DecodedField }) {
             <Copyable value={field.decoded_value.toString()}>
                 <Label color="green.400" fontSize="md">{field.decoded_value.toString()}</Label>
             </Copyable>
+            <If condition={hasSubmenu}>
+                <Flex color="blue.300" gap="5px">
+                    <Label >
+                        <Icon as={MdLink} /> to
+                    </Label>
+                    <Label fontWeight="bold">{typ?.label}</Label>
+                </Flex>
+            </If>
         </MenuEntry>
     </>
 }
