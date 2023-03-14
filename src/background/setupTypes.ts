@@ -14,7 +14,7 @@ function field(name: string, typ: string, optional: boolean, idx: number, refere
         array_size: 0,
         is_dynamic_size: false,
         hide: false,
-        references_type: false,
+        references_type: referenced_type != undefined,
         referenced_type_id: referenced_type
     };
 
