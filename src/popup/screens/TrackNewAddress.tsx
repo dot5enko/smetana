@@ -34,20 +34,27 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
         if (validAddr != "") {
 
             setLoading(true);
-            AddressHandler.getTable().get({ address: validAddr }).then((addrObj) => {
-                return getSignleRawAccountInfo(connection, addrObj).then(rawaccount => {
 
-                    setFound(true);
-                    setRaw(rawaccount)
+            getAddrId(validAddr).then(addrid => {
 
-                    setLoading(false)
-                }).catch(e => {
-                    setLoading(false)
-                    setFound(false);
-                    setRaw(undefined)
-                    setErr(e.message)
-                    console.error('unable to fetch address info : ', e.message)
-                })
+                return AddressHandler.getById(addrid).then((addrObj) => {
+
+                    console.log(' addr object for ',validAddr, addrObj.address, addrObj)
+
+                    return getSignleRawAccountInfo(connection, addrObj).then(rawaccount => {
+
+                        setFound(true);
+                        setRaw(rawaccount)
+
+                        setLoading(false)
+                    }).catch(e => {
+                        setLoading(false)
+                        setFound(false);
+                        setRaw(undefined)
+                        setErr(e.message)
+                        console.error('unable to fetch address info : ', e.message)
+                    })
+                });
             });
 
         }
@@ -110,7 +117,7 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
 
                         setType(types[0]);
 
-                        console.log('found codec by discriminant !, count = ', types.length);
+                        console.log('found codec by discriminant !, count = ', types.length, types[0]);
                     }
                 })
             })

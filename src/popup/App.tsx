@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { MdKeyboardBackspace, MdSettings } from "react-icons/md"
 import { If, SlideWindow } from "./components/menu"
 import { useEffect, useState } from "react"
+import { setup_types } from "../background/setupTypes"
 
 function App() {
 

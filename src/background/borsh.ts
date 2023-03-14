@@ -49,7 +49,7 @@ export function decodeSimpleType(data: Uint8Array, typ: DataTypeField): DecodeFi
         bytesUsed: 0,
     };
 
-    let size = typ.optional ? 1 : 0;
+    let size = typ.optional ? 4 : 0;
 
     let optionalPresentFlagValue = false;
 
@@ -58,6 +58,10 @@ export function decodeSimpleType(data: Uint8Array, typ: DataTypeField): DecodeFi
             result.error = 'underflow'
             return result;
         } else {
+
+            //read uint32 instead
+            // whhhhaaat ?
+
             optionalPresentFlagValue = data[0] > 0;
         }
     }

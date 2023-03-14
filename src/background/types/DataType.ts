@@ -64,6 +64,9 @@ export async function datatypesForDiscriminator(disc: Uint8Array): Promise<DataT
     return await datatype.
         where("discriminator").
         equals(disc).
+        filter((it: DataType) => {
+            return it.is_anchor;
+        }).
         toArray()
 }
 
@@ -71,7 +74,7 @@ export async function datatypesForProgram(program: string, label: string = "", l
 
     const datatype = DataTypeHandler.getTable();
 
-    console.log('fetching datatypes with query :', label)
+    console.log('fetching datatypes for program with query :', label, program)
 
     if (label === "") {
 

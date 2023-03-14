@@ -8,7 +8,7 @@ import { MenuEntryWithSublabel } from "../menu/MenuEntryWithSublabel";
 export function DecodedType(props: { item: DecodeTypeResult }) {
 
     return <Flex gap="5px" direction="column">
-        {props.item.fields.filter((it) => !it.field.hide).map((it, idx) => {
+        {props.item.fields.filter((it) => !it.field.hide || (it.present != undefined && !it.present)).map((it, idx) => {
             return <DecodedFieldComponent key={idx} field={it} />
         })}
         {props.item.partial ? <>
@@ -41,11 +41,11 @@ function DecodedFieldComponent(props: { field: DecodedField }) {
         }}>
             <Flex gap="5px">
                 <Text fontWeight="bold">{field.field.label}</Text>
-                <If condition={field.field.is_array}>
-                    <Text color="blue.400">{field.decoded_value.length} elements</Text>
-                </If>
+                {/* <If condition={field.field.is_array}> */}
+                    {/* <Text color="blue.400">{field.decoded_value.length} elements</Text> */}
+                {/* </If> */}
             </Flex>
-            <Text color="green.400" fontSize="md">{field.decoded_value.toString()}</Text>
+            <Text color="green.400" fontSize="md">{JSON.stringify(field.decoded_value)}</Text>
         </MenuEntry>
     </>
 }

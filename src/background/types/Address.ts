@@ -17,15 +17,27 @@ export async function getAddrId(addrStr: string): Promise<number> {
 
     const table = AddressHandler.getTable();
 
-    const address = await table.get({ address: addrStr });
+    // this eliminates concurent object creation
+    return table.db.transaction('rw', table, async () => {
+        const address = await table.get({ address: addrStr });
 
-    if (address == null) {
-        return await table.add({
-            address: addrStr,
-        }) as number;
-    } else {
-        return Promise.resolve(address.id);
-    }
+        try {
+            if (address == null) {
+                const newId = await table.add({
+                    address: addrStr,
+                }) as number;
+
+                return newId;
+            } else {
+                return address.id;
+            }
+        } catch (e: any) {
+            console.error(`error getting id for addr ${addrStr}`, e)
+            throw e;
+        }
+    })
+
+
 }
 
 export async function setAddrIdOwner(id: number, owner_id: number, datalen: number) {

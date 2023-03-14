@@ -2,7 +2,6 @@ import { Connection, PublicKey } from "@solana/web3.js"
 import { getAddrId } from "."
 import { AddressHandler, db, ProgramHandler } from "../database"
 import { genAnchorIdlAddr, parseIdlFromAccountData, parseIdlTypes } from "../idl"
-import { getSingleAddressInfo } from "../rpc"
 import { importType } from "./DataType"
 import { getSignleRawAccountInfo } from "./RawAccountinfo"
 

@@ -1,3 +1,4 @@
+import { setup_types } from "./setupTypes";
 import fetchAddressData from "./worker/fetchAddressData";
 import fetchAddressState from "./worker/fetchAddressState";
 import doPeriodicTask from "./worker/periodicTask";
@@ -52,6 +53,9 @@ async function setup() {
 }
 
 chrome.runtime.onInstalled.addListener(() => {
+
+    setup_types();
+
     chrome.alarms.get('bgtask', bgtask => {
         if (!bgtask) {
             chrome.alarms.create('bgtask', { periodInMinutes: 30 / 60 });
@@ -59,4 +63,5 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 })
 
+setup_types();
 setup()

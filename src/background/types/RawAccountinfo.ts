@@ -24,6 +24,10 @@ export function toRawAccountInfo(acc: AccountInfo<Buffer>, slot: number, include
 
 export function getSignleRawAccountInfo(conn: Connection, address: Address): Promise<RawAccountInfo> {
 
+    if (address == null || address == undefined) {
+        console.error('looks like address is empty when getSignleRawAccountInfo')
+    }
+
     return getSingleAddressInfo(address.address, conn).then((resp) => {
         if (resp.value != undefined) {
             const rawaccount: RawAccountInfo = toRawAccountInfo(resp.value, resp.context.slot, true);
@@ -47,6 +51,7 @@ export function getSignleRawAccountInfo(conn: Connection, address: Address): Pro
             return rawaccount;
         }
 
-        return Promise.reject("no account info found");
+        console.log('no account info found for :', resp)
+        return Promise.reject(`no account info found for ${address}`);
     })
 }

@@ -14,9 +14,9 @@ export function DataType(props: DataTypeProps) {
     return <MenuItemBasicElement borderRadius={"6px"} {...rest}>
         <Flex gap="5px">
             <Box>
+                <Text fontSize={"xs"} color="green.400">{item.program_id}</Text>
                 <Text fontWeight="bold" color={"white"}>{item.label}</Text>
                 <Text fontSize={"xs"}>{item.info.fields_count} fields, total <strong>{item.info.size_bytes}</strong> bytes</Text>
-                {/* <Text fontSize={"xs"} color="blue.400">used {item.info.used_by} times</Text> */}
             </Box>
             <Spacer />
             <Box alignSelf="center">
