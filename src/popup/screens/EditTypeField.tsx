@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { MenuEntry, If, ActionButton, MenuDivider, SwitchInput, TextInput, Group, MultipleItemsRow } from "../components/menu";
+import { MenuEntry, If, ActionButton, MenuDivider, SwitchInput, TextInput, Group, MultipleItemsRow, Label } from "../components/menu";
 import { BorshTypeSelect } from "../components/smetana/BorshTypeSelect";
-import { DataTypeFieldHandler, getFieldSize } from "../../background/types/DataTypeField";
+import { DataTypeFieldHandler, getFieldSize,DataType } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import {  } from "../../background/database";
+import { DataTypeHandler } from "../../background/database";
 import { useObjectState } from "../components/context/objectState";
+import { TypeSelectorSearchbox } from "../components/smetana/TypeSelectorSearchbox";
 
 export interface EditTypeFieldProps {
     id: any
@@ -17,6 +18,17 @@ export function EditTypeField(props: EditTypeFieldProps) {
 
     // todo pass is protected
     const { object, changeObject } = useObjectState(DataTypeFieldHandler, props.id, props.protected, "type is protected, unprotect first");
+
+    const [referenedType,setReferencedType] = useState<DataType | undefined>();
+
+    useEffect(() => {
+        if (object?.referenced_type_id) {
+            DataTypeHandler.getById(object.referenced_type_id).then( typ => {
+                setReferencedType(typ);
+            })
+        }
+    },[object?.referenced_type_id])
+
 
     const [arraySize, setArraySize] = useState<string | undefined>();
 
@@ -59,6 +71,24 @@ export function EditTypeField(props: EditTypeFieldProps) {
             changeObject(it => it.hide = val)
         }}
         >Hide in view</SwitchInput>
+
+        <If condition={!object?.is_array && object?.field_type === "publicKey"}>
+            <Group name="referenced value type">
+                <SwitchInput value={object?.references_type} onChange={(val) => {
+                    changeObject(it => it.references_type = val)
+                }}
+                >Referenced value type
+                    <If condition={object?.references_type && object?.referenced_type_id}>
+                        <Label color="green.300">{referenedType?.label}</Label>
+                    </If>
+                </SwitchInput>
+                <If condition={object?.references_type}>
+                    <TypeSelectorSearchbox value={object?.referenced_type_id} onSelectorValueChange={nval => {
+                        changeObject(it => it.referenced_type_id = nval.id as number)
+                    }} />
+                </If>
+            </Group>
+        </If>
 
         <Group name="property type">
 

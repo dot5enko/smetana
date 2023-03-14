@@ -44,7 +44,10 @@ export async function createNew(is_anchor: boolean): Promise<IndexableType> {
     return table.add(typ)
 }
 
-export async function findDatatypes(label: string, limit: number): Promise<DataType[]> {
+export type ItemFilter<T> = (item: T) => boolean
+
+// todo add is_limited to response
+export async function findDatatypes(label: string, limit: number, itemFilter?: ItemFilter<DataType>): Promise<DataType[]> {
 
     const datatype = DataTypeHandler.getTable();
 
@@ -53,7 +56,20 @@ export async function findDatatypes(label: string, limit: number): Promise<DataT
     }
 
     return await datatype.filter((it: DataType) => {
-        return it.label.toLowerCase().indexOf(label.toLowerCase()) != -1
+
+        // todo optimize
+        const labelPassed = it.label.toLowerCase().indexOf(label.toLowerCase()) != -1;
+
+        if (!labelPassed) {
+            return false;
+        } else {
+            if (itemFilter) {
+                return itemFilter(it)
+            } else {
+                return true;
+            }
+        }
+
     }).limit(limit).toArray()
 }
 

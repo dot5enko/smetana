@@ -18,6 +18,9 @@ export interface DataTypeField {
     is_dynamic_size: boolean
 
     hide: boolean
+
+    references_type: boolean
+    referenced_type_id? : number
 }
 
 
@@ -142,7 +145,9 @@ export async function createNewField(parent_type: number): Promise<IndexableType
         hide: false,
         is_array: false,
         array_size: 1,
-        is_dynamic_size: false
+        is_dynamic_size: false,
+        references_type: false,
+        referenced_type_id: 0
     }
     const result = await datatypefield.add(fieldObject)
 

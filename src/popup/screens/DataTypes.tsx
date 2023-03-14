@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { DataType } from "../components/smetana";
-import { DataType as DataTypeInterface, findDatatypes } from "../../background/types"
+import { DataType as DataTypeInterface, findDatatypes, ItemFilter } from "../../background/types"
 import { TextInput, BottomContent, MenuEntry } from "../components/menu";
 import { setup_types } from "../../background/setupTypes";
 
@@ -10,33 +10,47 @@ export let SearchLimit = 30;
 export interface DataTypesProps {
 }
 
-export function DataTypes(props: DataTypesProps) {
-
-    const { setRoute, setSlideRoute } = useExtensionContext();
+export function useDataTypes(q: string, filterF?: ItemFilter<DataTypeInterface>): DataTypeInterface[] {
 
     const [query, setQuery] = useState<string>("");
     const [items, setItems] = useState<DataTypeInterface[]>([]);
+    const [filter, setFilter] = useState<ItemFilter<DataTypeInterface> | undefined>(filterF);
 
-    function loadTypes(q: string) {
-        findDatatypes(q, SearchLimit).then((items) => {
+    useEffect(() => {
+        setQuery(q);
+    }, [q])
+
+    useEffect(() => {
+        setFilter(filterF)
+    }, [filterF])
+
+    function loadTypes(q: string, filterFunc?: ItemFilter<DataTypeInterface>) {
+        findDatatypes(q, SearchLimit, filterFunc).then((items) => {
             setItems(items);
         });
     }
 
     useEffect(() => {
+        loadTypes(query);
+    }, [query])
+
+    return items;
+}
+
+export function DataTypes(props: DataTypesProps) {
+
+    const { setRoute, setSlideRoute } = useExtensionContext();
+
+    const [query, setQuery] = useState<string>("");
+    const items = useDataTypes(query);
+
+    useEffect(() => {
         setup_types().then((setup) => {
             if (setup) {
-                loadTypes(query);
+                setQuery("tok");
             }
         });
     }, [])
-
-    useEffect(() => {
-
-
-        loadTypes(query);
-
-    }, [query])
 
     return <>
         <BottomContent>

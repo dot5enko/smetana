@@ -80,7 +80,9 @@ async function parseIdlStruct(isType: boolean, struct: any, typesMap: Map<string
                 is_array: false,
                 array_size: 1,
                 hide: true,
-                is_dynamic_size: false
+                references_type: false,
+                is_dynamic_size: false,
+                referenced_type_id: 0
             };
 
             result.push(discriminatorField)
@@ -100,7 +102,9 @@ async function parseIdlStruct(isType: boolean, struct: any, typesMap: Map<string
                 hide: false,
                 is_array: false,
                 array_size: 1,
-                is_dynamic_size: false
+                references_type: false,
+                is_dynamic_size: false,
+                referenced_type_id : 0
             };
 
             if (complexType) {
