@@ -63,5 +63,4 @@ chrome.runtime.onInstalled.addListener(() => {
     });
 })
 
-setup_types();
 setup()

@@ -73,7 +73,7 @@ export async function getFieldSize(object: DataTypeField) {
         throw new Error('complex field types not implemented. can\'t calc size of field')
     } else {
 
-        let size = object.optional ? 1 : 0;
+        let size = object.optional ? 4 : 0;
 
         let arraySizeModified = object.is_array ? object.array_size : 1;
 

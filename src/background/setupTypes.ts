@@ -1,4 +1,4 @@
-import { getKeyValueFromDb, setKeyValue } from "./storage";
+import { getKeyValueFromDb, setKeyValue, setKeyValueToDb } from "./storage";
 import { DataTypeField, importType, ParsedTypeFromIdl } from "./types";
 
 
@@ -72,7 +72,7 @@ export async function setup_types() {
         importType(tokeneg, spl_token);
         importType(tokeneg, spl_mint);
 
-        setKeyValue(setup_done_key, "1");
+        setKeyValueToDb(setup_done_key, "1");
     }
 
 }

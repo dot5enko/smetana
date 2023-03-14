@@ -76,8 +76,6 @@ export function AddressDashboard(props: { id: string | number }) {
 
     }, [lastData]);
 
-
-
     return <>
         <TextLabel sizeVariant="sm">{object?.address}</TextLabel>
         <MenuEntry submenu="basic_addr_edit" submenuTitle="address info edit" args={[id]} >

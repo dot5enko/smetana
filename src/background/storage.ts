@@ -15,6 +15,21 @@ export async function getKeyValueFromDb(key: string, deflt: string): Promise<str
     })
 }
 
+export async function setKeyValueToDb(key: string, value: string) {
+    return configtable.get({ key }).then((resp) => {
+        if (resp == null) {
+            return configtable.add({ key, value: value }).then(() => {
+                return value;
+            })
+        } else {
+            return configtable.update(key, { value: value }).then(() => {
+                return value;
+            })
+        }
+    })
+}
+
+
 export function setKeyValue(key: string, value: string) {
     localStorage.setItem(key, value)
 

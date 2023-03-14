@@ -1,5 +1,5 @@
 import { PublicKey } from "@solana/web3.js";
-import { DecodedField, DecodeFieldResult,DataTypeField,DataTypeSync, DecodeTypeResult  } from "./types";
+import { DecodedField, DecodeFieldResult, DataTypeField, DataTypeSync, DecodeTypeResult } from "./types";
 import * as borsh from "borsh"
 import { Buffer } from "buffer"
 
@@ -61,8 +61,7 @@ export function decodeSimpleType(data: Uint8Array, typ: DataTypeField): DecodeFi
 
             //read uint32 instead
             // whhhhaaat ?
-
-            optionalPresentFlagValue = data[0] > 0;
+            optionalPresentFlagValue = data[0] > 0 || data[1] > 0 || data[2] > 0 || data[3] > 0;
         }
     }
 
