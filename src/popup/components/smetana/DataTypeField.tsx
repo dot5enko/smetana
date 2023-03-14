@@ -1,7 +1,10 @@
-import { Box, Flex, HTMLChakraProps, Icon, Spacer, Text } from "@chakra-ui/react";
+import { Box, Flex, HTMLChakraProps, Icon, Spacer } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { MdArrowDropDown, MdArrowDropUp, MdKeyboardArrowRight } from "react-icons/md";
-import { DataTypeField, moveDown, moveUp } from "../../../background/types/DataTypeField";
+import { DataTypeHandler } from "../../../background/database"
+import { DataType, DataTypeField, moveDown, moveUp, } from "../../../background/types";
+import { If, Label } from "../menu";
+import { Link } from "../menu/Link";
 import { MenuItemBasicElement } from "../menu/MenuItemBasicElement";
 
 export interface DataTypeFieldProps extends HTMLChakraProps<'div'> {
@@ -65,14 +68,34 @@ export function DataTypeField(props: DataTypeFieldProps) {
 
     const { item, movable, onMoved, ...rest } = props;
 
+    const [referencedType, setTyp] = useState<DataType | undefined>();
+
+    useEffect(() => {
+        if (item.references_type && item.referenced_type_id) {
+
+            DataTypeHandler.getById(item.referenced_type_id).then(typ => {
+                setTyp(typ)
+            })
+        } else {
+            setTyp(undefined);
+        }
+    }, [item])
+
+
     return <MenuItemBasicElement borderRadius={"6px"} {...rest}>
         <Flex>
             <Box>
                 <Flex>
-                    <Text fontWeight="bold" color={item.hide ? "gray" : "white"}>{item.label ? item.label : "<empty>"}</Text>
-                    {item.optional ? <Text fontSize="xs" color="red">*</Text> : null}
+                    <Label fontWeight="bold" color={item.hide ? "gray" : "white"}>{item.label ? item.label : "<empty>"}</Label>
+                    {item.optional ? <Label fontSize="xs" color="red">*</Label> : null}
                 </Flex>
-                <Text fontSize={"sm"} color="green.300">{item.field_type ? <Typ item={item}></Typ> : "<error type>"}</Text>
+                <Label fontSize={"sm"} color="green.300">{item.field_type ? <Typ item={item}></Typ> : "<error type>"}</Label>
+                <If condition={referencedType}>
+                    <Flex gap="5px">
+                        <Label>ref to: </Label>
+                        <Link to="edit_datatype" args={[referencedType?.id]}>{referencedType?.label}</Link>
+                    </Flex>
+                </If>
             </Box>
             <Spacer />
 

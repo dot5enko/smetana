@@ -44,7 +44,7 @@ export function TypeSelectorSearchbox(props: TypeSelectorSearchboxProps) {
             onChange={(newVal) => {
                 setQuery(newVal)
             }}></TextInput>
-        <ScrolledItem height={300}>
+        <ScrolledItem height={200}>
             <ItemSelector
                 onSelectorValueChange={(val) => {
                     const dt = val[0] as DataType;

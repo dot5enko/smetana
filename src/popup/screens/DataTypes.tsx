@@ -10,6 +10,7 @@ export let SearchLimit = 30;
 export interface DataTypesProps {
 }
 
+// todo add one ability to make OR filter
 export function useDataTypes(q: string, filterF?: ItemFilter<DataTypeInterface>): DataTypeInterface[] {
 
     const [query, setQuery] = useState<string>("");
