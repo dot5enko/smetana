@@ -1,6 +1,7 @@
 import { useRouteArg } from "./components/context/ExtensionContext";
 import { BottomContent, ColorPicker, Route, MenuEntry } from "./components/menu";
 import { Addresses, ImportIdl, DataTypes, EditDataType, EditTypeField, EditWatchedAddress, AddressDashboard } from "./screens";
+import { AddressBook } from "./screens/AddressBook";
 import { BasicAddrEdit } from "./screens/BasicAddrEdit";
 import { ChangeAddrDefaultType } from "./screens/ChangeAddrDefaultType";
 import { DataHistory } from "./screens/DataHistory";
@@ -9,10 +10,14 @@ export function Routes() {
     return <>
         <Route path="">
             <MenuEntry submenu="addresses">Watching</MenuEntry>
+            <MenuEntry submenu="address_book">Address Book</MenuEntry>
             <MenuEntry submenu="data_types" fixedFooter={true} >Data types</MenuEntry>
             <BottomContent>
                 <MenuEntry submenu="addr_view" colorVariant="info" args={[undefined, undefined, true]}>Explore</MenuEntry>
             </BottomContent>
+        </Route>
+        <Route path="address_book">
+            <AddressBook />
         </Route>
         <Route path="addr_default_type">
             <ChangeAddrDefaultType id={useRouteArg(0)} />

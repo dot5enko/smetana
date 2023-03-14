@@ -6,7 +6,7 @@ export const db = new Dexie('accounts');
 
 // todo check double initialization
 db.version(1).stores({
-    address: '++id, &address, type_assigned',
+    address: '++id, &address, type_assigned, label',
     data: '++id, address_id, created_at',
     watched_address: '++id, &address_id, paused',
     datatype: '++id, label, program_id, discriminator',

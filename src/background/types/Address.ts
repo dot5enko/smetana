@@ -1,4 +1,5 @@
 import { AddressHandler } from "../database";
+import { ItemFilter } from "./DataType";
 
 export interface Address {
     id?: number
@@ -52,9 +53,52 @@ export async function setAddrIdOwner(id: number, owner_id: number, datalen: numb
     })
 }
 
-export async function setAddrType(id: number, type_id : number) {
+export async function setAddrType(id: number, type_id: number) {
     AddressHandler.update(id, {
         type_assigned: type_id
     })
 }
+
+// todo move to templates
+export async function findAddresses(queryString: string, limit: number, itemFilter?: ItemFilter<Address>): Promise<Address[]> {
+
+    const datatype = AddressHandler.getTable();
+
+
+    const qIsEmpty = queryString === "" || queryString === undefined || queryString === "null"
+    const qlower = queryString
+
+    return await datatype.filter((it: Address) => {
+
+        // console.log(' label or color not empyt', it.label, it.labelColor, [hasLabel, hasColor]);
+
+        // todo optimize
+        const labelPassed = qIsEmpty ? true : (it.label ? it.label.toLowerCase().indexOf(qlower) != -1: false);
+        const addrPassed = qIsEmpty ? true : (it.address ? it.address.indexOf(qlower) != -1 : false);
+
+        if (!labelPassed && !addrPassed) {
+            return false;
+        } else {
+
+            const hasLabel = it.label != null && it.label != "" && it.label != undefined;
+            const hasColor = it.hasColor && it.labelColor != "";
+
+            if (!qIsEmpty || hasLabel || hasColor) {
+                return true;
+            } else {
+                return false;
+            }
+
+            // if (itemFilter) {
+            //     return itemFilter(it)
+            // } else {
+            //     return true;
+            // }
+        }
+
+    }).limit(limit).toArray()
+}
+
+
+
 
