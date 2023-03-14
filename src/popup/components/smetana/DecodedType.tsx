@@ -1,8 +1,8 @@
-import { Box, Flex, Text } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { Flex, Text } from "@chakra-ui/react";
+import { useMemo } from "react";
 import { DecodeTypeResult, DecodedField } from "../../../background/types";
 import { Label } from "../menu";
+import { Copyable } from "../menu/Copyable";
 import { If } from "../menu/If";
 import { MenuEntry } from "../menu/MenuEntry";
 import { MenuEntryWithSublabel } from "../menu/MenuEntryWithSublabel";
@@ -24,9 +24,6 @@ export function DecodedType(props: { item: DecodeTypeResult }) {
 function DecodedFieldComponent(props: { field: DecodedField }) {
 
     const { field } = props;
-    const [copied, setCopied] = useState(false);
-
-
 
     const referencedPk = useMemo(() => {
         if (field.field.references_type) {
@@ -49,23 +46,9 @@ function DecodedFieldComponent(props: { field: DecodedField }) {
                     <Text color="blue.400">{field.decoded_value.length} elements</Text>
                 </If>
             </Flex>
-            <Box onClick={(e: any) => {
-
-                e.preventDefault()
-                e.stopPropagation()
-
-                navigator.clipboard.writeText(field.decoded_value.toString())
-                setCopied(true);
-                setTimeout(() => {
-                    setCopied(false)
-                }, 450)
-            }}>
-                {!copied ?
-                    <Label color="green.400" fontSize="md">{field.decoded_value.toString()}</Label> :
-                    <Label color="blue.400" fontSize="md">copied!</Label>
-                }
-            </Box>
-
+            <Copyable>
+                <Label color="green.400" fontSize="md">{field.decoded_value.toString()}</Label>
+            </Copyable>
         </MenuEntry>
     </>
 }

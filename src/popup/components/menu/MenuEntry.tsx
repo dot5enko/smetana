@@ -9,7 +9,7 @@ export interface MenuEntryProps extends HTMLChakraProps<"div">, BasicEntryProps 
     submenuTitle?: string
     fixedFooter?: boolean
     isSlidePath?: boolean
-    args?: any[]
+    args: any[]
 }
 
 MenuEntry.defaultProps = {

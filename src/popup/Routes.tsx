@@ -14,7 +14,7 @@ export function Routes() {
             </BottomContent>
         </Route>
         <Route path="addr_view">
-            <AddressDashboard id={useRouteArg(0)} />
+            <AddressDashboard id={useRouteArg(0)} type_id={useRouteArg(1)} />
         </Route>
         <Route path="basic_addr_edit">
             <BasicAddrEdit id={useRouteArg(0)} />
