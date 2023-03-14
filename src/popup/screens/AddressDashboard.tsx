@@ -4,22 +4,25 @@ import { useEffect, useMemo, useState } from "react";
 import { AddressData, AddressHandler, DataTypeHandler, decodeType, getLastHistoryEntryOrFetch, WatchedAddressHandler } from "../../background";
 import { Address, createNewWatchedAddress, DataTypeSync, getAddrId, getDataTypeForSync, getTypeToDecode, WatchedAddress } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import { ActionButton, Group, If, Label, MenuDivider, MenuEntry, MultipleItemsRow, Sublabel } from "../components/menu";
+import { ActionButton, Group, If, Label, MenuDivider, MenuEntry, MultipleItemsRow, Sublabel, TextInput } from "../components/menu";
 import { Copyable } from "../components/menu/Copyable";
 import { addrFormat, DecodedType, WatchedAddress as WatchedAddressComponent, } from "../components/smetana";
 
 export const ExpirySeconds: number = 5 * 60; // 5 minutes
 
 export interface AddressDashboardProps {
-    id: string | number,
+    id?: string | number,
     type_id?: number
+    explore?: boolean
 }
+
+
 
 export function AddressDashboard(props: AddressDashboardProps) {
 
     const { connection, setSlideRoute, setRoute, hideSlide } = useExtensionContext();
 
-    const { id, type_id } = props;
+    const { id, type_id, explore } = props;
 
     const [objectId, setObjId] = useState(0);
     const [object, setObject] = useState<Address | undefined>();
@@ -28,16 +31,19 @@ export function AddressDashboard(props: AddressDashboardProps) {
     const [typ, setType] = useState<DataTypeSync | undefined>();
 
     const [noTypeFound, setNoTypeFound] = useState(false);
-    const [curState, setCurState] = useState<string>("");
     const [loading, setLoading] = useState(true);
 
     const [decodeError, setDecodeError] = useState<string | undefined>()
 
+    const [exploreInput, setInput] = useState("");
+
     useEffect(() => {
-        if (typeof id === 'number') {
-            setObjId(id)
-        } else {
-            getAddrId(id).then(idval => setObjId(idval))
+        if (id) {
+            if (typeof id === 'number') {
+                setObjId(id)
+            } else {
+                getAddrId(id).then(idval => setObjId(idval))
+            }
         }
     }, [id])
 
@@ -179,10 +185,28 @@ export function AddressDashboard(props: AddressDashboardProps) {
 
     return <>
 
-        <MenuEntry submenu="basic_addr_edit" submenuTitle="address info edit" args={[id]} >
-            Explorer presentation
-            {currentRep}
-        </MenuEntry>
+        <If condition={explore}>
+            <TextInput
+                value={exploreInput}
+                invalidTypeLabel="pubkey in base58 format required"
+                placeholder="address to explore"
+                validate="publicKey"
+                onChange={(nval) => { setInput(nval) }}
+                onValidChange={(valid, validVal) => {
+                    if (valid) {
+                        getAddrId(validVal).then(idval => setObjId(idval))
+                    }
+                }}
+            />
+        </If>
+
+        <If condition={object} >
+            <MenuEntry submenu="basic_addr_edit" submenuTitle="address info edit" args={[objectId]} >
+                Explorer presentation
+                {currentRep}
+            </MenuEntry>
+        </If>
+
         <Copyable><Sublabel>{object?.address}</Sublabel></Copyable>
         {watched ?
             <WatchedAddressComponent item={watched as WatchedAddress} />
@@ -252,12 +276,14 @@ export function AddressDashboard(props: AddressDashboardProps) {
                 </ActionButton>
             </>
             :
-            <MenuEntry submenu="addr_default_type" submenuTitle="change addr default type codec" args={[objectId]} >
-                Change address type
-                <Label fontSize="xs" color="green.300">
-                    {typ?.typ.label}
-                </Label>
-            </MenuEntry>
+            <If condition={object}>
+                <MenuEntry submenu="addr_default_type" submenuTitle="change addr default type codec" args={[objectId]} >
+                    Change address type
+                    <Label fontSize="xs" color="green.300">
+                        {typ?.typ.label}
+                    </Label>
+                </MenuEntry>
+            </If >
         }
     </>
 }

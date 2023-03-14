@@ -1,6 +1,6 @@
 import { useRouteArg } from "./components/context/ExtensionContext";
 import { BottomContent, ColorPicker, Route, MenuEntry } from "./components/menu";
-import { TrackNewAddress, Addresses, ImportIdl, DataTypes, EditDataType, EditTypeField, EditWatchedAddress, AddressDashboard } from "./screens";
+import { Addresses, ImportIdl, DataTypes, EditDataType, EditTypeField, EditWatchedAddress, AddressDashboard } from "./screens";
 import { BasicAddrEdit } from "./screens/BasicAddrEdit";
 import { ChangeAddrDefaultType } from "./screens/ChangeAddrDefaultType";
 import { DataHistory } from "./screens/DataHistory";
@@ -11,20 +11,17 @@ export function Routes() {
             <MenuEntry submenu="addresses">Watching</MenuEntry>
             <MenuEntry submenu="data_types" fixedFooter={true} >Data types</MenuEntry>
             <BottomContent>
-                <MenuEntry submenu="track_new_address" colorVariant="info" fixedFooter={true}>Track new address</MenuEntry>
+                <MenuEntry submenu="addr_view" colorVariant="info" args={[undefined, undefined, true]}>Explore</MenuEntry>
             </BottomContent>
         </Route>
         <Route path="addr_default_type">
             <ChangeAddrDefaultType id={useRouteArg(0)} />
         </Route>
         <Route path="addr_view">
-            <AddressDashboard id={useRouteArg(0)} type_id={useRouteArg(1)} />
+            <AddressDashboard id={useRouteArg(0)} type_id={useRouteArg(1)} explore={useRouteArg(2)} />
         </Route>
         <Route path="basic_addr_edit">
             <BasicAddrEdit id={useRouteArg(0)} />
-        </Route>
-        <Route path="track_new_address">
-            <TrackNewAddress addr="8szGkuLTAux9XMgZ2vtY39jVSowEcpBfFfD8hXSEqdGC" />
         </Route>
         <Route path="addresses">
             <Addresses />
