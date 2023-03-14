@@ -2,9 +2,9 @@ import { Skeleton } from "@chakra-ui/react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useEffect, useMemo, useState } from "react";
 import { AddressData, AddressHandler, DataTypeHandler, decodeType, getLastHistoryEntryOrFetch, WatchedAddressHandler } from "../../background";
-import { Address, createNewWatchedAddress, DataTypeSync, getAddrId, getDataTypeForSync, getTypeToDecode, setAddrType, WatchedAddress } from "../../background/types";
+import { Address, createNewWatchedAddress, DataTypeSync, getAddrId, getDataTypeForSync, getTypeToDecode, WatchedAddress } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import { ActionButton, Group, If, Label, MenuDivider, MenuEntry, MultipleItemsRow, Sublabel, TextLabel } from "../components/menu";
+import { ActionButton, Group, If, Label, MenuDivider, MenuEntry, MultipleItemsRow, Sublabel } from "../components/menu";
 import { Copyable } from "../components/menu/Copyable";
 import { addrFormat, DecodedType, WatchedAddress as WatchedAddressComponent, } from "../components/smetana";
 
@@ -53,10 +53,6 @@ export function AddressDashboard(props: AddressDashboardProps) {
             return undefined;
         } else {
 
-            AddressHandler.getById(object.program_owner).then((owner) => {
-                setProgramOwner(owner.address);
-            })
-
             const strlabel = (object.label != null && object.label != "") ? object.label : object.address;
 
             return <Label fontSize="sm" color={object.hasColor ? object.labelColor : "gray"}>{strlabel}</Label>
@@ -101,7 +97,9 @@ export function AddressDashboard(props: AddressDashboardProps) {
             getTypeToDecode(
                 object as Address,
                 true,
-                discriminatorBytes
+                discriminatorBytes,
+                undefined,
+                connection
             ).then((hasType) => {
 
                 console.log('got type to decode result : ', hasType)
@@ -116,6 +114,18 @@ export function AddressDashboard(props: AddressDashboardProps) {
             }).catch((e) => {
                 setLoading(false);
             })
+        }
+
+        if (object) {
+            // at this point address has program owner, right ?
+            AddressHandler.refresh(object).then(newAddr => {
+
+                console.log('going to get address for program: ', newAddr.program_owner)
+
+                AddressHandler.getById(newAddr.program_owner).then((owner) => {
+                    setProgramOwner(owner.address);
+                })
+            });
         }
 
         if (type_id) {

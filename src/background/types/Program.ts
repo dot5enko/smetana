@@ -56,6 +56,8 @@ export async function fetchProgramIdl(conn: Connection, program_id: string): Pro
 
     const programInfo = await getProgramState(program_id);
 
+    console.log(`fetching ${program_id} program idl ... `, programInfo)
+
     if (!programInfo.fetched) {
         const idlAddress = await genAnchorIdlAddr(new PublicKey(program_id));
 
@@ -72,19 +74,25 @@ export async function fetchProgramIdl(conn: Connection, program_id: string): Pro
         await programtable.update(programInfo.id, programInfo)
 
         const idlJson = parseIdlFromAccountData(rawAccountInfo.data);
-
         const parseJsonIdlResult = await parseIdlTypes(idlJson, true);
+
+        console.log(`found ${parseJsonIdlResult.types.size} types in idl`)
 
         programInfo.idl_parsed = true;
         await programtable.update(programInfo.id, programInfo)
 
+        let importedCount = 0;
+
         for (var it of parseJsonIdlResult.types) {
             try {
                 await importType(program_id, it[1]);
+                importedCount += 1
             } catch (e: any) {
                 console.log(`unable to import type ${it[0]}: ${e.message}`, e)
             }
         }
+
+        console.log(` idl fetch finished with ${importedCount} types imported`)
 
         programInfo.imported = true;
         await programtable.update(programInfo.id, programInfo)

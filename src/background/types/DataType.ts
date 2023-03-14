@@ -1,6 +1,7 @@
+import { Connection } from "@solana/web3.js";
 import { IndexableType } from "dexie";
 import { DataType } from "src/popup/components/smetana";
-import { Address, Program, setAddrType } from ".";
+import { Address, fetchProgramIdl, Program, setAddrType } from ".";
 import { AddressHandler, DataTypeHandler, ProgramHandler, WatchedAddressHandler } from "../database";
 import { DataTypeField, DataTypeFieldHandler, getFieldsForType, getFieldSize } from "./DataTypeField";
 import { DecodedField } from "./DecodedField";
@@ -175,8 +176,23 @@ export interface HasTypeResponse {
     hasbyprogram?: boolean
 }
 
+function equal(dis1: Uint8Array, disc2: Uint8Array) {
+
+    if (dis1.byteLength != disc2.byteLength) return false;
+    for (var i = 0; i != disc2.byteLength; i++) {
+        if (dis1[i] != disc2[i]) return false;
+    }
+    return true;
+}
+
 // todo add discriminator bytes ?
-export async function getTypeToDecode(address: Address, fetchidl: boolean, discriminator?: Uint8Array, forceFallback?: boolean): Promise<HasTypeResponse> {
+export async function getTypeToDecode(
+    address: Address,
+    fetchidl: boolean,
+    discriminator?: Uint8Array,
+    forceFallback?: boolean,
+    connection?: Connection
+): Promise<HasTypeResponse> {
 
     let result: HasTypeResponse = {
         fetched: fetchidl,
@@ -184,8 +200,6 @@ export async function getTypeToDecode(address: Address, fetchidl: boolean, discr
     }
 
     if (address.type_assigned && !forceFallback) {
-
-        console.log('getTypeToDecode : type assigned, no force callback')
 
         const typ = await DataTypeHandler.getById(address.type_assigned);
         if (typ == null) {
@@ -246,66 +260,69 @@ export async function getTypeToDecode(address: Address, fetchidl: boolean, discr
             equals(address.program_owner).
             first()
 
-        // todo if fetch idl 
-        if (program != null) {
+        // this should be first step in type search, no?
+        // then idl lookup
+        // no program info were found, look for installed types for this program
+        // todo update address field to just address_id in types
 
-            console.log(' ----- program found:', program)
+        const programAddrInfo = await AddressHandler.getById(address.program_owner)
 
-            const program_addr = await AddressHandler.getById(address.program_owner);
+        // todo move to config. actually there should be no limit at all
+        // todo move to getCompatibleTypes to use in other places too
 
-            const typeRef: DataType = await DataTypeHandler.getTable().
-                where('program_id').
-                equals(program_addr.address).
-                // todo fix this
-                filter((it: DataType) => {
-                    console.log(it.info.size_bytes, ' == ', address.datalen)
-                    return it.info.size_bytes == address.datalen;
-                }).first()
+        let foundType = false;
 
-            if (typeRef) {
-                const syncedT = await getDataTypeForSync(typeRef);
-                result.typ = syncedT;
-            } else {
-                console.log('unable to find a type to decode')
-            }
-
-        } else {
-
-            // this should be first step in type search, no?
-            // then idl lookup
-            // no program info were found, look for installed types for this program
-            // todo update address field to just address_id in types
-
-            const programAddrInfo = await AddressHandler.getById(address.program_owner)
-
-            // todo move to config. actually there should be no limit at all
-            // todo move to getCompatibleTypes to use in other places too
+        async function checkProgramTypes(is_anchor: boolean) {
             const types = await datatypesForProgram(programAddrInfo.address, "", 500);
 
             // took by full size equallity first 
             if (types.length == 0) {
                 console.warn(`no types for program ${programAddrInfo.address} found`);
             } else {
-                const filteredByLen = types.filter(it => it.info.size_bytes == address.datalen);
 
-                if (filteredByLen.length >= 1) {
-                    result.morethanone = filteredByLen.length > 1;
-                    result.typ = await getDataTypeForSync(filteredByLen[0]);
-                } else if (filteredByLen.length == 0) {
+                const filtered = types.filter(it => {
+                    if (is_anchor) {
+                        return equal(it.discriminator, discriminator ?? new Uint8Array());
+                    } else {
+                        return it.info.size_bytes == address.datalen;
+                    }
+                });
+
+                console.log('found some types for addr: ' + address.address, types.length, "filtered = ", filtered.length)
+
+                if (filtered.length >= 1) {
+                    result.morethanone = filtered.length > 1;
+                    result.typ = await getDataTypeForSync(filtered[0]);
+                    foundType = true;
+                } else if (filtered.length == 0) {
                     result.hasbyprogram = true;
                 }
             }
+        }
 
-            // if no type found fetch idl if needed
+        await checkProgramTypes(false);
+
+        // if no type found fetch idl 
+        // in case no previously attempt exists
+        if (!foundType && fetchidl && !program) {
+            try {
+                if (connection) {
+                    const programFetched = await fetchProgramIdl(connection, programAddrInfo.address);
+                    if (programFetched.is_anchor) {
+                        await checkProgramTypes(true);
+                    }
+                } else {
+                    throw new Error('no connection were provided  but idl is required to fetch for address: ' + address.address)
+                }
+            } catch (e: any) {
+                console.log('unable to fetch idl ' + e.message, e)
+            }
         }
     } else {
-
         if (address.program_owner == null) {
             console.log('not enough info on account to get type', address)
             throw new Error('no address.program_owner was set prior using getTypeToDecode')
         }
-
-        // force fetch addr
     }
 
     if (result.typ) {
