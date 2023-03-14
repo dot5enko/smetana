@@ -171,16 +171,22 @@ export async function importType(program_id: string, t: ParsedTypeFromIdl): Prom
 export interface HasTypeResponse {
     typ?: DataTypeSync,
     fetched: boolean
+    morethanone: boolean
+    hasbyprogram?: boolean
 }
 
 // todo add discriminator bytes ?
 export async function getTypeToDecode(address: Address, fetchidl: boolean, discriminator?: Uint8Array, forceFallback?: boolean): Promise<HasTypeResponse> {
 
     let result: HasTypeResponse = {
-        fetched: fetchidl
+        fetched: fetchidl,
+        morethanone: false
     }
 
     if (address.type_assigned && !forceFallback) {
+
+        console.log('getTypeToDecode : type assigned, no force callback')
+
         const typ = await DataTypeHandler.getById(address.type_assigned);
         if (typ == null) {
             console.warn(`this shouldn't happen, assigned type is null for ${address.address}, using fallback`);
@@ -200,7 +206,6 @@ export async function getTypeToDecode(address: Address, fetchidl: boolean, discr
 
         const types = await datatypesForDiscriminator(discriminator);
 
-
         if (types.length > 0) {
             if (types.length > 1) {
                 console.log('--- more than 1 datatype are found by discriminator, codec could be wrong, perform filtering by program owner first')
@@ -210,9 +215,7 @@ export async function getTypeToDecode(address: Address, fetchidl: boolean, discr
             result.typ = syncedT;
             return result;
         }
-
     }
-
 
     const watchedAddr = await WatchedAddressHandler.getById(address_id);
 
@@ -230,6 +233,10 @@ export async function getTypeToDecode(address: Address, fetchidl: boolean, discr
     console.log(' --- no watched address were found : (')
 
     // todo fetch address if fetchidl = true
+
+    // refresh addr
+    address = await AddressHandler.refresh(address)
+
     if (address != null && address.program_owner != null) {
 
         console.log(' ---- address found:', address)
@@ -239,6 +246,7 @@ export async function getTypeToDecode(address: Address, fetchidl: boolean, discr
             equals(address.program_owner).
             first()
 
+        // todo if fetch idl 
         if (program != null) {
 
             console.log(' ----- program found:', program)
@@ -262,11 +270,42 @@ export async function getTypeToDecode(address: Address, fetchidl: boolean, discr
             }
 
         } else {
-            // fetch idl if needed
+
+            // this should be first step in type search, no?
+            // then idl lookup
+            // no program info were found, look for installed types for this program
+            // todo update address field to just address_id in types
+
+            const programAddrInfo = await AddressHandler.getById(address.program_owner)
+
+            // todo move to config. actually there should be no limit at all
+            // todo move to getCompatibleTypes to use in other places too
+            const types = await datatypesForProgram(programAddrInfo.address, "", 500);
+
+            // took by full size equallity first 
+            if (types.length == 0) {
+                console.warn(`no types for program ${programAddrInfo.address} found`);
+            } else {
+                const filteredByLen = types.filter(it => it.info.size_bytes == address.datalen);
+
+                if (filteredByLen.length >= 1) {
+                    result.morethanone = filteredByLen.length > 1;
+                    result.typ = await getDataTypeForSync(filteredByLen[0]);
+                } else if (filteredByLen.length == 0) {
+                    result.hasbyprogram = true;
+                }
+            }
+
+            // if no type found fetch idl if needed
         }
     } else {
+
+        if (address.program_owner == null) {
+            console.log('not enough info on account to get type', address)
+            throw new Error('no address.program_owner was set prior using getTypeToDecode')
+        }
+
         // force fetch addr
-        console.log(" ### address not found :(", address)
     }
 
     if (result.typ) {

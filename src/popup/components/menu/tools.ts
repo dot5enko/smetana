@@ -9,5 +9,5 @@ export function minutesReadable(minutes: number): string {
 
 
 export function timeNow(): number {
-    return new Date().getTime()/1000;
+    return Math.floor(new Date().getTime()/1000);
 }

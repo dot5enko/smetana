@@ -23,13 +23,16 @@ export interface HistoryResponse {
 }
 
 export async function forceFetchData(connection: Connection, address: Address): Promise<AddressData> {
+
     await getSignleRawAccountInfo(connection, address);
     const refreshed = await getHistory(address.id as number, 1);
+
     return refreshed.filtered[0];
 }
 
 export async function getLastHistoryEntryOrFetch(connection: Connection, address: Address, expiry_seconds: number = 0): Promise<AddressData> {
 
+    console.log(' getting history or fetching ... ', address.address)
 
     if (expiry_seconds === -1) {
         // fetch fresh

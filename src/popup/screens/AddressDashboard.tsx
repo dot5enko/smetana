@@ -64,6 +64,9 @@ export function AddressDashboard(props: AddressDashboardProps) {
 
             getLastHistoryEntryOrFetch(connection, object, ExpirySeconds).then((it) => {
                 setData(it);
+
+                console.log('set last data to ', it)
+
                 setLoading(false);
             }).catch((e: any) => {
                 setDecodeError("unable to load account data: " + e.message)
@@ -77,6 +80,7 @@ export function AddressDashboard(props: AddressDashboardProps) {
 
         function fallback() {
 
+            setNoTypeFound(false);
             setLoading(true);
 
             let discriminatorBytes = undefined;
@@ -92,6 +96,8 @@ export function AddressDashboard(props: AddressDashboardProps) {
                 true,
                 discriminatorBytes
             ).then((hasType) => {
+
+                console.log('got type to decode result : ', hasType)
 
                 setLoading(false);
                 if (hasType.typ) {
@@ -111,10 +117,13 @@ export function AddressDashboard(props: AddressDashboardProps) {
 
                 return getDataTypeForSync(forceType).then((syncType) => {
                     setType(syncType);
-                    setNoTypeFound(true);
+                    console.log("found forced type by route param");
+
+                    setNoTypeFound(false);
                     setLoading(false);
                 }).catch((e: any) => {
 
+                    setNoTypeFound(true);
                     console.warn('unable to get referenced type, this shouldn"t happen: ' + e.message, e)
 
                     fallback()
@@ -127,9 +136,10 @@ export function AddressDashboard(props: AddressDashboardProps) {
 
     const decoded = useMemo(() => {
 
-        console.log('decoding data with type ', typ?.typ.label, lastData?.data.length)
-
         if (typ && lastData) {
+
+            console.log('decoding data with type ', typ?.typ.label, lastData?.data.length)
+
             setDecodeError(undefined);
             try {
                 const decoded = decodeType(lastData?.data, typ)
@@ -181,12 +191,21 @@ export function AddressDashboard(props: AddressDashboardProps) {
             </> : null}
         </>}
 
-        <MenuEntry submenu="addr_default_type" submenuTitle="change addr default type codec" args={[objectId]} >
-            Change default type
-            <Label fontSize="xs" color="green.300">
-                {typ?.typ.label}
-            </Label>
-        </MenuEntry>
-
+        {noTypeFound ?
+            <>
+                <MenuDivider width={0} />
+                <ActionButton>
+                    No type found
+                    <Label fontSize="xs">No worries, you still can try our <strong>smetana lab</strong> and decode address data by yourself!</Label>
+                </ActionButton>
+            </>
+            :
+            <MenuEntry submenu="addr_default_type" submenuTitle="change addr default type codec" args={[objectId]} >
+                Change address type
+                <Label fontSize="xs" color="green.300">
+                    {typ?.typ.label}
+                </Label>
+            </MenuEntry>
+        }
     </>
 }

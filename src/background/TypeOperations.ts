@@ -18,6 +18,10 @@ export class TypeOperations<T> {
         this.table = dbtable;
     }
 
+    async refresh(obj: T): Promise<T> {
+        return this.getById((obj as any).id);
+    }
+
     async getById(id: number): Promise<T> {
         return this.table.get({ id: id });
     }

@@ -1,6 +1,7 @@
 import { AccountInfo, Connection } from "@solana/web3.js"
 import { getSingleAddressInfo } from "../rpc"
 import { getAddrId, addNewAddressData, Address } from "."
+import { timeNow } from "../../popup/components/menu"
 
 export interface RawAccountInfo {
     context_slot: number
@@ -22,35 +23,32 @@ export function toRawAccountInfo(acc: AccountInfo<Buffer>, slot: number, include
     return rawaccount;
 }
 
-export function getSignleRawAccountInfo(conn: Connection, address: Address): Promise<RawAccountInfo> {
+export async function getSignleRawAccountInfo(conn: Connection, address: Address): Promise<RawAccountInfo> {
 
     if (address == null || address == undefined) {
         console.error('looks like address is empty when getSignleRawAccountInfo')
     }
 
-    return getSingleAddressInfo(address.address, conn).then((resp) => {
-        if (resp.value != undefined) {
-            const rawaccount: RawAccountInfo = toRawAccountInfo(resp.value, resp.context.slot, true);
+    const resp = await getSingleAddressInfo(address.address, conn);
+    if (resp.value != undefined) {
 
-            (async () => {
+        const rawaccount: RawAccountInfo = toRawAccountInfo(resp.value, resp.context.slot, true);
 
-                let program_id = address.program_owner;
+        let program_id = address.program_owner;
 
-                if (address.program_owner == null || address.program_owner == 0) {
-                    program_id = await getAddrId(resp.value?.owner.toBase58() as string)
-                }
-
-                addNewAddressData(
-                    rawaccount,
-                    address.id as number,
-                    new Date().getTime() / 1000,
-                    program_id,
-                )
-            })()
-
-            return rawaccount;
+        if (address.program_owner == null || address.program_owner == 0) {
+            program_id = await getAddrId(resp.value?.owner.toBase58() as string)
         }
 
-        return Promise.reject(`no account info found for ${address}`);
-    })
+        await addNewAddressData(
+            rawaccount,
+            address.id as number,
+            timeNow(),
+            program_id,
+        )
+
+        return rawaccount;
+    }
+
+    return Promise.reject(`no account info found for ${address}`);
 }
