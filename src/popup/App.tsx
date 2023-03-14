@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Spacer, Text } from "@chakra-ui/react"
+import { Box, Flex, Icon, Spacer, Text,useColorMode } from "@chakra-ui/react"
 import { ChakraProvider } from '@chakra-ui/react'
 import { ToastContainer } from "react-toastify"
 import { ExtensionContextProvider, useExtensionContext } from "./components/context/ExtensionContext"
@@ -8,7 +8,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { MdKeyboardBackspace, MdSettings } from "react-icons/md"
 import { If, SlideWindow } from "./components/menu"
 import { useEffect, useState } from "react"
-import { setup_types } from "../background/setupTypes"
 
 function App() {
 
@@ -20,6 +19,16 @@ function App() {
 }
 
 function Content() {
+
+  const { colorMode, toggleColorMode } = useColorMode()
+
+  // broken initial color mode fix
+  useEffect(() => {
+    if (colorMode == 'light') {
+      toggleColorMode();
+    }
+  },[])
+
 
   return (
     <Flex alignItems="center" justifyContent="center" >
@@ -82,7 +91,7 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
     position="relative"
     overflow="hidden"
   >
-    <Flex direction="column" height="100vh" boxSizing="border-box">
+    <Flex direction="column" height="98.5vh" boxSizing="border-box">
       <Box padding="5px 0px" height="55px">
         <Flex>
           {hasBack ? <Box

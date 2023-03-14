@@ -1,5 +1,6 @@
 import { Connection } from "@solana/web3.js";
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { DefaultRpcServer } from "../../../background";
 import { getKeyValueOrDefault, RpcConfigKey, setKeyValue } from "../../../background/storage";
 
 export interface ExtensionContextType {
@@ -45,7 +46,7 @@ export function ExtensionContextProvider(props: { children?: JSX.Element }) {
     const [currentRoute, setRouteState] = useState<RouteHistoryEntry>(emptyRoute)
     const [routeStack, setRouteStack] = useState<RouteHistoryEntry[]>([]);
 
-    const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, "https://rpc.ankr.com/solana"));
+    const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, DefaultRpcServer));
     const [connection, setConnection] = useState(new Connection(rpc, 'confirmed'))
 
     const [slideActive, setSlideActive] = useState<boolean>(false);

@@ -50,12 +50,8 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
         if (it.querySelector(".smetanaExplorer") == null) {
 
             const badge = document.createElement("span");
-            badge.style.border = "1px solid gray";
-            badge.style.padding = "4px";
-            badge.style.marginRight = "10px";
-            badge.style.borderRadius = "4px";
-            badge.style.color = 'black';
-            badge.style.mixBlendMode = 'difference'
+            badge.className = "smetana-btn"
+
             // badge.style.backgroundColor = "#189AB4";
             badge.onclick = async function (e) {
 
@@ -127,7 +123,7 @@ function processLinksWithData(links: HTMLAnchorElement[], pageContext: ContentCo
                 }
             }
 
-            badge.innerText = "[S]";
+            badge.innerText = "S";
 
             it.prepend(badge);
         }
