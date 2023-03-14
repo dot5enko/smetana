@@ -46,7 +46,7 @@ function DecodedFieldComponent(props: { field: DecodedField }) {
                     <Text color="blue.400">{field.decoded_value.length} elements</Text>
                 </If>
             </Flex>
-            <Copyable>
+            <Copyable value={field.decoded_value.toString()}>
                 <Label color="green.400" fontSize="md">{field.decoded_value.toString()}</Label>
             </Copyable>
         </MenuEntry>

@@ -4,6 +4,7 @@ import { AddressData, AddressHandler, DataTypeHandler, decodeType, getLastHistor
 import { Address, DataTypeSync, getAddrId, getDataTypeForSync, getTypeToDecode, WatchedAddress } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
 import { ActionButton, Group, If, Label, MenuDivider, MenuEntry, Sublabel, TextLabel } from "../components/menu";
+import { Copyable } from "../components/menu/Copyable";
 import { DecodedType, WatchedAddress as WatchedAddressComponent, } from "../components/smetana";
 
 export const ExpirySeconds: number = 5 * 60; // 5 minutes
@@ -49,9 +50,9 @@ export function AddressDashboard(props: AddressDashboardProps) {
             return undefined;
         } else {
 
-            const strlabel = (object.label != null && object.label != "") ? object.label : object.address;          
+            const strlabel = (object.label != null && object.label != "") ? object.label : object.address;
 
-            return <Label color={object.hasColor ? object.labelColor : ""}>{strlabel}</Label>
+            return <Label fontSize="sm" color={object.hasColor ? object.labelColor : "gray"}>{strlabel}</Label>
         }
     }, [object])
 
@@ -91,13 +92,13 @@ export function AddressDashboard(props: AddressDashboardProps) {
                 true,
                 discriminatorBytes
             ).then((hasType) => {
-                
+
                 setLoading(false);
                 if (hasType.typ) {
                     setType(hasType.typ);
                 } else {
                     setNoTypeFound(true);
-                    
+
                 }
             }).catch((e) => {
                 setLoading(false);
@@ -150,13 +151,12 @@ export function AddressDashboard(props: AddressDashboardProps) {
     }, [typ, lastData])
 
     return <>
-       
+
         <MenuEntry submenu="basic_addr_edit" submenuTitle="address info edit" args={[id]} >
             Explorer presentation
             {currentRep}
         </MenuEntry>
-        <Sublabel>{object?.address}</Sublabel>
-        
+        <Sublabel><Copyable showIcon={true}>{object?.address}</Copyable></Sublabel>
         <If condition={watched}>
             <WatchedAddressComponent item={watched as WatchedAddress} />
         </If>
