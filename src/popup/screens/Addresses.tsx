@@ -25,7 +25,7 @@ export function Addresses(props: AddressesProps) {
     return <>
         <TextInput
             sizeVariant="sm"
-            placeholder="search query"
+            placeholder="search by label"
             value={query}
             onChange={(newVal) => {
                 setQuery(newVal)

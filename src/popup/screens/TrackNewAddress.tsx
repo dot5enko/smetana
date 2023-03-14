@@ -154,20 +154,6 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                 (raw ?
                     // <Group name="info fetched">
                     <>
-                        <MultipleItemsRow>
-                            <MenuEntry>
-                                <Text color="green.400">{raw.data.length}</Text>
-                                <Text fontSize="xs">size bytes</Text>
-                            </MenuEntry>
-                            <MenuEntry >
-                                <Text color="green.400">{Math.round((raw.lamports / LAMPORTS_PER_SOL) * 1000) / 1000}</Text>
-                                <Text fontSize="xs">sol balance</Text>
-                            </MenuEntry>
-                            <MenuEntry>
-                                <Text color="green.400">{addrFormat(raw.owner, 5)}</Text>
-                                <Text fontSize="xs">owned by program</Text>
-                            </MenuEntry>
-                        </MultipleItemsRow>
 
                         {decoded ? <>
                             <MenuDivider width={0} height={10} />
@@ -177,26 +163,7 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                         </> : null}
 
                         <BottomContent>
-                            <ActionButton colorVariant="info" action={() => {
-                                if (decodeType) {
-                                    setSlideRoute("track_address_options", (label: string, fetchinterval: number) => {
-
-                                        createNewWatchedAddress(
-                                            validAddr,
-                                            decodeType?.id as number,
-                                            fetchinterval,
-                                            label).then(() => {
-                                                // todo move routes to config
-                                                setRoute("addresses", "Addresses", true)
-                                            }).finally(() => {
-                                                hideSlide();
-                                            })
-                                    })
-                                }
-                            }}>
-                                <Text>Track</Text>
-                                {!decodeType ? <Sublabel >select type decoder first</Sublabel> : null}
-                            </ActionButton>
+                        
                         </BottomContent>
                         {/* <MenuDivider width={0} /> */}
                         <ItemSelector label="Select compatible decoder for data" onSelectorValueChange={(nval) => {

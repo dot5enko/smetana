@@ -64,7 +64,7 @@ export function DataTypes(props: DataTypesProps) {
         </BottomContent>
         <TextInput
             sizeVariant="sm"
-            placeholder="search query"
+            placeholder="search type by name"
             value={query}
             onChange={(newVal) => {
                 setQuery(newVal)

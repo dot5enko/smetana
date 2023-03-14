@@ -16,7 +16,6 @@ export function Decoder(props: {
 
         }
     }}>
-
         {matchSize ?
             <Label fontSize="xs" color="green.400">matched by size</Label> :
             (matchDiscriminator ? <Label fontSize="xs" color="green.400">matched by size</Label> :

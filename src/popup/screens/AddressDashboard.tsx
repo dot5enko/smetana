@@ -1,11 +1,12 @@
 import { Skeleton } from "@chakra-ui/react";
+import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useEffect, useMemo, useState } from "react";
 import { AddressData, AddressHandler, DataTypeHandler, decodeType, getLastHistoryEntryOrFetch, WatchedAddressHandler } from "../../background";
-import { Address, DataTypeSync, getAddrId, getDataTypeForSync, getTypeToDecode, setAddrType, WatchedAddress } from "../../background/types";
+import { Address, createNewWatchedAddress, DataTypeSync, getAddrId, getDataTypeForSync, getTypeToDecode, setAddrType, WatchedAddress } from "../../background/types";
 import { useExtensionContext } from "../components/context/ExtensionContext";
-import { ActionButton, Group, If, Label, MenuDivider, MenuEntry, Sublabel, TextLabel } from "../components/menu";
+import { ActionButton, Group, If, Label, MenuDivider, MenuEntry, MultipleItemsRow, Sublabel, TextLabel } from "../components/menu";
 import { Copyable } from "../components/menu/Copyable";
-import { DecodedType, WatchedAddress as WatchedAddressComponent, } from "../components/smetana";
+import { addrFormat, DecodedType, WatchedAddress as WatchedAddressComponent, } from "../components/smetana";
 
 export const ExpirySeconds: number = 5 * 60; // 5 minutes
 
@@ -16,7 +17,7 @@ export interface AddressDashboardProps {
 
 export function AddressDashboard(props: AddressDashboardProps) {
 
-    const { connection } = useExtensionContext();
+    const { connection, setSlideRoute, setRoute, hideSlide } = useExtensionContext();
 
     const { id, type_id } = props;
 
@@ -45,10 +46,16 @@ export function AddressDashboard(props: AddressDashboardProps) {
         WatchedAddressHandler.getTable().get({ address_id: objectId }).then(w => setWatched(w))
     }, [objectId])
 
+    const [programOwner, setProgramOwner] = useState("");
+
     const currentRep = useMemo(() => {
         if (!object) {
             return undefined;
         } else {
+
+            AddressHandler.getById(object.program_owner).then((owner) => {
+                setProgramOwner(owner.address);
+            })
 
             const strlabel = (object.label != null && object.label != "") ? object.label : object.address;
 
@@ -167,9 +174,25 @@ export function AddressDashboard(props: AddressDashboardProps) {
             {currentRep}
         </MenuEntry>
         <Copyable><Sublabel>{object?.address}</Sublabel></Copyable>
-        <If condition={watched}>
+        {watched ?
             <WatchedAddressComponent item={watched as WatchedAddress} />
-        </If>
+            : (object && typ ? <ActionButton colorVariant="info" action={() => {
+                setSlideRoute("track_address_options", (label: string, fetchinterval: number) => {
+                    createNewWatchedAddress(
+                        object,
+                        typ,
+                        fetchinterval,
+                        label).then(() => {
+                            // todo move routes to config
+                            setRoute("addresses", "Addresses", true)
+                        }).finally(() => {
+                            hideSlide();
+                        })
+                })
+            }}>
+                Watch this address
+            </ActionButton> : null)
+        }
 
         {loading ? <>
             <Skeleton width={"100%"} height="100px" borderRadius="6px"></Skeleton>
@@ -190,6 +213,25 @@ export function AddressDashboard(props: AddressDashboardProps) {
                 </Group>
             </> : null}
         </>}
+
+        <If condition={lastData}>
+            <MultipleItemsRow>
+                <MenuEntry>
+                    <Label color="green.400">{lastData?.data.length}</Label>
+                    <Label fontSize="xs">size bytes</Label>
+                </MenuEntry>
+                <MenuEntry >
+                    <Label color="green.400">{Math.round((lastData?.lamports as number / LAMPORTS_PER_SOL) * 1000) / 1000}</Label>
+                    <Label fontSize="xs">sol balance</Label>
+                </MenuEntry>
+                <MenuEntry>
+                    <Copyable value={programOwner}>
+                        <Label color="green.400">{addrFormat(programOwner, 5)}</Label>
+                        <Label fontSize="xs">owned by program</Label>
+                    </Copyable>
+                </MenuEntry>
+            </MultipleItemsRow>
+        </If>
 
         {noTypeFound ?
             <>

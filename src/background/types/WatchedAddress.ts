@@ -1,4 +1,4 @@
-import { getAddrId } from "."
+import { Address, DataType, DataTypeSync, getAddrId } from "."
 import { WatchedAddressHandler } from "../database"
 
 export interface WatchedAddress {
@@ -25,13 +25,15 @@ export async function getWatchedByAddressId(addrid: number): Promise<WatchedAddr
 }
 
 export async function createNewWatchedAddress(
-    address: string,
-    data_type_id: number,
+    address: Address,
+    data_type: DataTypeSync,
     sync_interval: number,
     label: string
 ): Promise<WatchedAddress> {
 
-    const addressId = await getAddrId(address);
+
+    const data_type_id = data_type.typ.id as number;
+    const addressId = address.id as number;
 
     const watched = await getWatchedByAddressId(addressId);
     if (!watched) {
