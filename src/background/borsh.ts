@@ -12,6 +12,8 @@ export function decodeType(data: Uint8Array, typ: DataTypeSync): DecodeTypeResul
     let offset = 0;
     let err = false;
 
+    let optionalSkipped = 0;
+
     for (var itfield of fields) {
         if (itfield.is_complex_type) {
             throw new Error('complex types not implemented yet');
@@ -22,6 +24,11 @@ export function decodeType(data: Uint8Array, typ: DataTypeSync): DecodeTypeResul
                 err = true;
                 break;
             } else {
+
+                if (itfield.optional && !decoderesult.contains) {
+                    optionalSkipped += 1;
+                }
+
                 result.push({
                     field: itfield,
                     decoded_value: decoderesult.outvalue,
@@ -33,7 +40,7 @@ export function decodeType(data: Uint8Array, typ: DataTypeSync): DecodeTypeResul
         }
     }
 
-    if (offset != data.length) {
+    if (optionalSkipped == 0 && offset != data.length) {
         err = true;
     }
 
@@ -59,16 +66,17 @@ export function decodeSimpleType(data: Uint8Array, typ: DataTypeField): DecodeFi
             return result;
         } else {
 
-            //read uint32 instead
+            //read uint32
             // whhhhaaat ?
+
             optionalPresentFlagValue = data[0] > 0 || data[1] > 0 || data[2] > 0 || data[3] > 0;
+            result.contains = optionalPresentFlagValue;
         }
     }
 
     if (typ.optional && !optionalPresentFlagValue) {
 
         result.bytesUsed += size;
-        result.contains = optionalPresentFlagValue;
 
         return result
     } else {
@@ -122,6 +130,7 @@ export function decodeSimpleType(data: Uint8Array, typ: DataTypeField): DecodeFi
                     size += 1;
                     break;
                 case "bool":
+                    result.outvalue = reader.readU8() > 0 ? true : false;
                     size += 1;
                     break;
                 case "u16":

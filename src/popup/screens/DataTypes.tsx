@@ -3,6 +3,7 @@ import { useExtensionContext } from "../components/context/ExtensionContext";
 import { DataType } from "../components/smetana";
 import { DataType as DataTypeInterface, findDatatypes } from "../../background/types"
 import { TextInput, BottomContent, MenuEntry } from "../components/menu";
+import { setup_types } from "../../background/setupTypes";
 
 export let SearchLimit = 30;
 
@@ -12,15 +13,29 @@ export interface DataTypesProps {
 export function DataTypes(props: DataTypesProps) {
 
     const { setRoute, setSlideRoute } = useExtensionContext();
-    
-    const [query, setQuery] = useState<string>("");
 
+    const [query, setQuery] = useState<string>("");
     const [items, setItems] = useState<DataTypeInterface[]>([]);
 
-    useEffect(() => {
-        findDatatypes(query, SearchLimit).then((items) => {
+    function loadTypes(q: string) {
+        findDatatypes(q, SearchLimit).then((items) => {
             setItems(items);
         });
+    }
+
+    useEffect(() => {
+        setup_types().then((setup) => {
+            if (setup) {
+                loadTypes(query);
+            }
+        });
+    }, [])
+
+    useEffect(() => {
+
+
+        loadTypes(query);
+
     }, [query])
 
     return <>

@@ -20,7 +20,7 @@ function field(name: string, typ: string, optional: boolean, idx: number): DataT
 }
 const setup_done_key = "setup_types";
 
-export async function setup_types() {
+export async function setup_types() : Promise<boolean> {
 
     let setup_done = await getKeyValueFromDb(setup_done_key, "0");
 
@@ -73,6 +73,9 @@ export async function setup_types() {
         importType(tokeneg, spl_mint);
 
         setKeyValueToDb(setup_done_key, "1");
+
+        return true;
     }
 
+    return false;
 }

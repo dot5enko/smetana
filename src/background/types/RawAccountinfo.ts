@@ -51,7 +51,6 @@ export function getSignleRawAccountInfo(conn: Connection, address: Address): Pro
             return rawaccount;
         }
 
-        console.log('no account info found for :', address.address, resp)
         return Promise.reject(`no account info found for ${address}`);
     })
 }

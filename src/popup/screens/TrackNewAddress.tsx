@@ -39,7 +39,7 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
 
                 return AddressHandler.getById(addrid).then((addrObj) => {
 
-                    console.log(' addr object for ',validAddr, addrObj.address, addrObj)
+                    console.log(' addr object for ', validAddr, addrObj.address, addrObj)
 
                     return getSignleRawAccountInfo(connection, addrObj).then(rawaccount => {
 
@@ -120,8 +120,9 @@ export function TrackNewAddress(props: TrackNewAddressProps) {
                         console.log('found codec by discriminant !, count = ', types.length, types[0]);
                     }
                 })
+            }).catch((e: any) => {
+                cleanTypes()
             })
-
         } else {
             cleanTypes()
         }
