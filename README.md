@@ -2,7 +2,7 @@
 ### Smetana 
 browser extension that helps solana developers easilly explore and debug their accounts without leaving explorer pages
 
-![image](https://github.com/dot5enko/smetana/tree/master/screen.png)
+![image](https://github.com/dot5enko/smetana/blob/master/screen.png?raw=true)
 
 ### Features
 
