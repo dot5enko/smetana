@@ -116,7 +116,7 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
     width={contentWidth + "px"}
     padding="10px"
     transition=".25s all ease"
-    backgroundColor="#353535"
+    backgroundColor="#283845"
     position="relative"
     overflow="hidden"
   >

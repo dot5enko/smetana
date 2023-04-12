@@ -49,7 +49,7 @@ export function getVariantStyle(actionVariant: ColorVariantType) {
 
         default: {
 
-            result.style.backgroundColor = "#363A46"
+            result.style.backgroundColor = "#202c39"
             result.style.color = "whiteAlpha.600"
 
             result.hover.backgroundColor = "#1E2027"
