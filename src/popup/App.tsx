@@ -67,11 +67,10 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
 
   useEffect(() => {
 
-
     let specificWidth = false
 
-    if (route.path == "addr_view") {
-      setWidth(600);
+    if (route.path == "addr_view" || route.path == "") {
+      setWidth(700);
       specificWidth = true;
     } 
 

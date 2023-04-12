@@ -8,13 +8,16 @@ import { DataHistory } from "./screens/DataHistory";
 export function Routes() {
 
     return <>
-        <Route path="">
+        <Route path="home">
             <MenuEntry submenu="addresses">Watching</MenuEntry>
             <MenuEntry submenu="address_book">Address Book</MenuEntry>
             <MenuEntry submenu="data_types" fixedFooter={true} >Data types</MenuEntry>
             <BottomContent>
                 <MenuEntry submenu="addr_view" colorVariant="info" args={[undefined, undefined, true]}>Explore</MenuEntry>
             </BottomContent>
+        </Route>
+        <Route path="">
+            <AddressDashboard id={useRouteArg(0)} type_id={useRouteArg(1)} explore={true} />
         </Route>
         <Route path="address_book">
             <AddressBook />

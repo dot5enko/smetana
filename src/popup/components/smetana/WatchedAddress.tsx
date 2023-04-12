@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { AddressDataHandler, AddressHandler } from "../../../background";
 import { Address, WatchedAddress as WatchedAddressInterface } from "../../../background/types"
 import { Label, MenuEntry, minutesReadable } from "../menu";
+import { Copyable } from "../menu/Copyable";
 
 export interface WatchedAddressProps extends HTMLChakraProps<'div'> {
     item: WatchedAddressInterface
@@ -44,7 +45,7 @@ export function WatchedAddress(props: WatchedAddressProps) {
     >
         <Label fontWeight="bold" color={"white"}>{item.label}</Label>
         <Label>
-           {adrval?.address}
+           <Copyable>{adrval?.address}</Copyable>
         </Label>
         <Label fontSize={"xs"} color="blue.400">watch once in {minutesReadable(item.sync_interval)}. total entries :{entries} </Label>
     </MenuEntry>

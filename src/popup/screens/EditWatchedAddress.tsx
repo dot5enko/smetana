@@ -42,6 +42,8 @@ export function EditWatchedAddress(props: EditWatchedAddressProps) {
 
             <MenuEntry submenu="data_insight_configuration" args={[id]} >Configure data insights</MenuEntry>
             <MenuEntry submenu="address_data_history" args={[object?.address_id]} >Data fetch history</MenuEntry>
+            <MenuEntry submenu="addr_view" args={[object?.address_id]} colorVariant="info" >Latest data</MenuEntry>
+            
         </If>
         <If condition={err}>
             <ActionButton>{err}</ActionButton>

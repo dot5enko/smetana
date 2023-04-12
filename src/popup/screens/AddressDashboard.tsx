@@ -1,4 +1,4 @@
-import { Skeleton } from "@chakra-ui/react";
+import { Flex, Skeleton } from "@chakra-ui/react";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 import { useEffect, useMemo, useState } from "react";
 import { AddressData, AddressHandler, DataTypeHandler, decodeType, getLastHistoryEntryOrFetch, WatchedAddressHandler } from "../../background";
@@ -185,20 +185,19 @@ export function AddressDashboard(props: AddressDashboardProps) {
     }, [typ, lastData])
 
     return <>
-
         <If condition={explore}>
-            <TextInput
-                value={exploreInput}
-                invalidTypeLabel="pubkey in base58 format required"
-                placeholder="address to explore"
-                validate="publicKey"
-                onChange={(nval) => { setInput(nval) }}
-                onValidChange={(valid, validVal) => {
-                    if (valid) {
-                        getAddrId(validVal).then(idval => setObjId(idval))
-                    }
-                }}
-            />
+                <TextInput
+                    value={exploreInput}
+                    invalidTypeLabel="pubkey in base58 format required"
+                    placeholder="address to explore"
+                    validate="publicKey"
+                    onChange={(nval) => { setInput(nval) }}
+                    onValidChange={(valid, validVal) => {
+                        if (valid) {
+                            getAddrId(validVal).then(idval => setObjId(idval))
+                        }
+                    }}
+                />
         </If>
 
         <If condition={object} >

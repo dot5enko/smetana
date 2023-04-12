@@ -49,7 +49,14 @@ export function ExtensionContextProvider(props: { children?: JSX.Element }) {
     const [contentWidth, setWidth] = useState(350);
 
     const [currentRoute, setRouteState] = useState<RouteHistoryEntry>(emptyRoute)
-    const [routeStack, setRouteStack] = useState<RouteHistoryEntry[]>([]);
+    const [routeStack, setRouteStack] = useState<RouteHistoryEntry[]>([
+        {
+            path: "home",
+            title : "home",
+            args : [],
+            footerContent : true
+        }
+    ]);
 
     const [rpc, setRpcRaw] = useState<string>(getKeyValueOrDefault(RpcConfigKey, DefaultRpcServer));
     const [connection, setConnection] = useState(new Connection(rpc, 'confirmed'))
