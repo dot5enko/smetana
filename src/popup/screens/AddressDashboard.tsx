@@ -20,7 +20,7 @@ export interface AddressDashboardProps {
 
 export function AddressDashboard(props: AddressDashboardProps) {
 
-    const { connection, setSlideRoute, setRoute, hideSlide } = useExtensionContext();
+    const { connection, setSlideRoute, setRoute, hideSlide, setWidth } = useExtensionContext();
 
     const { id, type_id, explore } = props;
 
@@ -45,6 +45,7 @@ export function AddressDashboard(props: AddressDashboardProps) {
                 getAddrId(id).then(idval => setObjId(idval))
             }
         }
+
     }, [id])
 
     useEffect(() => {

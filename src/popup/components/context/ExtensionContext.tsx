@@ -5,6 +5,9 @@ import { getKeyValueOrDefault, RpcConfigKey, setKeyValue } from "../../../backgr
 
 export interface ExtensionContextType {
 
+    contentWidth : number
+    setWidth: (val : number) => void
+
     route: RouteHistoryEntry,
     setRoute(val: string, title: string, footer: boolean, ...args: any[]): void,
     cleanupHistory():void;
@@ -42,6 +45,8 @@ const emptyRoute: RouteHistoryEntry = {
 export function ExtensionContextProvider(props: { children?: JSX.Element }) {
 
     const { children } = props;
+
+    const [contentWidth, setWidth] = useState(350);
 
     const [currentRoute, setRouteState] = useState<RouteHistoryEntry>(emptyRoute)
     const [routeStack, setRouteStack] = useState<RouteHistoryEntry[]>([]);
@@ -121,6 +126,10 @@ export function ExtensionContextProvider(props: { children?: JSX.Element }) {
         }
 
         const value: ExtensionContextType = {
+
+            contentWidth, 
+            setWidth,
+
             connection,
             rpc, setRpc,
 
@@ -136,7 +145,8 @@ export function ExtensionContextProvider(props: { children?: JSX.Element }) {
         }
         return value;
 
-    }, [rpc, slideActive, routeStack, currentRoute, connection,
+    }, [contentWidth, setWidth,
+        rpc, slideActive, routeStack, currentRoute, connection,
         slideRoute, slideActive])
 
     return (

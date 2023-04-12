@@ -57,11 +57,12 @@ export function SlideWindow(props: SlideWindowProps) {
         ></Box>
         <Box
             position={"absolute"}
-            width="100%"
+            maxWidth="450px"
             display="flex"
             bottom="0"
             right="0"
             left="0"
+            margin="0 auto"
             flexDirection="column"
             boxSizing="border-box"
         >

@@ -1,4 +1,4 @@
-import { Box, Flex, Icon, Spacer, Text,useColorMode } from "@chakra-ui/react"
+import { Box, Flex, Icon, Spacer, Text, useColorMode } from "@chakra-ui/react"
 import { ChakraProvider } from '@chakra-ui/react'
 import { ToastContainer } from "react-toastify"
 import { ExtensionContextProvider, useExtensionContext } from "./components/context/ExtensionContext"
@@ -27,7 +27,7 @@ function Content() {
     if (colorMode == 'light') {
       toggleColorMode();
     }
-  },[])
+  }, [])
 
 
   return (
@@ -35,7 +35,9 @@ function Content() {
       <Box>
         <ToastContainer position="top-center" limit={1} theme="dark" hideProgressBar={true} closeButton={false} />
         <ExtensionContextProvider>
-          <AppWindowInner routes={<Routes />} slideRoutes={<SlideRoutes />} />
+          <Flex>
+            <AppWindowInner routes={<Routes />} slideRoutes={<SlideRoutes />} />
+          </Flex>
         </ExtensionContextProvider>
       </Box>
     </Flex >)
@@ -59,9 +61,35 @@ const useHash = () => {
 
 function AppWindowInner(props: { routes: any, slideRoutes: any }) {
 
-  const { setRoute, cleanupHistory } = useExtensionContext();
+  const { setRoute, cleanupHistory, route, setWidth } = useExtensionContext();
 
   const hash = useHash();
+
+  useEffect(() => {
+
+
+    let specificWidth = false
+
+    if (route.path == "addr_view") {
+      setWidth(600);
+      specificWidth = true;
+    } 
+
+    if (route.path == "edit_datatype" || route.path == "edit_typefield") {
+      setWidth(450);
+      specificWidth = true;
+    }
+    
+    if (route.path == "addresses") {
+      setWidth(500);
+      specificWidth = true;
+    }
+
+    
+    if (!specificWidth) {
+      setWidth(350);
+    }
+  }, [route])
 
   useEffect(() => {
     if (hash != "") {
@@ -82,11 +110,12 @@ function AppWindowInner(props: { routes: any, slideRoutes: any }) {
     }
   }, [hash])
 
-  const { slideActive, hasBack, routeBack, setSlideRoute, rpc, route: { footerContent: footer, title, path: routePath } } = useExtensionContext();
+  const { slideActive, hasBack, routeBack, setSlideRoute, rpc, route: { footerContent: footer, title, path: routePath }, contentWidth } = useExtensionContext();
 
   return <Box
-    width="100vw"
+    width={contentWidth + "px"}
     padding="10px"
+    transition=".25s all ease"
     backgroundColor="#353535"
     position="relative"
     overflow="hidden"

@@ -1,7 +1,7 @@
 import { HTMLChakraProps } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { AddressDataHandler } from "../../../background";
-import { WatchedAddress as WatchedAddressInterface } from "../../../background/types"
+import { AddressDataHandler, AddressHandler } from "../../../background";
+import { Address, WatchedAddress as WatchedAddressInterface } from "../../../background/types"
 import { Label, MenuEntry, minutesReadable } from "../menu";
 
 export interface WatchedAddressProps extends HTMLChakraProps<'div'> {
@@ -23,6 +23,19 @@ export function WatchedAddress(props: WatchedAddressProps) {
         }
     }, [item.id])
 
+
+    const [adrval , setAddr] = useState<Address|undefined>();
+
+   useEffect(() => {
+
+    if (item) {
+        AddressHandler.getById(item.address_id).then( addr => {
+            setAddr(addr);
+        })
+    }
+   },[item]) 
+
+
     return <MenuEntry
         borderRadius={"6px"}
         submenu="edit_watchedaddress"
@@ -30,6 +43,9 @@ export function WatchedAddress(props: WatchedAddressProps) {
         args={[item.id]} {...rest}
     >
         <Label fontWeight="bold" color={"white"}>{item.label}</Label>
+        <Label>
+           {adrval?.address}
+        </Label>
         <Label fontSize={"xs"} color="blue.400">watch once in {minutesReadable(item.sync_interval)}. total entries :{entries} </Label>
     </MenuEntry>
 }
